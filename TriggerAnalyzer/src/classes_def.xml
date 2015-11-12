@@ -1,0 +1,7 @@
+<lcgdict>
+  <class name="triggerStudyEventVars" />
+  <class name="std::vector<triggerStudyEventVars>" />
+  <class pattern="edm::Wrapper<triggerStudyEventVars>"/>
+  <class name="edm::Wrapper<std::vector<triggerStudyEventVars> >" />
+
+</lcgdict>
