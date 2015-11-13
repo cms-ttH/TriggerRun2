@@ -76,6 +76,8 @@
 
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
 
@@ -127,16 +129,20 @@ class TriggerAnalyzer : public edm::EDAnalyzer {
   edm::EDGetTokenT <pat::ElectronCollection> electronToken;
   edm::EDGetTokenT <pat::MuonCollection> muonToken;
   edm::EDGetTokenT <pat::JetCollection> jetToken;
-  edm::EDGetTokenT <pat::METCollection> metToken;
+  edm::EDGetTokenT <pat::METCollection> pfMetToken;
+  edm::EDGetTokenT <pat::METCollection> pfMetNoHFToken;
+  edm::EDGetTokenT <pat::METCollection> puppiMetToken;
 
   edm::EDGetTokenT <pat::PackedCandidateCollection> packedpfToken;
 
   edm::EDGetTokenT <reco::BeamSpot> beamspotToken;
+  edm::EDGetTokenT <reco::ConversionCollection> EDMConversionCollectionToken;
   edm::EDGetTokenT <double> rhoToken;
   edm::EDGetTokenT <reco::GenParticleCollection> mcparicleToken;
   edm::EDGetTokenT <std::vector< PileupSummaryInfo > > puInfoToken;
 
   edm::EDGetTokenT <GenEventInfoProduct> genInfoProductToken;
+  edm::EDGetTokenT <LHEEventProduct> lheEventProductToken;
 
   edm::EDGetTokenT <l1extra::L1EtMissParticleCollection> l1HTMissToken;
 
@@ -241,16 +247,21 @@ TriggerAnalyzer::TriggerAnalyzer(const edm::ParameterSet& iConfig):
   electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
   muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
-  metToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
+  pfMetToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
+  pfMetNoHFToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETsNoHF")));
+  puppiMetToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETsPuppi")));
 
   packedpfToken = consumes <pat::PackedCandidateCollection> (edm::InputTag(std::string("packedPFCandidates")));
 
   beamspotToken = consumes <reco::BeamSpot> (edm::InputTag(std::string("offlineBeamSpot")));
-  rhoToken = consumes <double> (edm::InputTag(std::string("fixedGridRhoAll")));
+  rhoToken = consumes <double> (edm::InputTag(std::string("fixedGridRhoFastjetAll")));
   mcparicleToken = consumes <reco::GenParticleCollection> (edm::InputTag(std::string("prunedGenParticles")));
-  puInfoToken = consumes <std::vector< PileupSummaryInfo > > (edm::InputTag(std::string("addPileupInfo")));
+  puInfoToken = consumes <std::vector< PileupSummaryInfo > > (edm::InputTag(std::string("slimmedAddPileupInfo")));
+  EDMConversionCollectionToken = consumes <reco::ConversionCollection > (edm::InputTag("reducedEgamma","reducedConversions",""));
 
   genInfoProductToken = consumes <GenEventInfoProduct> (edm::InputTag(std::string("generator")));
+  lheEventProductToken = consumes <LHEEventProduct> (edm::InputTag(std::string("externalLHEProducer")));
+
 
   l1HTMissToken = consumes <l1extra::L1EtMissParticleCollection> (edm::InputTag(std::string("l1extraParticles"), std::string("MHT")));
 
@@ -298,6 +309,10 @@ TriggerAnalyzer::TriggerAnalyzer(const edm::ParameterSet& iConfig):
 
   miniAODhelper.SetUp(era, insample_, iAnalysisType, isData);
 
+  miniAODhelper.SetJetCorrectorUncertainty();
+
+  miniAODhelper.SetUpElectronMVA("MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB1_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB2_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EE_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml");
+
 }
 
 
@@ -332,8 +347,8 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   if( debug_ ) std::cout << " ====> test 0 " << std::endl;
 
-  double minTightLeptonPt = 10.;
-  double minLooseLeptonPt = 10.;
+  double minTightLeptonPt = 15.;
+  double minLooseLeptonPt = 15.;
 
   if( debug_ ) std::cout << " ====> test 0.1 " << std::endl;
 
@@ -687,7 +702,13 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   iEvent.getByToken(jetToken,pfjets);
 
   edm::Handle<pat::METCollection> pfmet;
-  iEvent.getByToken(metToken,pfmet);
+  iEvent.getByToken(pfMetToken,pfmet);
+
+  edm::Handle<pat::METCollection> pfmetnohf;
+  iEvent.getByToken(pfMetNoHFToken,pfmetnohf);
+
+  edm::Handle<pat::METCollection> puppimet;
+  iEvent.getByToken(puppiMetToken,puppimet);
 
   edm::Handle<pat::PackedCandidateCollection> packedPFcands;
   iEvent.getByToken(packedpfToken,packedPFcands);
@@ -696,8 +717,28 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   edm::Handle<reco::BeamSpot> bsHandle;
   iEvent.getByToken(beamspotToken,bsHandle);
 
+  edm::Handle<reco::ConversionCollection> h_conversioncollection;
+  iEvent.getByToken( EDMConversionCollectionToken,h_conversioncollection );
+
   edm::Handle<reco::GenParticleCollection> mcparticles;
   iEvent.getByToken(mcparicleToken,mcparticles);
+
+
+  double top_pt = -99;
+  double antitop_pt = -99;
+  if( mcparticles.isValid() ){
+    for( size_t k = 0; k < mcparticles->size(); k++ ){
+      const reco::Candidate & mcParticle = (*mcparticles)[k];
+      int pdgId = mcParticle.pdgId();
+      double pt = mcParticle.pt();
+      if( pdgId==6 )       top_pt = pt;
+      else if( pdgId==-6 ) antitop_pt = pt;
+    }
+  }
+
+  eve->top_pt_ = top_pt;
+  eve->antitop_pt_ = antitop_pt;
+
 
   edm::Handle<double> rhoHandle;
   iEvent.getByToken(rhoToken,rhoHandle);
@@ -705,6 +746,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   double rho_event = ( (rhoHandle.isValid()) ) ? *rhoHandle : -99;
   miniAODhelper.SetRho(rho_event);
 
+  eve->rho_ = rho_event;
 
   edm::Handle<std::vector< PileupSummaryInfo > > PupInfo;
   iEvent.getByToken(puInfoToken,PupInfo);
@@ -714,7 +756,34 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   iEvent.getByToken(genInfoProductToken,GenEventInfoHandle);
 
   double GenEventInfoWeight = 1.0;
-  if( GenEventInfoHandle.isValid() ) GenEventInfoWeight = GenEventInfoHandle.product()->weight();
+  double qScale=-99, pthat=-99;
+  if( GenEventInfoHandle.isValid() ){
+    GenEventInfoWeight = GenEventInfoHandle.product()->weight();
+    qScale = GenEventInfoHandle->qScale();
+    pthat = ( GenEventInfoHandle->hasBinningValues() ? (GenEventInfoHandle->binningValues())[0] : 0.0);
+  }
+
+  eve->qscale_ = qScale;
+  eve->pthat_ = pthat;
+
+
+
+  edm::Handle<LHEEventProduct> LHEEventProductHandle;
+  iEvent.getByToken(lheEventProductToken,LHEEventProductHandle);
+
+  double originalXWGTUP=-99;
+  vdouble LHEEvent_weights; 
+  if( LHEEventProductHandle.isValid() ){
+    unsigned int NumEventWeights = LHEEventProductHandle->weights().size();
+    for( unsigned int iWgt=0; iWgt < NumEventWeights; iWgt++ ){
+      double evtWgt = LHEEventProductHandle->weights()[iWgt].wgt;
+      LHEEvent_weights.push_back(evtWgt);
+    }
+  }
+
+  eve->originalXWGTUP_ = originalXWGTUP;
+  eve->LHEEvent_weights_ = LHEEvent_weights;
+
 
 
   edm::Handle<int> genTtbarId;
@@ -763,6 +832,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       numpv++;
     }
   }
+
+  eve->PV_x_ = vertex.x();
+  eve->PV_y_ = vertex.y();
+  eve->PV_z_ = vertex.z();
 
 
   if( debug_ ) std::cout << " ====> test 9 " << std::endl;
@@ -871,8 +944,11 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   /// Electrons
   ///
   ////////
+
+  miniAODhelper.SetElectronMVAinfo(h_conversioncollection, bsHandle);
+
   // std::vector<pat::Electron> selectedElectrons_tight = miniAODhelper.GetSelectedElectrons( *electrons, minTightLeptonPt, electronID::electronSpring15M, 2.1 );
-  std::vector<pat::Electron> selectedElectrons_loose = miniAODhelper.GetSelectedElectrons( *electrons, minLooseLeptonPt, electronID::electronSpring15L, 2.4 );
+  std::vector<pat::Electron> selectedElectrons_loose = miniAODhelper.GetSelectedElectrons( *electrons, minLooseLeptonPt, electronID::electronEndOf15MVAmedium, 2.4 );
 
   // int numTightElectrons = int(selectedElectrons_tight.size());
   // int numLooseElectrons = int(selectedElectrons_loose.size());// - numTightElectrons;
@@ -886,7 +962,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   ///
   ////////
   // std::vector<pat::Muon> selectedMuons_tight = miniAODhelper.GetSelectedMuons( *muons, minTightLeptonPt, muonID::muonTight, coneSize::R04, corrType::deltaBeta, 2.1 );
-  std::vector<pat::Muon> selectedMuons_loose = miniAODhelper.GetSelectedMuons( *muons, minLooseLeptonPt, muonID::muonLoose, coneSize::R04, corrType::deltaBeta, 2.4 );
+  std::vector<pat::Muon> selectedMuons_loose = miniAODhelper.GetSelectedMuons( *muons, minLooseLeptonPt, muonID::muonTight, coneSize::R04, corrType::deltaBeta, 2.4 );
 
   // int numTightMuons = int(selectedMuons_tight.size());
   // int numLooseMuons = int(selectedMuons_loose.size());// - numTightMuons;
@@ -901,9 +977,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<pat::Jet> pfJets_ID = miniAODhelper.GetSelectedJets(*pfjets,0.,999,jetID::jetLoose,'-');
   std::vector<pat::Jet> pfJets_ID_clean = miniAODhelper.GetDeltaRCleanedJets( pfJets_ID, selectedMuons_loose, selectedElectrons_loose, 0.4);
   std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets(pfJets_ID_clean);
-  std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup);
-  std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 3.0, jetID::none, '-' );
-  std::vector<pat::Jet> selectedJets_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 20., 3.0, jetID::none, 'M' );
+  std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::NA);
+  std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 10., 3.0, jetID::none, '-' );
+  std::vector<pat::Jet> selectedJets_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 10., 3.0, jetID::none, 'M' );
+
 
   //////
   if( debug_ ) std::cout << " ====> test 15 " << std::endl;
@@ -924,7 +1001,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   /// jets without cc
   std::vector<pat::Jet> rawJets_nocc = miniAODhelper.GetUncorrectedJets(pfJets_ID);
   std::vector<pat::Jet> correctedJets_nocc_noSys = miniAODhelper.GetCorrectedJets(rawJets_nocc, iEvent, iSetup);
-  std::vector<pat::Jet> selectedJets_nocc_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_nocc_noSys, 20., 3.0, jetID::none, '-' );
+  std::vector<pat::Jet> selectedJets_nocc_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_nocc_noSys, 15., 3.0, jetID::none, '-' );
 
   //////
   if( debug_ ) std::cout << " ====> test 15 " << std::endl;
@@ -935,15 +1012,93 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   // Get Corrected MET (propagating JEC and JER)
   // pat::MET correctedMET = pfmet->front();//miniAODhelper.GetCorrectedMET( pfmets.at(0), pfJets_forMET, iSysType );
-  std::vector<pat::Jet> oldJetsForMET = miniAODhelper.GetSelectedJets(*pfjets, 0., 999, jetID::jetMETcorrection, '-' );
+  std::vector<pat::Jet> oldJetsForMET = miniAODhelper.GetSelectedJets(*pfjets, 0., 999., jetID::jetMETcorrection, '-' );
   std::vector<pat::Jet> oldJetsForMET_uncorr = miniAODhelper.GetUncorrectedJets(oldJetsForMET);
-  std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup);
-  std::vector<pat::MET> newMETs = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmet);
+  std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::NA);
 
-  pat::MET correctedMET = newMETs.at(0); 
+  std::vector<pat::MET> newPfMETs = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmet);
+  std::vector<pat::MET> newPfMETsNoHF = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmetnohf);
+  std::vector<pat::MET> newPuppiMETs = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *puppimet);
 
-  eve->pfMET_pt_  = correctedMET.pt();
-  eve->pfMET_phi_ = correctedMET.phi();
+  eve->pfMET_pt_  = newPfMETs.at(0).pt();
+  eve->pfMET_phi_ = newPfMETs.at(0).phi();
+
+  eve->pfMETNoHF_pt_  = newPfMETsNoHF.at(0).pt();
+  eve->pfMETNoHF_phi_ = newPfMETsNoHF.at(0).phi();
+
+  eve->puppiMET_pt_  = newPuppiMETs.at(0).pt();
+  eve->puppiMET_phi_ = newPuppiMETs.at(0).phi();
+
+  eve->puppiMET_Upt_  = puppimet->front().pt();
+  eve->puppiMET_Uphi_ = puppimet->front().phi();
+
+
+  // JESup
+  std::vector<pat::Jet> newJetsForMET_JESup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JESup);
+
+  std::vector<pat::MET> newPfMETs_JESup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESup, *pfmet);
+  std::vector<pat::MET> newPfMETsNoHF_JESup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESup, *pfmetnohf);
+  std::vector<pat::MET> newPuppiMETs_JESup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESup, *puppimet);
+
+  eve->pfMET_pt_JESup_  = newPfMETs_JESup.at(0).pt();
+  eve->pfMET_phi_JESup_ = newPfMETs_JESup.at(0).phi();
+
+  eve->pfMETNoHF_pt_JESup_  = newPfMETsNoHF_JESup.at(0).pt();
+  eve->pfMETNoHF_phi_JESup_ = newPfMETsNoHF_JESup.at(0).phi();
+
+  eve->puppiMET_pt_JESup_  = newPuppiMETs_JESup.at(0).pt();
+  eve->puppiMET_phi_JESup_ = newPuppiMETs_JESup.at(0).phi();
+
+  // JESdown
+  std::vector<pat::Jet> newJetsForMET_JESdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JESdown);
+
+  std::vector<pat::MET> newPfMETs_JESdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESdown, *pfmet);
+  std::vector<pat::MET> newPfMETsNoHF_JESdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESdown, *pfmetnohf);
+  std::vector<pat::MET> newPuppiMETs_JESdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESdown, *puppimet);
+
+  eve->pfMET_pt_JESdown_  = newPfMETs_JESdown.at(0).pt();
+  eve->pfMET_phi_JESdown_ = newPfMETs_JESdown.at(0).phi();
+
+  eve->pfMETNoHF_pt_JESdown_  = newPfMETsNoHF_JESdown.at(0).pt();
+  eve->pfMETNoHF_phi_JESdown_ = newPfMETsNoHF_JESdown.at(0).phi();
+
+  eve->puppiMET_pt_JESdown_  = newPuppiMETs_JESdown.at(0).pt();
+  eve->puppiMET_phi_JESdown_ = newPuppiMETs_JESdown.at(0).phi();
+
+
+  // JERup
+  std::vector<pat::Jet> newJetsForMET_JERup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JERup);
+
+  std::vector<pat::MET> newPfMETs_JERup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERup, *pfmet);
+  std::vector<pat::MET> newPfMETsNoHF_JERup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERup, *pfmetnohf);
+  std::vector<pat::MET> newPuppiMETs_JERup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERup, *puppimet);
+
+  eve->pfMET_pt_JERup_  = newPfMETs_JERup.at(0).pt();
+  eve->pfMET_phi_JERup_ = newPfMETs_JERup.at(0).phi();
+
+  eve->pfMETNoHF_pt_JERup_  = newPfMETsNoHF_JERup.at(0).pt();
+  eve->pfMETNoHF_phi_JERup_ = newPfMETsNoHF_JERup.at(0).phi();
+
+  eve->puppiMET_pt_JERup_  = newPuppiMETs_JERup.at(0).pt();
+  eve->puppiMET_phi_JERup_ = newPuppiMETs_JERup.at(0).phi();
+
+  // JERdown
+  std::vector<pat::Jet> newJetsForMET_JERdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JERdown);
+
+  std::vector<pat::MET> newPfMETs_JERdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERdown, *pfmet);
+  std::vector<pat::MET> newPfMETsNoHF_JERdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERdown, *pfmetnohf);
+  std::vector<pat::MET> newPuppiMETs_JERdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERdown, *puppimet);
+
+  eve->pfMET_pt_JERdown_  = newPfMETs_JERdown.at(0).pt();
+  eve->pfMET_phi_JERdown_ = newPfMETs_JERdown.at(0).phi();
+
+  eve->pfMETNoHF_pt_JERdown_  = newPfMETsNoHF_JERdown.at(0).pt();
+  eve->pfMETNoHF_phi_JERdown_ = newPfMETsNoHF_JERdown.at(0).phi();
+
+  eve->puppiMET_pt_JERdown_  = newPuppiMETs_JERdown.at(0).pt();
+  eve->puppiMET_phi_JERdown_ = newPuppiMETs_JERdown.at(0).phi();
+
+
 
   if( debug_ ) std::cout << " ====> test 16 " << std::endl;
 
@@ -961,7 +1116,12 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<double> vec_jet_phi;
   std::vector<double> vec_jet_energy;
   std::vector<double> vec_jet_csv;
-  std::vector<int>    vec_jet_flavor;
+  std::vector<int>    vec_jet_partonFlavour;
+  std::vector<int>    vec_jet_hadronFlavour;
+
+  std::vector<double> vec_jet_vx;
+  std::vector<double> vec_jet_vy;
+  std::vector<double> vec_jet_vz;
 
   for( std::vector<pat::Jet>::const_iterator iJet = selectedJets.begin(); iJet != selectedJets.end(); iJet++ ){ 
     double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
@@ -973,7 +1133,12 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_phi.push_back(iJet->phi());
     vec_jet_energy.push_back(iJet->energy());
     vec_jet_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    vec_jet_flavor.push_back(iJet->partonFlavour());
+    vec_jet_partonFlavour.push_back(iJet->partonFlavour());
+    vec_jet_hadronFlavour.push_back(iJet->hadronFlavour());
+
+    vec_jet_vx.push_back(iJet->vx());
+    vec_jet_vy.push_back(iJet->vy());
+    vec_jet_vz.push_back(iJet->vz());
   } // end loop on jets
 
   eve->jet_pt_  = vec_jet_pt;
@@ -981,7 +1146,11 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->jet_phi_ = vec_jet_phi;
   eve->jet_energy_ = vec_jet_energy;
   eve->jet_csv_ = vec_jet_csv;
-  eve->jet_flavor_ = vec_jet_flavor;
+  eve->jet_partonFlavour_ = vec_jet_partonFlavour;
+  eve->jet_hadronFlavour_ = vec_jet_hadronFlavour;
+  eve->jet_vx_ = vec_jet_vx;
+  eve->jet_vy_ = vec_jet_vy;
+  eve->jet_vz_ = vec_jet_vz;
 
 
   /////
@@ -992,7 +1161,8 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<double> vec_jet_nocc_phi;
   std::vector<double> vec_jet_nocc_energy;
   std::vector<double> vec_jet_nocc_csv;
-  std::vector<int>    vec_jet_nocc_flavor;
+  std::vector<int>    vec_jet_nocc_partonFlavour;
+  std::vector<int>    vec_jet_nocc_hadronFlavour;
 
   for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_nocc.begin(); iJet != selectedJets_nocc.end(); iJet++ ){ 
     double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
@@ -1004,7 +1174,8 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_nocc_phi.push_back(iJet->phi());
     vec_jet_nocc_energy.push_back(iJet->energy());
     vec_jet_nocc_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    vec_jet_nocc_flavor.push_back(iJet->partonFlavour());
+    vec_jet_nocc_partonFlavour.push_back(iJet->partonFlavour());
+    vec_jet_nocc_hadronFlavour.push_back(iJet->hadronFlavour());
   } // end loop on jets
 
   eve->jet_nocc_pt_  = vec_jet_nocc_pt;
@@ -1012,10 +1183,168 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->jet_nocc_phi_ = vec_jet_nocc_phi;
   eve->jet_nocc_energy_ = vec_jet_nocc_energy;
   eve->jet_nocc_csv_ = vec_jet_nocc_csv;
-  eve->jet_nocc_flavor_ = vec_jet_nocc_flavor;
+  eve->jet_nocc_partonFlavour_ = vec_jet_nocc_partonFlavour;
+  eve->jet_nocc_hadronFlavour_ = vec_jet_nocc_hadronFlavour;
+
 
   ////
 
+
+  // JESUp
+  std::vector<pat::Jet> correctedJets_JESup = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JESup);
+  std::vector<pat::Jet> selectedJets_JESup_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JESup, 10., 3.0, jetID::none, '-' );
+  std::vector<pat::Jet> selectedJets_JESup = miniAODhelper.GetSortedByPt( selectedJets_JESup_unsorted );
+
+  // Loop over jets
+  std::vector<double> vec_jet_JESup_pt;
+  std::vector<double> vec_jet_JESup_eta;
+  std::vector<double> vec_jet_JESup_phi;
+  std::vector<double> vec_jet_JESup_energy;
+  std::vector<double> vec_jet_JESup_csv;
+  std::vector<int>    vec_jet_JESup_partonFlavour;
+  std::vector<int>    vec_jet_JESup_hadronFlavour;
+
+  for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JESup.begin(); iJet != selectedJets_JESup.end(); iJet++ ){ 
+    double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+    if( csv>-5 && csv<-0.5 ) csv = -0.2;
+    if( csv<-5 )             csv = -0.4;
+
+    vec_jet_JESup_pt.push_back(iJet->pt());
+    vec_jet_JESup_eta.push_back(iJet->eta());
+    vec_jet_JESup_phi.push_back(iJet->phi());
+    vec_jet_JESup_energy.push_back(iJet->energy());
+    vec_jet_JESup_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+    vec_jet_JESup_partonFlavour.push_back(iJet->partonFlavour());
+    vec_jet_JESup_hadronFlavour.push_back(iJet->hadronFlavour());
+  } // end loop on jets
+
+  eve->jet_JESup_pt_  = vec_jet_JESup_pt;
+  eve->jet_JESup_eta_ = vec_jet_JESup_eta;
+  eve->jet_JESup_phi_ = vec_jet_JESup_phi;
+  eve->jet_JESup_energy_ = vec_jet_JESup_energy;
+  eve->jet_JESup_csv_ = vec_jet_JESup_csv;
+  eve->jet_JESup_partonFlavour_ = vec_jet_JESup_partonFlavour;
+  eve->jet_JESup_hadronFlavour_ = vec_jet_JESup_hadronFlavour;
+
+
+  //
+
+  // JESDown
+  std::vector<pat::Jet> correctedJets_JESdown = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JESdown);
+  std::vector<pat::Jet> selectedJets_JESdown_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JESdown, 10., 3.0, jetID::none, '-' );
+  std::vector<pat::Jet> selectedJets_JESdown = miniAODhelper.GetSortedByPt( selectedJets_JESdown_unsorted );
+
+  // Loop over jets
+  std::vector<double> vec_jet_JESdown_pt;
+  std::vector<double> vec_jet_JESdown_eta;
+  std::vector<double> vec_jet_JESdown_phi;
+  std::vector<double> vec_jet_JESdown_energy;
+  std::vector<double> vec_jet_JESdown_csv;
+  std::vector<int>    vec_jet_JESdown_partonFlavour;
+  std::vector<int>    vec_jet_JESdown_hadronFlavour;
+
+  for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JESdown.begin(); iJet != selectedJets_JESdown.end(); iJet++ ){ 
+    double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+    if( csv>-5 && csv<-0.5 ) csv = -0.2;
+    if( csv<-5 )             csv = -0.4;
+
+    vec_jet_JESdown_pt.push_back(iJet->pt());
+    vec_jet_JESdown_eta.push_back(iJet->eta());
+    vec_jet_JESdown_phi.push_back(iJet->phi());
+    vec_jet_JESdown_energy.push_back(iJet->energy());
+    vec_jet_JESdown_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+    vec_jet_JESdown_partonFlavour.push_back(iJet->partonFlavour());
+    vec_jet_JESdown_hadronFlavour.push_back(iJet->hadronFlavour());
+  } // end loop on jets
+
+  eve->jet_JESdown_pt_  = vec_jet_JESdown_pt;
+  eve->jet_JESdown_eta_ = vec_jet_JESdown_eta;
+  eve->jet_JESdown_phi_ = vec_jet_JESdown_phi;
+  eve->jet_JESdown_energy_ = vec_jet_JESdown_energy;
+  eve->jet_JESdown_csv_ = vec_jet_JESdown_csv;
+  eve->jet_JESdown_partonFlavour_ = vec_jet_JESdown_partonFlavour;
+  eve->jet_JESdown_hadronFlavour_ = vec_jet_JESdown_hadronFlavour;
+
+
+
+  // JERUp
+  std::vector<pat::Jet> correctedJets_JERup = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JERup);
+  std::vector<pat::Jet> selectedJets_JERup_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JERup, 10., 3.0, jetID::none, '-' );
+  std::vector<pat::Jet> selectedJets_JERup = miniAODhelper.GetSortedByPt( selectedJets_JERup_unsorted );
+
+  // Loop over jets
+  std::vector<double> vec_jet_JERup_pt;
+  std::vector<double> vec_jet_JERup_eta;
+  std::vector<double> vec_jet_JERup_phi;
+  std::vector<double> vec_jet_JERup_energy;
+  std::vector<double> vec_jet_JERup_csv;
+  std::vector<int>    vec_jet_JERup_partonFlavour;
+  std::vector<int>    vec_jet_JERup_hadronFlavour;
+
+  for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JERup.begin(); iJet != selectedJets_JERup.end(); iJet++ ){ 
+    double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+    if( csv>-5 && csv<-0.5 ) csv = -0.2;
+    if( csv<-5 )             csv = -0.4;
+
+    vec_jet_JERup_pt.push_back(iJet->pt());
+    vec_jet_JERup_eta.push_back(iJet->eta());
+    vec_jet_JERup_phi.push_back(iJet->phi());
+    vec_jet_JERup_energy.push_back(iJet->energy());
+    vec_jet_JERup_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+    vec_jet_JERup_partonFlavour.push_back(iJet->partonFlavour());
+    vec_jet_JERup_hadronFlavour.push_back(iJet->hadronFlavour());
+  } // end loop on jets
+
+  eve->jet_JERup_pt_  = vec_jet_JERup_pt;
+  eve->jet_JERup_eta_ = vec_jet_JERup_eta;
+  eve->jet_JERup_phi_ = vec_jet_JERup_phi;
+  eve->jet_JERup_energy_ = vec_jet_JERup_energy;
+  eve->jet_JERup_csv_ = vec_jet_JERup_csv;
+  eve->jet_JERup_partonFlavour_ = vec_jet_JERup_partonFlavour;
+  eve->jet_JERup_hadronFlavour_ = vec_jet_JERup_hadronFlavour;
+
+
+  //
+
+  // JERDown
+  std::vector<pat::Jet> correctedJets_JERdown = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JERdown);
+  std::vector<pat::Jet> selectedJets_JERdown_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JERdown, 10., 3.0, jetID::none, '-' );
+  std::vector<pat::Jet> selectedJets_JERdown = miniAODhelper.GetSortedByPt( selectedJets_JERdown_unsorted );
+
+  // Loop over jets
+  std::vector<double> vec_jet_JERdown_pt;
+  std::vector<double> vec_jet_JERdown_eta;
+  std::vector<double> vec_jet_JERdown_phi;
+  std::vector<double> vec_jet_JERdown_energy;
+  std::vector<double> vec_jet_JERdown_csv;
+  std::vector<int>    vec_jet_JERdown_partonFlavour;
+  std::vector<int>    vec_jet_JERdown_hadronFlavour;
+
+  for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JERdown.begin(); iJet != selectedJets_JERdown.end(); iJet++ ){ 
+    double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+    if( csv>-5 && csv<-0.5 ) csv = -0.2;
+    if( csv<-5 )             csv = -0.4;
+
+    vec_jet_JERdown_pt.push_back(iJet->pt());
+    vec_jet_JERdown_eta.push_back(iJet->eta());
+    vec_jet_JERdown_phi.push_back(iJet->phi());
+    vec_jet_JERdown_energy.push_back(iJet->energy());
+    vec_jet_JERdown_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+    vec_jet_JERdown_partonFlavour.push_back(iJet->partonFlavour());
+    vec_jet_JERdown_hadronFlavour.push_back(iJet->hadronFlavour());
+  } // end loop on jets
+
+  eve->jet_JERdown_pt_  = vec_jet_JERdown_pt;
+  eve->jet_JERdown_eta_ = vec_jet_JERdown_eta;
+  eve->jet_JERdown_phi_ = vec_jet_JERdown_phi;
+  eve->jet_JERdown_energy_ = vec_jet_JERdown_energy;
+  eve->jet_JERdown_csv_ = vec_jet_JERdown_csv;
+  eve->jet_JERdown_partonFlavour_ = vec_jet_JERdown_partonFlavour;
+  eve->jet_JERdown_hadronFlavour_ = vec_jet_JERdown_hadronFlavour;
+
+
+
+  ////////////
 
 
   if( debug_ ) std::cout << " ====> test 17 " << std::endl;
@@ -1024,7 +1353,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   vint lepton_genId, lepton_genParentId, lepton_genGrandParentId, lepton_trkCharge, lepton_isMuon, lepton_isTight, lepton_isLoose;
   vint lepton_isPhys14L, lepton_isPhys14M, lepton_isPhys14T;
-  vint lepton_isSpring15L, lepton_isSpring15M, lepton_isSpring15T;
+  vint lepton_isSpring15L, lepton_isSpring15M, lepton_isSpring15T, lepton_isTrigMVAM;;
   vdouble lepton_pt;
   vdouble lepton_eta;
   vdouble lepton_phi;
@@ -1035,11 +1364,16 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   vdouble lepton_iso_sumNeutralHadronEt;
   vdouble lepton_iso_sumPhotonEt;
   vdouble lepton_iso_sumPUPt;
-  vdouble lepton_mvaTrigValue;
+  vdouble lepton_trigMVAOutput;
+  vint    lepton_passTrigPresel;
   vint    lepton_numMissingHits;
   vdouble lepton_scSigmaIEtaIEta;
   vdouble lepton_full5x5_scSigmaIEtaIEta;
   vdouble lepton_hadronicOverEm;
+  vdouble lepton_hcalOverEcal;
+  vdouble lepton_ecalPFClusterIso;
+  vdouble lepton_hcalPFClusterIso;
+  vdouble lepton_dr03TkSumPt;
   vdouble lepton_relEcalIso;
   vdouble lepton_relHcalIso;
   vdouble lepton_relTrackIso;
@@ -1101,6 +1435,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     int isSpring15L = false;
     int isSpring15M = false;
     int isSpring15T = false;
+    int isTrigMVAM = false;
 
     double d0 = -999;
     double dZ = -999;
@@ -1139,6 +1474,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     lepton_isSpring15L.push_back(isSpring15L);
     lepton_isSpring15M.push_back(isSpring15M);
     lepton_isSpring15T.push_back(isSpring15T);
+    lepton_isTrigMVAM.push_back(isTrigMVAM);
     lepton_genId.push_back(genId);
     lepton_genParentId.push_back(genParentId);
     lepton_genGrandParentId.push_back(genGrandParentId);
@@ -1152,10 +1488,15 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     lepton_iso_sumNeutralHadronEt.push_back(iMu->pfIsolationR03().sumNeutralHadronEt);
     lepton_iso_sumPhotonEt.push_back(iMu->pfIsolationR03().sumPhotonEt);
     lepton_iso_sumPUPt.push_back(iMu->pfIsolationR03().sumPUPt);
-    lepton_mvaTrigValue.push_back(-99);
+    lepton_trigMVAOutput.push_back(-99);
+    lepton_passTrigPresel.push_back(-99);
     lepton_scSigmaIEtaIEta.push_back(-99);
     lepton_full5x5_scSigmaIEtaIEta.push_back(-99);
     lepton_hadronicOverEm.push_back(-99);
+    lepton_hcalOverEcal.push_back(-99);
+    lepton_ecalPFClusterIso.push_back(-99);
+    lepton_hcalPFClusterIso.push_back(-99);
+    lepton_dr03TkSumPt.push_back(-99);
     lepton_relEcalIso.push_back(-99);
     lepton_relHcalIso.push_back(-99);
     lepton_relTrackIso.push_back(-99);
@@ -1222,9 +1563,27 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     int isSpring15L = ( miniAODhelper.isGoodElectron(*iEle, minLooseLeptonPt, 2.4, electronID::electronSpring15L) ) ? 1 : 0;
     int isSpring15M = ( miniAODhelper.isGoodElectron(*iEle, minLooseLeptonPt, 2.4, electronID::electronSpring15M) ) ? 1 : 0;
     int isSpring15T = ( miniAODhelper.isGoodElectron(*iEle, minLooseLeptonPt, 2.4, electronID::electronSpring15T) ) ? 1 : 0;
+    int isTrigMVAM = ( miniAODhelper.isGoodElectron(*iEle, minLooseLeptonPt, 2.4, electronID::electronEndOf15MVAmedium) ) ? 1 : 0;
 
+    double trigMVAOutput = miniAODhelper.GetElectronMVAIDValue(*iEle);//myMVATrig->mvaValue(*iEle,false);
 
-    double mvaTrigValue = -99;//myMVATrig->mvaValue(*iEle,false);
+    bool myTrigPresel = ( iEle->pt()>15 && 
+			  ( ( abs(iEle->superCluster()->position().eta()) < 1.4442 && 
+			      iEle->full5x5_sigmaIetaIeta() < 0.012 && 
+			      iEle->hcalOverEcal() < 0.09 && 
+			      (iEle->ecalPFClusterIso() / iEle->pt()) < 0.37 && 
+			      (iEle->hcalPFClusterIso() / iEle->pt()) < 0.25 && 
+			      (iEle->dr03TkSumPt() / iEle->pt()) < 0.18 && 
+			      abs(iEle->deltaEtaSuperClusterTrackAtVtx()) < 0.0095 && 
+			      abs(iEle->deltaPhiSuperClusterTrackAtVtx()) < 0.065 ) || 
+			    ( abs(iEle->superCluster()->position().eta()) > 1.5660 && 
+			      iEle->full5x5_sigmaIetaIeta() < 0.033 && 
+			      iEle->hcalOverEcal() <0.09 && 
+			      (iEle->ecalPFClusterIso() / iEle->pt()) < 0.45 && 
+			      (iEle->hcalPFClusterIso() / iEle->pt()) < 0.28 && 
+			      (iEle->dr03TkSumPt() / iEle->pt()) < 0.18 
+			      ))
+			  );
 
     bool inCrack = false;
     double scEta = -99;
@@ -1319,6 +1678,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     lepton_isSpring15L.push_back(isSpring15L);
     lepton_isSpring15M.push_back(isSpring15M);
     lepton_isSpring15T.push_back(isSpring15T);
+    lepton_isTrigMVAM.push_back(isTrigMVAM);
     lepton_genId.push_back(genId);
     lepton_genParentId.push_back(genParentId);
     lepton_genGrandParentId.push_back(genGrandParentId);
@@ -1332,10 +1692,15 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     lepton_iso_sumNeutralHadronEt.push_back(iEle->pfIsolationVariables().sumNeutralHadronEt);
     lepton_iso_sumPhotonEt.push_back(iEle->pfIsolationVariables().sumPhotonEt);
     lepton_iso_sumPUPt.push_back(iEle->pfIsolationVariables().sumPUPt);
-    lepton_mvaTrigValue.push_back(mvaTrigValue);
+    lepton_trigMVAOutput.push_back(trigMVAOutput);
+    lepton_passTrigPresel.push_back( (myTrigPresel) ? 1 : 0);
     lepton_scSigmaIEtaIEta.push_back(iEle->scSigmaIEtaIEta());
     lepton_full5x5_scSigmaIEtaIEta.push_back(iEle->full5x5_sigmaIetaIeta());
     lepton_hadronicOverEm.push_back(iEle->hadronicOverEm());
+    lepton_hcalOverEcal.push_back(iEle->hcalOverEcal());
+    lepton_ecalPFClusterIso.push_back(iEle->ecalPFClusterIso());
+    lepton_hcalPFClusterIso.push_back(iEle->hcalPFClusterIso());
+    lepton_dr03TkSumPt.push_back(iEle->dr03TkSumPt());
     lepton_relEcalIso.push_back(relEcalIso);
     lepton_relHcalIso.push_back(relHcalIso);
     lepton_relTrackIso.push_back(relTrackIso);
@@ -1387,6 +1752,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->lepton_isSpring15L_      = lepton_isSpring15L;
   eve->lepton_isSpring15M_      = lepton_isSpring15M;
   eve->lepton_isSpring15T_      = lepton_isSpring15T;
+  eve->lepton_isTrigMVAM_       = lepton_isTrigMVAM;
   eve->lepton_genId_            = lepton_genId;
   eve->lepton_genParentId_      = lepton_genParentId;
   eve->lepton_genGrandParentId_ = lepton_genGrandParentId;
@@ -1400,10 +1766,15 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->lepton_iso_sumNeutralHadronEt_ = lepton_iso_sumNeutralHadronEt;
   eve->lepton_iso_sumPhotonEt_        = lepton_iso_sumPhotonEt;
   eve->lepton_iso_sumPUPt_            = lepton_iso_sumPUPt;
-  eve->lepton_mvaTrigValue_     = lepton_mvaTrigValue;
+  eve->lepton_trigMVAOutput_     = lepton_trigMVAOutput;
+  eve->lepton_passTrigPresel_    = lepton_passTrigPresel;
   eve->lepton_scSigmaIEtaIEta_  = lepton_scSigmaIEtaIEta;
   eve->lepton_full5x5_scSigmaIEtaIEta_ = lepton_full5x5_scSigmaIEtaIEta;
   eve->lepton_hadronicOverEm_   = lepton_hadronicOverEm;
+  eve->lepton_hcalOverEcal_     = lepton_hcalOverEcal;
+  eve->lepton_ecalPFClusterIso_ = lepton_ecalPFClusterIso;
+  eve->lepton_hcalPFClusterIso_ = lepton_hcalPFClusterIso;
+  eve->lepton_dr03TkSumPt_      = lepton_dr03TkSumPt;
   eve->lepton_relEcalIso_       = lepton_relEcalIso;
   eve->lepton_relHcalIso_       = lepton_relHcalIso;
   eve->lepton_relTrackIso_      = lepton_relTrackIso;
@@ -1600,6 +1971,23 @@ TriggerAnalyzer::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup)
     std::string name = (algo->second).algoName();
     l1talgo_cppath_[name] = 0;
   }
+
+
+  /*
+  edm::Handle<LHERunInfoProduct> run; 
+  typedef std::vector<LHERunInfoProduct::Header>::const_iterator headers_const_iterator;
+ 
+  iRun.getByLabel( "externalLHEProducer", run );
+  LHERunInfoProduct myLHERunInfoProduct = *(run.product());
+ 
+  for (headers_const_iterator iter=myLHERunInfoProduct.headers_begin(); iter!=myLHERunInfoProduct.headers_end(); iter++){
+    std::cout << iter->tag() << std::endl;
+    std::vector<std::string> lines = iter->lines();
+    for (unsigned int iLine = 0; iLine<lines.size(); iLine++) {
+      std::cout << lines.at(iLine);
+    }
+  }
+  */
 
 }
 

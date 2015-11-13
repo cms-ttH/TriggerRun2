@@ -51,6 +51,19 @@ struct triggerStudyEventVars{
 
   int additionalJetEventId_;
 
+
+  /////
+
+  double rho_;
+  double top_pt_;
+  double antitop_pt_;
+
+  double qscale_;
+  double pthat_;
+  double originalXWGTUP_;
+
+  vdouble LHEEvent_weights_;
+
   /////
 
   int pass_HLT_Ele27_eta2p1_WP75_Gsf_v_;
@@ -72,28 +85,130 @@ struct triggerStudyEventVars{
 
   /////
 
-
+  // pfMET
   double pfMET_pt_;
   double pfMET_phi_;
+
+  double pfMET_pt_JESup_;
+  double pfMET_phi_JESup_;
+  double pfMET_pt_JESdown_;
+  double pfMET_phi_JESdown_;
+
+  double pfMET_pt_JERup_;
+  double pfMET_phi_JERup_;
+  double pfMET_pt_JERdown_;
+  double pfMET_phi_JERdown_;
+
+  // pfMETNoHF
+  double pfMETNoHF_pt_;
+  double pfMETNoHF_phi_;
+
+  double pfMETNoHF_pt_JESup_;
+  double pfMETNoHF_phi_JESup_;
+  double pfMETNoHF_pt_JESdown_;
+  double pfMETNoHF_phi_JESdown_;
+
+  double pfMETNoHF_pt_JERup_;
+  double pfMETNoHF_phi_JERup_;
+  double pfMETNoHF_pt_JERdown_;
+  double pfMETNoHF_phi_JERdown_;
+
+  // puppiMET
+  double puppiMET_pt_;
+  double puppiMET_phi_;
+
+  double puppiMET_pt_JESup_;
+  double puppiMET_phi_JESup_;
+  double puppiMET_pt_JESdown_;
+  double puppiMET_phi_JESdown_;
+
+  double puppiMET_pt_JERup_;
+  double puppiMET_phi_JERup_;
+  double puppiMET_pt_JERdown_;
+  double puppiMET_phi_JERdown_;
+
+  // puppiMET raw
+  double puppiMET_Upt_;
+  double puppiMET_Uphi_;
+
+
   double L1HTT_;
   double L1HTT_bxm2_;
   double L1HTT_bxm1_;
   double L1HTT_bxp1_;
   double L1HTT_bxp2_;
 
+  double PV_x_;
+  double PV_y_;
+  double PV_z_;
+
   vdouble jet_pt_;
   vdouble jet_eta_;
   vdouble jet_phi_;
   vdouble jet_energy_;
   vdouble jet_csv_;
-  vint    jet_flavor_;
+  vint    jet_partonFlavour_;
+  vint    jet_hadronFlavour_;
+  vdouble jet_vx_;
+  vdouble jet_vy_;
+  vdouble jet_vz_;
 
   vdouble jet_nocc_pt_;
   vdouble jet_nocc_eta_;
   vdouble jet_nocc_phi_;
   vdouble jet_nocc_energy_;
   vdouble jet_nocc_csv_;
-  vint    jet_nocc_flavor_;
+  vint    jet_nocc_partonFlavour_;
+  vint    jet_nocc_hadronFlavour_;
+  vdouble jet_nocc_vx_;
+  vdouble jet_nocc_vy_;
+  vdouble jet_nocc_vz_;
+
+
+  vdouble jet_JESup_pt_;
+  vdouble jet_JESup_eta_;
+  vdouble jet_JESup_phi_;
+  vdouble jet_JESup_energy_;
+  vdouble jet_JESup_csv_;
+  vint    jet_JESup_partonFlavour_;
+  vint    jet_JESup_hadronFlavour_;
+  vdouble jet_JESup_vx_;
+  vdouble jet_JESup_vy_;
+  vdouble jet_JESup_vz_;
+
+  vdouble jet_JESdown_pt_;
+  vdouble jet_JESdown_eta_;
+  vdouble jet_JESdown_phi_;
+  vdouble jet_JESdown_energy_;
+  vdouble jet_JESdown_csv_;
+  vint    jet_JESdown_partonFlavour_;
+  vint    jet_JESdown_hadronFlavour_;
+  vdouble jet_JESdown_vx_;
+  vdouble jet_JESdown_vy_;
+  vdouble jet_JESdown_vz_;
+
+  vdouble jet_JERup_pt_;
+  vdouble jet_JERup_eta_;
+  vdouble jet_JERup_phi_;
+  vdouble jet_JERup_energy_;
+  vdouble jet_JERup_csv_;
+  vint    jet_JERup_partonFlavour_;
+  vint    jet_JERup_hadronFlavour_;
+  vdouble jet_JERup_vx_;
+  vdouble jet_JERup_vy_;
+  vdouble jet_JERup_vz_;
+
+  vdouble jet_JERdown_pt_;
+  vdouble jet_JERdown_eta_;
+  vdouble jet_JERdown_phi_;
+  vdouble jet_JERdown_energy_;
+  vdouble jet_JERdown_csv_;
+  vint    jet_JERdown_partonFlavour_;
+  vint    jet_JERdown_hadronFlavour_;
+  vdouble jet_JERdown_vx_;
+  vdouble jet_JERdown_vy_;
+  vdouble jet_JERdown_vz_;
+
 
   double mass_leplep_;
   double dR_leplep_;
@@ -109,6 +224,7 @@ struct triggerStudyEventVars{
   vint lepton_isSpring15L_;
   vint lepton_isSpring15M_;
   vint lepton_isSpring15T_;
+  vint lepton_isTrigMVAM_;
   vint lepton_genId_;
   vint lepton_genParentId_;
   vint lepton_genGrandParentId_;
@@ -122,10 +238,15 @@ struct triggerStudyEventVars{
   vdouble lepton_iso_sumNeutralHadronEt_;
   vdouble lepton_iso_sumPhotonEt_;
   vdouble lepton_iso_sumPUPt_;
-  vdouble lepton_mvaTrigValue_;
+  vdouble lepton_trigMVAOutput_;
+  vint    lepton_passTrigPresel_;
   vdouble lepton_scSigmaIEtaIEta_;
   vdouble lepton_full5x5_scSigmaIEtaIEta_;
   vdouble lepton_hadronicOverEm_;
+  vdouble lepton_hcalOverEcal_;
+  vdouble lepton_ecalPFClusterIso_;
+  vdouble lepton_hcalPFClusterIso_;
+  vdouble lepton_dr03TkSumPt_;
   vdouble lepton_relEcalIso_;
   vdouble lepton_relHcalIso_;
   vdouble lepton_relTrackIso_;
@@ -211,6 +332,16 @@ void triggerStudyEventVars::initialize(){
 
   additionalJetEventId_ = -99;
 
+  rho_ = -99;
+  top_pt_ = -99;
+  antitop_pt_ = -99;
+  
+  qscale_ = -99;
+  pthat_ = -99;
+  originalXWGTUP_ = -99;
+
+  LHEEvent_weights_.clear();
+
   pass_HLT_Ele27_eta2p1_WP75_Gsf_v_ = -99;
   pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v_ = -99;
   pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v_ = -99;
@@ -230,8 +361,51 @@ void triggerStudyEventVars::initialize(){
   pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v_ = -99;
 
 
-  pfMET_pt_ = -1;
-  pfMET_phi_ = -1;
+  pfMET_pt_ = -99;
+  pfMET_phi_ = -99;
+
+  pfMET_pt_JESup_ = -99;
+  pfMET_phi_JESup_ = -99;
+  pfMET_pt_JESdown_ = -99;
+  pfMET_phi_JESdown_ = -99;
+
+  pfMET_pt_JERup_ = -99;
+  pfMET_phi_JERup_ = -99;
+  pfMET_pt_JERdown_ = -99;
+  pfMET_phi_JERdown_ = -99;
+
+
+  pfMETNoHF_pt_ = -99;
+  pfMETNoHF_phi_ = -99;
+
+  pfMETNoHF_pt_JESup_ = -99;
+  pfMETNoHF_phi_JESup_ = -99;
+  pfMETNoHF_pt_JESdown_ = -99;
+  pfMETNoHF_phi_JESdown_ = -99;
+
+  pfMETNoHF_pt_JERup_ = -99;
+  pfMETNoHF_phi_JERup_ = -99;
+  pfMETNoHF_pt_JERdown_ = -99;
+  pfMETNoHF_phi_JERdown_ = -99;
+
+
+  puppiMET_pt_ = -99;
+  puppiMET_phi_ = -99;
+
+  puppiMET_pt_JESup_ = -99;
+  puppiMET_phi_JESup_ = -99;
+  puppiMET_pt_JESdown_ = -99;
+  puppiMET_phi_JESdown_ = -99;
+
+  puppiMET_pt_JERup_ = -99;
+  puppiMET_phi_JERup_ = -99;
+  puppiMET_pt_JERdown_ = -99;
+  puppiMET_phi_JERdown_ = -99;
+
+
+  puppiMET_Upt_ = -99;
+  puppiMET_Uphi_ = -99;
+
 
   L1HTT_ = -1;
   L1HTT_bxm2_ = -1;
@@ -239,20 +413,78 @@ void triggerStudyEventVars::initialize(){
   L1HTT_bxp1_ = -1;
   L1HTT_bxp2_ = -1;
 
+  PV_x_ = -99;
+  PV_y_ = -99;
+  PV_z_ = -99;
 
   jet_pt_.clear();
   jet_eta_.clear();
   jet_phi_.clear();
   jet_energy_.clear();
   jet_csv_.clear();
-  jet_flavor_.clear();
+  jet_partonFlavour_.clear();
+  jet_hadronFlavour_.clear();
+  jet_vx_.clear();
+  jet_vy_.clear();
+  jet_vz_.clear();
+
 
   jet_nocc_pt_.clear();
   jet_nocc_eta_.clear();
   jet_nocc_phi_.clear();
   jet_nocc_energy_.clear();
   jet_nocc_csv_.clear();
-  jet_nocc_flavor_.clear();
+  jet_nocc_partonFlavour_.clear();
+  jet_nocc_hadronFlavour_.clear();
+  jet_nocc_vx_.clear();
+  jet_nocc_vy_.clear();
+  jet_nocc_vz_.clear();
+
+
+  jet_JESup_pt_.clear();
+  jet_JESup_eta_.clear();
+  jet_JESup_phi_.clear();
+  jet_JESup_energy_.clear();
+  jet_JESup_csv_.clear();
+  jet_JESup_partonFlavour_.clear();
+  jet_JESup_hadronFlavour_.clear();
+  jet_JESup_vx_.clear();
+  jet_JESup_vy_.clear();
+  jet_JESup_vz_.clear();
+
+  jet_JESdown_pt_.clear();
+  jet_JESdown_eta_.clear();
+  jet_JESdown_phi_.clear();
+  jet_JESdown_energy_.clear();
+  jet_JESdown_csv_.clear();
+  jet_JESdown_partonFlavour_.clear();
+  jet_JESdown_hadronFlavour_.clear();
+  jet_JESdown_vx_.clear();
+  jet_JESdown_vy_.clear();
+  jet_JESdown_vz_.clear();
+
+  jet_JERup_pt_.clear();
+  jet_JERup_eta_.clear();
+  jet_JERup_phi_.clear();
+  jet_JERup_energy_.clear();
+  jet_JERup_csv_.clear();
+  jet_JERup_partonFlavour_.clear();
+  jet_JERup_hadronFlavour_.clear();
+  jet_JERup_vx_.clear();
+  jet_JERup_vy_.clear();
+  jet_JERup_vz_.clear();
+
+  jet_JERdown_pt_.clear();
+  jet_JERdown_eta_.clear();
+  jet_JERdown_phi_.clear();
+  jet_JERdown_energy_.clear();
+  jet_JERdown_csv_.clear();
+  jet_JERdown_partonFlavour_.clear();
+  jet_JERdown_hadronFlavour_.clear();
+  jet_JERdown_vx_.clear();
+  jet_JERdown_vy_.clear();
+  jet_JERdown_vz_.clear();
+
 
   mass_leplep_ = -99;
   dR_leplep_ = -99;
@@ -269,6 +501,7 @@ void triggerStudyEventVars::initialize(){
   lepton_isSpring15L_.clear();
   lepton_isSpring15M_.clear();
   lepton_isSpring15T_.clear();
+  lepton_isTrigMVAM_.clear();
   lepton_genId_.clear();
   lepton_genParentId_.clear();
   lepton_genGrandParentId_.clear();
@@ -282,10 +515,15 @@ void triggerStudyEventVars::initialize(){
   lepton_iso_sumNeutralHadronEt_.clear();
   lepton_iso_sumPhotonEt_.clear();
   lepton_iso_sumPUPt_.clear();
-  lepton_mvaTrigValue_.clear();
+  lepton_trigMVAOutput_.clear();
+  lepton_passTrigPresel_.clear();
   lepton_scSigmaIEtaIEta_.clear();
   lepton_full5x5_scSigmaIEtaIEta_.clear();
   lepton_hadronicOverEm_.clear();
+  lepton_hcalOverEcal_.clear();
+  lepton_ecalPFClusterIso_.clear();
+  lepton_hcalPFClusterIso_.clear();
+  lepton_dr03TkSumPt_.clear();
   lepton_relEcalIso_.clear();
   lepton_relHcalIso_.clear();
   lepton_relTrackIso_.clear();
