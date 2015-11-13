@@ -149,9 +149,7 @@ struct triggerStudyEventVars{
   vdouble jet_csv_;
   vint    jet_partonFlavour_;
   vint    jet_hadronFlavour_;
-  vdouble jet_vx_;
-  vdouble jet_vy_;
-  vdouble jet_vz_;
+  vdouble jet_pileupJetId_fullDiscriminant_;
 
   vdouble jet_nocc_pt_;
   vdouble jet_nocc_eta_;
@@ -160,9 +158,7 @@ struct triggerStudyEventVars{
   vdouble jet_nocc_csv_;
   vint    jet_nocc_partonFlavour_;
   vint    jet_nocc_hadronFlavour_;
-  vdouble jet_nocc_vx_;
-  vdouble jet_nocc_vy_;
-  vdouble jet_nocc_vz_;
+  vdouble jet_nocc_pileupJetId_fullDiscriminant_;
 
 
   vdouble jet_JESup_pt_;
@@ -172,9 +168,7 @@ struct triggerStudyEventVars{
   vdouble jet_JESup_csv_;
   vint    jet_JESup_partonFlavour_;
   vint    jet_JESup_hadronFlavour_;
-  vdouble jet_JESup_vx_;
-  vdouble jet_JESup_vy_;
-  vdouble jet_JESup_vz_;
+  vdouble jet_JESup_pileupJetId_fullDiscriminant_;
 
   vdouble jet_JESdown_pt_;
   vdouble jet_JESdown_eta_;
@@ -183,9 +177,7 @@ struct triggerStudyEventVars{
   vdouble jet_JESdown_csv_;
   vint    jet_JESdown_partonFlavour_;
   vint    jet_JESdown_hadronFlavour_;
-  vdouble jet_JESdown_vx_;
-  vdouble jet_JESdown_vy_;
-  vdouble jet_JESdown_vz_;
+  vdouble jet_JESdown_pileupJetId_fullDiscriminant_;
 
   vdouble jet_JERup_pt_;
   vdouble jet_JERup_eta_;
@@ -194,9 +186,7 @@ struct triggerStudyEventVars{
   vdouble jet_JERup_csv_;
   vint    jet_JERup_partonFlavour_;
   vint    jet_JERup_hadronFlavour_;
-  vdouble jet_JERup_vx_;
-  vdouble jet_JERup_vy_;
-  vdouble jet_JERup_vz_;
+  vdouble jet_JERup_pileupJetId_fullDiscriminant_;
 
   vdouble jet_JERdown_pt_;
   vdouble jet_JERdown_eta_;
@@ -205,9 +195,7 @@ struct triggerStudyEventVars{
   vdouble jet_JERdown_csv_;
   vint    jet_JERdown_partonFlavour_;
   vint    jet_JERdown_hadronFlavour_;
-  vdouble jet_JERdown_vx_;
-  vdouble jet_JERdown_vy_;
-  vdouble jet_JERdown_vz_;
+  vdouble jet_JERdown_pileupJetId_fullDiscriminant_;
 
 
   double mass_leplep_;
@@ -307,6 +295,9 @@ struct triggerStudyEventVars{
 
   vint    l1t_accept_;
   vstring l1t_name_;
+
+  vint    flt_accept_;
+  vstring flt_name_;
 
   void initialize();
 
@@ -424,9 +415,7 @@ void triggerStudyEventVars::initialize(){
   jet_csv_.clear();
   jet_partonFlavour_.clear();
   jet_hadronFlavour_.clear();
-  jet_vx_.clear();
-  jet_vy_.clear();
-  jet_vz_.clear();
+  jet_pileupJetId_fullDiscriminant_.clear();
 
 
   jet_nocc_pt_.clear();
@@ -436,9 +425,7 @@ void triggerStudyEventVars::initialize(){
   jet_nocc_csv_.clear();
   jet_nocc_partonFlavour_.clear();
   jet_nocc_hadronFlavour_.clear();
-  jet_nocc_vx_.clear();
-  jet_nocc_vy_.clear();
-  jet_nocc_vz_.clear();
+  jet_nocc_pileupJetId_fullDiscriminant_.clear();
 
 
   jet_JESup_pt_.clear();
@@ -448,9 +435,7 @@ void triggerStudyEventVars::initialize(){
   jet_JESup_csv_.clear();
   jet_JESup_partonFlavour_.clear();
   jet_JESup_hadronFlavour_.clear();
-  jet_JESup_vx_.clear();
-  jet_JESup_vy_.clear();
-  jet_JESup_vz_.clear();
+  jet_JESup_pileupJetId_fullDiscriminant_.clear();
 
   jet_JESdown_pt_.clear();
   jet_JESdown_eta_.clear();
@@ -459,9 +444,7 @@ void triggerStudyEventVars::initialize(){
   jet_JESdown_csv_.clear();
   jet_JESdown_partonFlavour_.clear();
   jet_JESdown_hadronFlavour_.clear();
-  jet_JESdown_vx_.clear();
-  jet_JESdown_vy_.clear();
-  jet_JESdown_vz_.clear();
+  jet_JESdown_pileupJetId_fullDiscriminant_.clear();
 
   jet_JERup_pt_.clear();
   jet_JERup_eta_.clear();
@@ -470,9 +453,7 @@ void triggerStudyEventVars::initialize(){
   jet_JERup_csv_.clear();
   jet_JERup_partonFlavour_.clear();
   jet_JERup_hadronFlavour_.clear();
-  jet_JERup_vx_.clear();
-  jet_JERup_vy_.clear();
-  jet_JERup_vz_.clear();
+  jet_JERup_pileupJetId_fullDiscriminant_.clear();
 
   jet_JERdown_pt_.clear();
   jet_JERdown_eta_.clear();
@@ -481,9 +462,7 @@ void triggerStudyEventVars::initialize(){
   jet_JERdown_csv_.clear();
   jet_JERdown_partonFlavour_.clear();
   jet_JERdown_hadronFlavour_.clear();
-  jet_JERdown_vx_.clear();
-  jet_JERdown_vy_.clear();
-  jet_JERdown_vz_.clear();
+  jet_JERdown_pileupJetId_fullDiscriminant_.clear();
 
 
   mass_leplep_ = -99;
@@ -586,6 +565,9 @@ void triggerStudyEventVars::initialize(){
 
   l1t_accept_.clear();
   l1t_name_.clear();
+
+  flt_accept_.clear();
+  flt_name_.clear();
 
 
   return;

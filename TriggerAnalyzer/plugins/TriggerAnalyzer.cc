@@ -647,6 +647,8 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   edm::Handle<edm::TriggerResults> filterResults;
   iEvent.getByToken(filterResultsToken, filterResults);
 
+  vint    flt_accept;
+  vstring flt_name;
   if( filterResults.isValid() ){
     std::vector<std::string> triggerNames = filter_config_.triggerNames();
 
@@ -668,6 +670,9 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
       if( accept ) flt_cppath_[pathNameNoVer]+=1;
 
+      flt_accept.push_back(accept);
+      flt_name.push_back(pathName);
+
       if( accept ){
 	TAxis * axis = h_flt->GetXaxis();
 	if( !axis ) continue;
@@ -681,6 +686,9 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     std::cout << "Trigger results not valid for tag " << filterTag << std::endl;
   }
 
+
+  eve->flt_accept_ = flt_accept;
+  eve->flt_name_   = flt_name;
 
   if( debug_ ) std::cout << " ====> test 7 " << std::endl;
 
@@ -775,6 +783,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   vdouble LHEEvent_weights; 
   if( LHEEventProductHandle.isValid() ){
     unsigned int NumEventWeights = LHEEventProductHandle->weights().size();
+    originalXWGTUP = LHEEventProductHandle->originalXWGTUP();
     for( unsigned int iWgt=0; iWgt < NumEventWeights; iWgt++ ){
       double evtWgt = LHEEventProductHandle->weights()[iWgt].wgt;
       LHEEvent_weights.push_back(evtWgt);
@@ -1118,10 +1127,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<double> vec_jet_csv;
   std::vector<int>    vec_jet_partonFlavour;
   std::vector<int>    vec_jet_hadronFlavour;
-
-  std::vector<double> vec_jet_vx;
-  std::vector<double> vec_jet_vy;
-  std::vector<double> vec_jet_vz;
+  std::vector<double> vec_jet_pileupJetId_fullDiscriminant;
 
   for( std::vector<pat::Jet>::const_iterator iJet = selectedJets.begin(); iJet != selectedJets.end(); iJet++ ){ 
     double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
@@ -1135,10 +1141,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
     vec_jet_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_hadronFlavour.push_back(iJet->hadronFlavour());
-
-    vec_jet_vx.push_back(iJet->vx());
-    vec_jet_vy.push_back(iJet->vy());
-    vec_jet_vz.push_back(iJet->vz());
+    vec_jet_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
   } // end loop on jets
 
   eve->jet_pt_  = vec_jet_pt;
@@ -1148,9 +1151,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->jet_csv_ = vec_jet_csv;
   eve->jet_partonFlavour_ = vec_jet_partonFlavour;
   eve->jet_hadronFlavour_ = vec_jet_hadronFlavour;
-  eve->jet_vx_ = vec_jet_vx;
-  eve->jet_vy_ = vec_jet_vy;
-  eve->jet_vz_ = vec_jet_vz;
+  eve->jet_pileupJetId_fullDiscriminant_ = vec_jet_pileupJetId_fullDiscriminant;
 
 
   /////
@@ -1163,6 +1164,8 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<double> vec_jet_nocc_csv;
   std::vector<int>    vec_jet_nocc_partonFlavour;
   std::vector<int>    vec_jet_nocc_hadronFlavour;
+  std::vector<double> vec_jet_nocc_pileupJetId_fullDiscriminant;
+
 
   for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_nocc.begin(); iJet != selectedJets_nocc.end(); iJet++ ){ 
     double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
@@ -1176,6 +1179,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_nocc_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
     vec_jet_nocc_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_nocc_hadronFlavour.push_back(iJet->hadronFlavour());
+    vec_jet_nocc_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
   } // end loop on jets
 
   eve->jet_nocc_pt_  = vec_jet_nocc_pt;
@@ -1185,6 +1189,8 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->jet_nocc_csv_ = vec_jet_nocc_csv;
   eve->jet_nocc_partonFlavour_ = vec_jet_nocc_partonFlavour;
   eve->jet_nocc_hadronFlavour_ = vec_jet_nocc_hadronFlavour;
+  eve->jet_nocc_pileupJetId_fullDiscriminant_ = vec_jet_nocc_pileupJetId_fullDiscriminant;
+
 
 
   ////
@@ -1203,6 +1209,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<double> vec_jet_JESup_csv;
   std::vector<int>    vec_jet_JESup_partonFlavour;
   std::vector<int>    vec_jet_JESup_hadronFlavour;
+  std::vector<double> vec_jet_JESup_pileupJetId_fullDiscriminant;
 
   for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JESup.begin(); iJet != selectedJets_JESup.end(); iJet++ ){ 
     double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
@@ -1216,6 +1223,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JESup_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
     vec_jet_JESup_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JESup_hadronFlavour.push_back(iJet->hadronFlavour());
+    vec_jet_JESup_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
   } // end loop on jets
 
   eve->jet_JESup_pt_  = vec_jet_JESup_pt;
@@ -1225,6 +1233,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->jet_JESup_csv_ = vec_jet_JESup_csv;
   eve->jet_JESup_partonFlavour_ = vec_jet_JESup_partonFlavour;
   eve->jet_JESup_hadronFlavour_ = vec_jet_JESup_hadronFlavour;
+  eve->jet_JESup_pileupJetId_fullDiscriminant_ = vec_jet_JESup_pileupJetId_fullDiscriminant;
 
 
   //
@@ -1242,6 +1251,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<double> vec_jet_JESdown_csv;
   std::vector<int>    vec_jet_JESdown_partonFlavour;
   std::vector<int>    vec_jet_JESdown_hadronFlavour;
+  std::vector<double> vec_jet_JESdown_pileupJetId_fullDiscriminant;
 
   for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JESdown.begin(); iJet != selectedJets_JESdown.end(); iJet++ ){ 
     double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
@@ -1255,6 +1265,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JESdown_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
     vec_jet_JESdown_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JESdown_hadronFlavour.push_back(iJet->hadronFlavour());
+    vec_jet_JESdown_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
   } // end loop on jets
 
   eve->jet_JESdown_pt_  = vec_jet_JESdown_pt;
@@ -1264,6 +1275,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->jet_JESdown_csv_ = vec_jet_JESdown_csv;
   eve->jet_JESdown_partonFlavour_ = vec_jet_JESdown_partonFlavour;
   eve->jet_JESdown_hadronFlavour_ = vec_jet_JESdown_hadronFlavour;
+  eve->jet_JESdown_pileupJetId_fullDiscriminant_ = vec_jet_JESdown_pileupJetId_fullDiscriminant;
 
 
 
@@ -1280,6 +1292,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<double> vec_jet_JERup_csv;
   std::vector<int>    vec_jet_JERup_partonFlavour;
   std::vector<int>    vec_jet_JERup_hadronFlavour;
+  std::vector<double> vec_jet_JERup_pileupJetId_fullDiscriminant;
 
   for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JERup.begin(); iJet != selectedJets_JERup.end(); iJet++ ){ 
     double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
@@ -1293,6 +1306,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JERup_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
     vec_jet_JERup_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JERup_hadronFlavour.push_back(iJet->hadronFlavour());
+    vec_jet_JERup_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
   } // end loop on jets
 
   eve->jet_JERup_pt_  = vec_jet_JERup_pt;
@@ -1302,6 +1316,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->jet_JERup_csv_ = vec_jet_JERup_csv;
   eve->jet_JERup_partonFlavour_ = vec_jet_JERup_partonFlavour;
   eve->jet_JERup_hadronFlavour_ = vec_jet_JERup_hadronFlavour;
+  eve->jet_JERup_pileupJetId_fullDiscriminant_ = vec_jet_JERup_pileupJetId_fullDiscriminant;
 
 
   //
@@ -1319,6 +1334,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<double> vec_jet_JERdown_csv;
   std::vector<int>    vec_jet_JERdown_partonFlavour;
   std::vector<int>    vec_jet_JERdown_hadronFlavour;
+  std::vector<double> vec_jet_JERdown_pileupJetId_fullDiscriminant;
 
   for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JERdown.begin(); iJet != selectedJets_JERdown.end(); iJet++ ){ 
     double csv = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
@@ -1332,6 +1348,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JERdown_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
     vec_jet_JERdown_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JERdown_hadronFlavour.push_back(iJet->hadronFlavour());
+    vec_jet_JERdown_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
   } // end loop on jets
 
   eve->jet_JERdown_pt_  = vec_jet_JERdown_pt;
@@ -1341,6 +1358,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->jet_JERdown_csv_ = vec_jet_JERdown_csv;
   eve->jet_JERdown_partonFlavour_ = vec_jet_JERdown_partonFlavour;
   eve->jet_JERdown_hadronFlavour_ = vec_jet_JERdown_hadronFlavour;
+  eve->jet_JERdown_pileupJetId_fullDiscriminant_ = vec_jet_JERdown_pileupJetId_fullDiscriminant;
 
 
 
