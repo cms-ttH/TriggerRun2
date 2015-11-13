@@ -64,6 +64,8 @@ struct triggerStudyEventVars{
 
   vdouble LHEEvent_weights_;
 
+  double lheHT_;
+
   /////
 
   int pass_HLT_Ele27_eta2p1_WP75_Gsf_v_;
@@ -332,6 +334,8 @@ void triggerStudyEventVars::initialize(){
   originalXWGTUP_ = -99;
 
   LHEEvent_weights_.clear();
+
+  lheHT_ = -99;
 
   pass_HLT_Ele27_eta2p1_WP75_Gsf_v_ = -99;
   pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v_ = -99;

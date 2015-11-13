@@ -781,6 +781,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   double originalXWGTUP=-99;
   vdouble LHEEvent_weights; 
+  double lheHT = 0;
   if( LHEEventProductHandle.isValid() ){
     unsigned int NumEventWeights = LHEEventProductHandle->weights().size();
     originalXWGTUP = LHEEventProductHandle->originalXWGTUP();
@@ -788,11 +789,25 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       double evtWgt = LHEEventProductHandle->weights()[iWgt].wgt;
       LHEEvent_weights.push_back(evtWgt);
     }
+
+    for( int i = 0; i < LHEEventProductHandle->hepeup().NUP; ++i ){
+
+      int id = LHEEventProductHandle->hepeup().IDUP[i];
+      int status = LHEEventProductHandle->hepeup().ISTUP[i];
+      int absId = abs(id);
+
+      if( status==1 && ( absId==21 || (absId>0 && absId<7) ) ){
+	double px = LHEEventProductHandle->hepeup().PUP[i][0];
+	double py = LHEEventProductHandle->hepeup().PUP[i][1];
+
+	lheHT += sqrt( px*px + py*py );
+      }
+    }
   }
 
   eve->originalXWGTUP_ = originalXWGTUP;
   eve->LHEEvent_weights_ = LHEEvent_weights;
-
+  eve->lheHT_ = lheHT;
 
 
   edm::Handle<int> genTtbarId;
