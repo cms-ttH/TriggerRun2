@@ -87,6 +87,7 @@
 #include "TTree.h"
 
 #include "JetMETCorrections/Objects/interface/JetCorrector.h"
+#include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 
 #include "MiniAOD/MiniAODHelper/interface/MiniAODHelper.h"
 
@@ -167,6 +168,7 @@ class TriggerAnalyzer : public edm::EDAnalyzer {
 
 
   int insample_;
+  bool isData_;
 
   std::vector<std::string> hlt_triggerNames_;
   std::vector<std::string> flt_filterNames_;
@@ -224,7 +226,8 @@ class TriggerAnalyzer : public edm::EDAnalyzer {
 // constructors and destructor
 //
 TriggerAnalyzer::TriggerAnalyzer(const edm::ParameterSet& iConfig):
-  genTtbarIdToken_(consumes<int>(iConfig.getParameter<edm::InputTag>("genTtbarId")))
+  genTtbarIdToken_(consumes<int>(iConfig.getParameter<edm::InputTag>("genTtbarId"))),
+  isData_(iConfig.getParameter<bool>("isData"))
 {
    //now do what ever initialization is needed
   verbose_ = false;
@@ -305,11 +308,12 @@ TriggerAnalyzer::TriggerAnalyzer(const edm::ParameterSet& iConfig):
   intLumi_ = 20000;
 
   analysisType::analysisType iAnalysisType = analysisType::LJ;
-  bool isData = true;
+  bool isData = isData_;
 
   miniAODhelper.SetUp(era, insample_, iAnalysisType, isData);
 
-  miniAODhelper.SetJetCorrectorUncertainty();
+  //miniAODhelper.SetJetCorrectorUncertainty();
+  miniAODhelper.SetFactorizedJetCorrector();
 
   miniAODhelper.SetUpElectronMVA("MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB1_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB2_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EE_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml");
 
@@ -349,6 +353,8 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   double minTightLeptonPt = 15.;
   double minLooseLeptonPt = 15.;
+
+  double minLooseJetPt = 15.;
 
   if( debug_ ) std::cout << " ====> test 0.1 " << std::endl;
 
@@ -534,29 +540,46 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   ////
 
-  int pass_HLT_Ele27_eta2p1_WP75_Gsf_v = 0;
-  int pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v = 0;
-  int pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v = 0;
-  int pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v = 0;
+  int pass_HLT_Ele27_eta2p1_WP75_Gsf_v = -1;
+  int pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v = -1;
+  int pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v = -1;
+  int pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v = -1;
 
-  int pass_HLT_Ele25WP60_SC4_Mass55_v = 0;
-  int pass_HLT_Ele27_WP85_Gsf_v = 0;
-  int pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v = 0;
+  int pass_HLT_Ele25WP60_SC4_Mass55_v = -1;
+  int pass_HLT_Ele27_WP85_Gsf_v = -1;
+  int pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v = -1;
 
 
-  int pass_HLT_Ele27_eta2p1_WPTight_Gsf_v = 0;
-  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v = 0;
-  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v = 0;
-  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v = 0;
-  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v = 0;
+  int pass_HLT_Ele27_eta2p1_WPTight_Gsf_v = -1;
+  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v = -1;
+  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v = -1;
+  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v = -1;
+  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v = -1;
 
-  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v = 0;
+  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v = -1;
+
+
+  int pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v = -1;
+  int pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v = -1;
+  int pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v = -1;
+  int pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v = -1;
+  int pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v = -1;
+
+  int pass_HLT_IsoMu20_v = -1;
+  int pass_HLT_IsoMu18_v = -1;
+  int pass_HLT_IsoMu17_eta2p1_v = -1;
+  int pass_HLT_IsoTkMu20_v = -1;
+  int pass_HLT_Ele23_WPLoose_Gsf_v = -1;
+
+  int pass_HLT_Ele22_eta2p1_WP75_Gsf_v = -1;
+  int pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v = -1;
+  int pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v = -1;
+  int pass_HLT_PFHT450_SixJet40_PFBTagCSV_v = -1;
+  int pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v = -1;
 
 
   //////
 
-  vint    hlt_accept;
-  vstring hlt_name;
   if( triggerResults.isValid() ){
     std::vector<std::string> triggerNames = hlt_config_.triggerNames();
 
@@ -569,33 +592,47 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       int accept = triggerResults->accept(hltIndex);
       int prescale = -1;//hlt_config_.prescaleValue(iEvent, iSetup, pathName);
 
-      hlt_accept.push_back(accept);
-      hlt_name.push_back(pathName);
-
       if( verbose_ && dumpHLT_ ) std::cout << " =====>  HLT: path name = " << pathName << ",\t prescale = " << prescale << ",\t pass = " << accept << std::endl; 
 
       std::string pathNameNoVer = hlt_config_.removeVersion(pathName);
 
       if( accept ) hlt_cppath_[pathNameNoVer]+=1;
 
-      if( accept ){
-	if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WP75_Gsf_v = 1;
-	if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v = 1;
-	if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v")!=std::string::npos )        pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v = 1;
-	if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v")!=std::string::npos )  pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v = 1;
 
-	if( pathName.find("HLT_Ele25WP60_SC4_Mass55_v")!=std::string::npos )        pass_HLT_Ele25WP60_SC4_Mass55_v = 1;
-	if( pathName.find("HLT_Ele27_WP85_Gsf_v")!=std::string::npos )              pass_HLT_Ele27_WP85_Gsf_v = 1;
-	if( pathName.find("HLT_Ele27_eta2p1_WP85_Gsf_HT200_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v = 1;
+      if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WP75_Gsf_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v")!=std::string::npos )        pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v")!=std::string::npos )  pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v = (accept) ? 1 : 0;
 
-	if( pathName.find("HLT_Ele27_eta2p1_WPTight_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WPTight_Gsf_v = 1;
-	if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v = 1;
-	if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v = 1;
-	if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v")!=std::string::npos )        pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v = 1;
-	if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v")!=std::string::npos )  pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v = 1;
+      if( pathName.find("HLT_Ele25WP60_SC4_Mass55_v")!=std::string::npos )        pass_HLT_Ele25WP60_SC4_Mass55_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Ele27_WP85_Gsf_v")!=std::string::npos )              pass_HLT_Ele27_WP85_Gsf_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Ele27_eta2p1_WP85_Gsf_HT200_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v = (accept) ? 1 : 0;
 
-	if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v = 1;
-      }
+      if( pathName.find("HLT_Ele27_eta2p1_WPTight_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WPTight_Gsf_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v")!=std::string::npos )        pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v")!=std::string::npos )  pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v = (accept) ? 1 : 0;
+
+      if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v = (accept) ? 1 : 0;
+
+      if( pathName.find("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")!=std::string::npos ) pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v")!=std::string::npos ) pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v")!=std::string::npos ) pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")!=std::string::npos ) pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")!=std::string::npos ) pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v = (accept) ? 1 : 0;
+
+      if( pathName.find("HLT_IsoMu20_v")!=std::string::npos ) pass_HLT_IsoMu20_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_IsoMu18_v")!=std::string::npos ) pass_HLT_IsoMu18_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_IsoMu17_eta2p1_v")!=std::string::npos ) pass_HLT_IsoMu17_eta2p1_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_IsoTkMu20_v")!=std::string::npos ) pass_HLT_IsoTkMu20_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_Ele23_WPLoose_Gsf_v")!=std::string::npos ) pass_HLT_Ele23_WPLoose_Gsf_v = (accept) ? 1 : 0;
+
+      if( pathName.find("HLT_Ele22_eta2p1_WP75_Gsf_v")!=std::string::npos ) pass_HLT_Ele22_eta2p1_WP75_Gsf_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_PFHT450_SixJet40_PFBTagCSV0p72_v")!=std::string::npos ) pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v")!=std::string::npos ) pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_PFHT450_SixJet40_PFBTagCSV_v")!=std::string::npos ) pass_HLT_PFHT450_SixJet40_PFBTagCSV_v = (accept) ? 1 : 0;
+      if( pathName.find("HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v")!=std::string::npos ) pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v = (accept) ? 1 : 0;
 
 
       if( accept ){
@@ -612,8 +649,6 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   }
 
 
-  eve->hlt_accept_ = hlt_accept;
-  eve->hlt_name_   = hlt_name;
 
 
   eve->pass_HLT_Ele27_eta2p1_WP75_Gsf_v_                          = pass_HLT_Ele27_eta2p1_WP75_Gsf_v;
@@ -632,6 +667,25 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v_  = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v;
 
   eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v_ = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v;
+
+
+  eve->pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v;
+  eve->pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v;
+  eve->pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_ = pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v;
+  eve->pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ = pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v;
+  eve->pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_ = pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v;
+
+  eve->pass_HLT_IsoMu20_v_ = pass_HLT_IsoMu20_v;
+  eve->pass_HLT_IsoMu18_v_ = pass_HLT_IsoMu18_v;
+  eve->pass_HLT_IsoMu17_eta2p1_v_ = pass_HLT_IsoMu17_eta2p1_v;
+  eve->pass_HLT_IsoTkMu20_v_ = pass_HLT_IsoTkMu20_v;
+  eve->pass_HLT_Ele23_WPLoose_Gsf_v_ = pass_HLT_Ele23_WPLoose_Gsf_v;
+
+  eve->pass_HLT_Ele22_eta2p1_WP75_Gsf_v_ = pass_HLT_Ele22_eta2p1_WP75_Gsf_v;
+  eve->pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v_ = pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v;
+  eve->pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v_ = pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v;
+  eve->pass_HLT_PFHT450_SixJet40_PFBTagCSV_v_ = pass_HLT_PFHT450_SixJet40_PFBTagCSV_v;
+  eve->pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v_ = pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v;
 
 
   if( debug_ ) std::cout << " ====> test 4 " << std::endl;
@@ -906,9 +960,12 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   if( debug_ ) std::cout << " ====> test 10 " << std::endl;
 
+  /* 
+     //Use event setup for jet corrector 
   const JetCorrector* corrector = JetCorrector::getJetCorrector( "ak4PFchsL1L2L3", iSetup );   //Get the jet corrector from the event setup
 
   miniAODhelper.SetJetCorrector(corrector);
+  */
 
   if( debug_ ) std::cout << " ====> test 11 " << std::endl;
 
@@ -1001,9 +1058,12 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<pat::Jet> pfJets_ID = miniAODhelper.GetSelectedJets(*pfjets,0.,999,jetID::jetLoose,'-');
   std::vector<pat::Jet> pfJets_ID_clean = miniAODhelper.GetDeltaRCleanedJets( pfJets_ID, selectedMuons_loose, selectedElectrons_loose, 0.4);
   std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets(pfJets_ID_clean);
-  std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::NA);
-  std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 10., 3.0, jetID::none, '-' );
-  std::vector<pat::Jet> selectedJets_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 10., 3.0, jetID::none, 'M' );
+  // Use JEC from GT
+  //std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::NA);
+  std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, sysType::NA);
+
+  std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, minLooseJetPt, 3.0, jetID::none, '-' );
+  std::vector<pat::Jet> selectedJets_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, minLooseJetPt, 3.0, jetID::none, 'M' );
 
 
   //////
@@ -1024,8 +1084,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   /// jets without cc
   std::vector<pat::Jet> rawJets_nocc = miniAODhelper.GetUncorrectedJets(pfJets_ID);
-  std::vector<pat::Jet> correctedJets_nocc_noSys = miniAODhelper.GetCorrectedJets(rawJets_nocc, iEvent, iSetup);
-  std::vector<pat::Jet> selectedJets_nocc_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_nocc_noSys, 15., 3.0, jetID::none, '-' );
+  // Use JEC from GT
+  //std::vector<pat::Jet> correctedJets_nocc_noSys = miniAODhelper.GetCorrectedJets(rawJets_nocc, iEvent, iSetup);
+  std::vector<pat::Jet> correctedJets_nocc_noSys = miniAODhelper.GetCorrectedJets(rawJets_nocc);
+  std::vector<pat::Jet> selectedJets_nocc_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_nocc_noSys, minLooseJetPt, 3.0, jetID::none, '-' );
 
   //////
   if( debug_ ) std::cout << " ====> test 15 " << std::endl;
@@ -1038,7 +1100,9 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   // pat::MET correctedMET = pfmet->front();//miniAODhelper.GetCorrectedMET( pfmets.at(0), pfJets_forMET, iSysType );
   std::vector<pat::Jet> oldJetsForMET = miniAODhelper.GetSelectedJets(*pfjets, 0., 999., jetID::jetMETcorrection, '-' );
   std::vector<pat::Jet> oldJetsForMET_uncorr = miniAODhelper.GetUncorrectedJets(oldJetsForMET);
-  std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::NA);
+  // Use JEC from GT
+  //std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::NA);
+  std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::NA);
 
   std::vector<pat::MET> newPfMETs = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmet);
   std::vector<pat::MET> newPfMETsNoHF = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmetnohf);
@@ -1058,7 +1122,9 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
 
   // JESup
-  std::vector<pat::Jet> newJetsForMET_JESup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JESup);
+  // Use JEC from GT
+  //std::vector<pat::Jet> newJetsForMET_JESup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JESup);
+  std::vector<pat::Jet> newJetsForMET_JESup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::JESup);
 
   std::vector<pat::MET> newPfMETs_JESup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESup, *pfmet);
   std::vector<pat::MET> newPfMETsNoHF_JESup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESup, *pfmetnohf);
@@ -1074,7 +1140,9 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->puppiMET_phi_JESup_ = newPuppiMETs_JESup.at(0).phi();
 
   // JESdown
-  std::vector<pat::Jet> newJetsForMET_JESdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JESdown);
+  // Use JEC from GT
+  //std::vector<pat::Jet> newJetsForMET_JESdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JESdown);
+  std::vector<pat::Jet> newJetsForMET_JESdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::JESdown);
 
   std::vector<pat::MET> newPfMETs_JESdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESdown, *pfmet);
   std::vector<pat::MET> newPfMETsNoHF_JESdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESdown, *pfmetnohf);
@@ -1091,7 +1159,9 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
 
   // JERup
-  std::vector<pat::Jet> newJetsForMET_JERup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JERup);
+  // Use JEC from GT
+  //std::vector<pat::Jet> newJetsForMET_JERup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JERup);
+  std::vector<pat::Jet> newJetsForMET_JERup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::JERup);
 
   std::vector<pat::MET> newPfMETs_JERup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERup, *pfmet);
   std::vector<pat::MET> newPfMETsNoHF_JERup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERup, *pfmetnohf);
@@ -1107,7 +1177,9 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->puppiMET_phi_JERup_ = newPuppiMETs_JERup.at(0).phi();
 
   // JERdown
-  std::vector<pat::Jet> newJetsForMET_JERdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JERdown);
+  // Use JEC from GT
+  //std::vector<pat::Jet> newJetsForMET_JERdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JERdown);
+  std::vector<pat::Jet> newJetsForMET_JERdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::JERdown);
 
   std::vector<pat::MET> newPfMETs_JERdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERdown, *pfmet);
   std::vector<pat::MET> newPfMETsNoHF_JERdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERdown, *pfmetnohf);
@@ -1212,8 +1284,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
 
   // JESUp
-  std::vector<pat::Jet> correctedJets_JESup = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JESup);
-  std::vector<pat::Jet> selectedJets_JESup_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JESup, 10., 3.0, jetID::none, '-' );
+  // Use JEC from GT
+  //std::vector<pat::Jet> correctedJets_JESup = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JESup);
+  std::vector<pat::Jet> correctedJets_JESup = miniAODhelper.GetCorrectedJets(rawJets, sysType::JESup);
+  std::vector<pat::Jet> selectedJets_JESup_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JESup, minLooseJetPt, 3.0, jetID::none, '-' );
   std::vector<pat::Jet> selectedJets_JESup = miniAODhelper.GetSortedByPt( selectedJets_JESup_unsorted );
 
   // Loop over jets
@@ -1254,8 +1328,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   //
 
   // JESDown
-  std::vector<pat::Jet> correctedJets_JESdown = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JESdown);
-  std::vector<pat::Jet> selectedJets_JESdown_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JESdown, 10., 3.0, jetID::none, '-' );
+  // Use JEC from GT
+  //std::vector<pat::Jet> correctedJets_JESdown = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JESdown);
+  std::vector<pat::Jet> correctedJets_JESdown = miniAODhelper.GetCorrectedJets(rawJets, sysType::JESdown);
+  std::vector<pat::Jet> selectedJets_JESdown_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JESdown, minLooseJetPt, 3.0, jetID::none, '-' );
   std::vector<pat::Jet> selectedJets_JESdown = miniAODhelper.GetSortedByPt( selectedJets_JESdown_unsorted );
 
   // Loop over jets
@@ -1295,8 +1371,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
 
   // JERUp
-  std::vector<pat::Jet> correctedJets_JERup = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JERup);
-  std::vector<pat::Jet> selectedJets_JERup_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JERup, 10., 3.0, jetID::none, '-' );
+  // Use JEC from GT
+  //std::vector<pat::Jet> correctedJets_JERup = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JERup);
+  std::vector<pat::Jet> correctedJets_JERup = miniAODhelper.GetCorrectedJets(rawJets, sysType::JERup);
+  std::vector<pat::Jet> selectedJets_JERup_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JERup, minLooseJetPt, 3.0, jetID::none, '-' );
   std::vector<pat::Jet> selectedJets_JERup = miniAODhelper.GetSortedByPt( selectedJets_JERup_unsorted );
 
   // Loop over jets
@@ -1337,8 +1415,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   //
 
   // JERDown
-  std::vector<pat::Jet> correctedJets_JERdown = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JERdown);
-  std::vector<pat::Jet> selectedJets_JERdown_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JERdown, 10., 3.0, jetID::none, '-' );
+  // Use JEC from GT
+  //std::vector<pat::Jet> correctedJets_JERdown = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JERdown);
+  std::vector<pat::Jet> correctedJets_JERdown = miniAODhelper.GetCorrectedJets(rawJets, sysType::JERdown);
+  std::vector<pat::Jet> selectedJets_JERdown_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JERdown, minLooseJetPt, 3.0, jetID::none, '-' );
   std::vector<pat::Jet> selectedJets_JERdown = miniAODhelper.GetSortedByPt( selectedJets_JERdown_unsorted );
 
   // Loop over jets

@@ -85,6 +85,26 @@ struct triggerStudyEventVars{
 
   int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v_;
 
+  int pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_;
+  int pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_;
+  int pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_;
+  int pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_;
+  int pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_;
+
+  int pass_HLT_IsoMu20_v_;
+  int pass_HLT_IsoMu18_v_;
+  int pass_HLT_IsoMu17_eta2p1_v_;
+  int pass_HLT_IsoTkMu20_v_;
+  int pass_HLT_Ele23_WPLoose_Gsf_v_;
+
+  int pass_HLT_Ele22_eta2p1_WP75_Gsf_v_;
+  int pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v_;
+  int pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v_;
+  int pass_HLT_PFHT450_SixJet40_PFBTagCSV_v_;
+  int pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v_;
+
+
+
   /////
 
   // pfMET
@@ -292,9 +312,6 @@ struct triggerStudyEventVars{
   vdouble hltPFHT200Jet30_phi_;
   vint    hltPFHT200Jet30_id_;
 
-  vint    hlt_accept_;
-  vstring hlt_name_;
-
   vint    l1t_accept_;
   vstring l1t_name_;
 
@@ -354,6 +371,25 @@ void triggerStudyEventVars::initialize(){
   pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v_ = -99;
 
   pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v_ = -99;
+
+
+  pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99;
+  pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = -99;
+  pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_ = -99;
+  pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ = -99;
+  pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_ = -99;
+
+  pass_HLT_IsoMu20_v_ = -99;
+  pass_HLT_IsoMu18_v_ = -99;
+  pass_HLT_IsoMu17_eta2p1_v_ = -99;
+  pass_HLT_IsoTkMu20_v_ = -99;
+  pass_HLT_Ele23_WPLoose_Gsf_v_ = -99;
+
+  pass_HLT_Ele22_eta2p1_WP75_Gsf_v_ = -99;
+  pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v_ = -99;
+  pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v_ = -99;
+  pass_HLT_PFHT450_SixJet40_PFBTagCSV_v_ = -99;
+  pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v_ = -99;
 
 
   pfMET_pt_ = -99;
@@ -563,9 +599,6 @@ void triggerStudyEventVars::initialize(){
   hltPFHT200Jet30_eta_.clear();
   hltPFHT200Jet30_phi_.clear();
   hltPFHT200Jet30_id_.clear();
-
-  hlt_accept_.clear();
-  hlt_name_.clear();
 
   l1t_accept_.clear();
   l1t_name_.clear();
