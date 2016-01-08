@@ -19,6 +19,7 @@ using namespace std;
 typedef std::vector<std::vector<double> > vvdouble;
 typedef std::vector<std::vector<std::string> > vvstring;
 typedef std::vector<double> vdouble;
+typedef std::vector<float> vfloat;
 typedef std::vector<string> vstring;
 typedef std::vector<bool> vbool;
 typedef std::vector<int> vint;
@@ -67,6 +68,8 @@ struct triggerStudyEventVars{
   double lheHT_;
 
   /////
+  int pass_L1_SingleEG25_;
+  int pass_L1_SingleMu16_;
 
   int pass_HLT_Ele27_eta2p1_WP75_Gsf_v_;
   int pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v_;
@@ -169,6 +172,7 @@ struct triggerStudyEventVars{
   vdouble jet_phi_;
   vdouble jet_energy_;
   vdouble jet_csv_;
+  vdouble jet_cmva_;
   vint    jet_partonFlavour_;
   vint    jet_hadronFlavour_;
   vdouble jet_pileupJetId_fullDiscriminant_;
@@ -178,6 +182,7 @@ struct triggerStudyEventVars{
   vdouble jet_nocc_phi_;
   vdouble jet_nocc_energy_;
   vdouble jet_nocc_csv_;
+  vdouble jet_nocc_cmva_;
   vint    jet_nocc_partonFlavour_;
   vint    jet_nocc_hadronFlavour_;
   vdouble jet_nocc_pileupJetId_fullDiscriminant_;
@@ -188,6 +193,7 @@ struct triggerStudyEventVars{
   vdouble jet_JESup_phi_;
   vdouble jet_JESup_energy_;
   vdouble jet_JESup_csv_;
+  vdouble jet_JESup_cmva_;
   vint    jet_JESup_partonFlavour_;
   vint    jet_JESup_hadronFlavour_;
   vdouble jet_JESup_pileupJetId_fullDiscriminant_;
@@ -197,6 +203,7 @@ struct triggerStudyEventVars{
   vdouble jet_JESdown_phi_;
   vdouble jet_JESdown_energy_;
   vdouble jet_JESdown_csv_;
+  vdouble jet_JESdown_cmva_;
   vint    jet_JESdown_partonFlavour_;
   vint    jet_JESdown_hadronFlavour_;
   vdouble jet_JESdown_pileupJetId_fullDiscriminant_;
@@ -206,6 +213,7 @@ struct triggerStudyEventVars{
   vdouble jet_JERup_phi_;
   vdouble jet_JERup_energy_;
   vdouble jet_JERup_csv_;
+  vdouble jet_JERup_cmva_;
   vint    jet_JERup_partonFlavour_;
   vint    jet_JERup_hadronFlavour_;
   vdouble jet_JERup_pileupJetId_fullDiscriminant_;
@@ -215,6 +223,7 @@ struct triggerStudyEventVars{
   vdouble jet_JERdown_phi_;
   vdouble jet_JERdown_energy_;
   vdouble jet_JERdown_csv_;
+  vdouble jet_JERdown_cmva_;
   vint    jet_JERdown_partonFlavour_;
   vint    jet_JERdown_hadronFlavour_;
   vdouble jet_JERdown_pileupJetId_fullDiscriminant_;
@@ -225,6 +234,7 @@ struct triggerStudyEventVars{
   Int_t  oppositeLepCharge_;
 
   vint lepton_trkCharge_;
+  vint lepton_charge_;
   vint lepton_isMuon_;
   vint lepton_isTight_;
   vint lepton_isLoose_;
@@ -249,6 +259,7 @@ struct triggerStudyEventVars{
   vdouble lepton_iso_sumPhotonEt_;
   vdouble lepton_iso_sumPUPt_;
   vdouble lepton_trigMVAOutput_;
+  vint    lepton_trigMVACategory_;
   vint    lepton_passTrigPresel_;
   vdouble lepton_scSigmaIEtaIEta_;
   vdouble lepton_full5x5_scSigmaIEtaIEta_;
@@ -312,9 +323,6 @@ struct triggerStudyEventVars{
   vdouble hltPFHT200Jet30_phi_;
   vint    hltPFHT200Jet30_id_;
 
-  vint    l1t_accept_;
-  vstring l1t_name_;
-
   vint    flt_accept_;
   vstring flt_name_;
 
@@ -354,6 +362,9 @@ void triggerStudyEventVars::initialize(){
 
   lheHT_ = -99;
 
+  pass_L1_SingleEG25_ = -99;
+  pass_L1_SingleMu16_ = -99;
+  
   pass_HLT_Ele27_eta2p1_WP75_Gsf_v_ = -99;
   pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v_ = -99;
   pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v_ = -99;
@@ -453,6 +464,7 @@ void triggerStudyEventVars::initialize(){
   jet_phi_.clear();
   jet_energy_.clear();
   jet_csv_.clear();
+  jet_cmva_.clear();
   jet_partonFlavour_.clear();
   jet_hadronFlavour_.clear();
   jet_pileupJetId_fullDiscriminant_.clear();
@@ -463,6 +475,7 @@ void triggerStudyEventVars::initialize(){
   jet_nocc_phi_.clear();
   jet_nocc_energy_.clear();
   jet_nocc_csv_.clear();
+  jet_nocc_cmva_.clear();
   jet_nocc_partonFlavour_.clear();
   jet_nocc_hadronFlavour_.clear();
   jet_nocc_pileupJetId_fullDiscriminant_.clear();
@@ -473,6 +486,7 @@ void triggerStudyEventVars::initialize(){
   jet_JESup_phi_.clear();
   jet_JESup_energy_.clear();
   jet_JESup_csv_.clear();
+  jet_JESup_cmva_.clear();
   jet_JESup_partonFlavour_.clear();
   jet_JESup_hadronFlavour_.clear();
   jet_JESup_pileupJetId_fullDiscriminant_.clear();
@@ -482,6 +496,7 @@ void triggerStudyEventVars::initialize(){
   jet_JESdown_phi_.clear();
   jet_JESdown_energy_.clear();
   jet_JESdown_csv_.clear();
+  jet_JESdown_cmva_.clear();
   jet_JESdown_partonFlavour_.clear();
   jet_JESdown_hadronFlavour_.clear();
   jet_JESdown_pileupJetId_fullDiscriminant_.clear();
@@ -491,6 +506,7 @@ void triggerStudyEventVars::initialize(){
   jet_JERup_phi_.clear();
   jet_JERup_energy_.clear();
   jet_JERup_csv_.clear();
+  jet_JERup_cmva_.clear();
   jet_JERup_partonFlavour_.clear();
   jet_JERup_hadronFlavour_.clear();
   jet_JERup_pileupJetId_fullDiscriminant_.clear();
@@ -500,6 +516,7 @@ void triggerStudyEventVars::initialize(){
   jet_JERdown_phi_.clear();
   jet_JERdown_energy_.clear();
   jet_JERdown_csv_.clear();
+  jet_JERdown_cmva_.clear();
   jet_JERdown_partonFlavour_.clear();
   jet_JERdown_hadronFlavour_.clear();
   jet_JERdown_pileupJetId_fullDiscriminant_.clear();
@@ -511,6 +528,7 @@ void triggerStudyEventVars::initialize(){
 
 
   lepton_trkCharge_.clear();
+  lepton_charge_.clear();
   lepton_isMuon_.clear();
   lepton_isTight_.clear();
   lepton_isLoose_.clear();
@@ -535,6 +553,7 @@ void triggerStudyEventVars::initialize(){
   lepton_iso_sumPhotonEt_.clear();
   lepton_iso_sumPUPt_.clear();
   lepton_trigMVAOutput_.clear();
+  lepton_trigMVACategory_.clear();
   lepton_passTrigPresel_.clear();
   lepton_scSigmaIEtaIEta_.clear();
   lepton_full5x5_scSigmaIEtaIEta_.clear();
@@ -599,9 +618,6 @@ void triggerStudyEventVars::initialize(){
   hltPFHT200Jet30_eta_.clear();
   hltPFHT200Jet30_phi_.clear();
   hltPFHT200Jet30_id_.clear();
-
-  l1t_accept_.clear();
-  l1t_name_.clear();
 
   flt_accept_.clear();
   flt_name_.clear();
