@@ -269,23 +269,13 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
   // TFile* f_CSVwgt_HF = new TFile ((string(getenv("CMSSW_BASE")) + "/src/TriggerRun2/TriggerAnalyzer/" + inputFileHF).c_str());
   // TFile* f_CSVwgt_LF = new TFile ((string(getenv("CMSSW_BASE")) + "/src/TriggerRun2/TriggerAnalyzer/" + inputFileLF).c_str());
 
-  // TFile* f_CSVwgt_HF = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_5/src/ttH-LeptonPlusJets/AnalysisCode/csv_rwt_fit_hf_v2_final_2015_11_03.root");
-  // TFile* f_CSVwgt_LF = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_5/src/ttH-LeptonPlusJets/AnalysisCode/csv_rwt_fit_lf_v2_final_2015_11_03.root");
-
-  // TFile* f_CSVwgt_HF = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_12/src/csvReweightingRun2/csvTreeMaker/csv_rwt_fit_hf_v3_final_2015_11_12.root");
-  // TFile* f_CSVwgt_LF = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_12/src/csvReweightingRun2/csvTreeMaker/csv_rwt_fit_lf_v3_final_2015_11_12.root");
-  // TFile* f_CSVwgt_HF = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_15/src/csvReweightingRun2/csvTreeMaker/csv_rwt_fit_hf_v3_final_2015_11_18.root");
-  // TFile* f_CSVwgt_LF = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_15/src/csvReweightingRun2/csvTreeMaker/csv_rwt_fit_lf_v3_final_2015_11_18.root");
-
-  // TFile* f_CSVwgt_HF = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_15/src/csvReweightingRun2/csvTreeMaker/csv_rwt_fit_hf_2015_11_20.root");
-  // TFile* f_CSVwgt_LF = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_15/src/csvReweightingRun2/csvTreeMaker/csv_rwt_fit_lf_2015_11_20.root");
-  TFile* f_CSVwgt_HF = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_15/src/csvReweightingRun2/csvTreeMaker/data/csv_rwt_fit_hf_2015_12_14.root");
-  TFile* f_CSVwgt_LF = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_15/src/csvReweightingRun2/csvTreeMaker/data/csv_rwt_fit_lf_2015_12_14.root");
+  TFile* f_CSVwgt_HF = new TFile("/home/puigh/work/TTH/Run2015_76x/CMSSW_7_6_3/src/TriggerRun2/TriggerAnalyzer/data/csv_rwt_fit_hf_2015_12_14.root");
+  TFile* f_CSVwgt_LF = new TFile("/home/puigh/work/TTH/Run2015_76x/CMSSW_7_6_3/src/TriggerRun2/TriggerAnalyzer/data/csv_rwt_fit_lf_2015_12_14.root");
 
   fillCSVhistos(f_CSVwgt_HF, f_CSVwgt_LF);
 
-  TFile* f_CSVwgt_HF_old = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_15/src/csvReweightingRun2/csvTreeMaker/csv_rwt_fit_hf_2015_11_20.root");
-  TFile* f_CSVwgt_LF_old = new TFile("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_15/src/csvReweightingRun2/csvTreeMaker/csv_rwt_fit_lf_2015_11_20.root");
+  TFile* f_CSVwgt_HF_old = new TFile("/home/puigh/work/TTH/Run2015_76x/CMSSW_7_6_3/src/TriggerRun2/TriggerAnalyzer/data/csv_rwt_fit_hf_2015_11_20.root");
+  TFile* f_CSVwgt_LF_old = new TFile("/home/puigh/work/TTH/Run2015_76x/CMSSW_7_6_3/src/TriggerRun2/TriggerAnalyzer/data/csv_rwt_fit_lf_2015_11_20.root");
 
   fillCSVhistos_old(f_CSVwgt_HF_old, f_CSVwgt_LF_old);
 
@@ -347,6 +337,20 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
       if( ttCat_==2 ) mySample_sampleName_ = "ttb_aMC";
       if( ttCat_==3 ) mySample_sampleName_ = "tt2b_aMC";
       if( ttCat_==4 ) mySample_sampleName_ = "ttbb_aMC";
+    }
+  }
+  else if( insample==2530 ){
+    mySample_xSec_ = 87.31;//https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+    mySample_nGen_ = 14188545;//42784971//25357774;//25446993;
+    mySample_sampleName_ = "ttbar_powheg_dil";
+    // standard
+    mySample_inputDirs_.push_back("");
+    if( ttCat_>=0 ){
+      if( ttCat_==0 ) mySample_sampleName_ = "ttlf_powheg_dil";
+      if( ttCat_==1 ) mySample_sampleName_ = "ttcc_powheg_dil";
+      if( ttCat_==2 ) mySample_sampleName_ = "ttb_powheg_dil";
+      if( ttCat_==3 ) mySample_sampleName_ = "tt2b_powheg_dil";
+      if( ttCat_==4 ) mySample_sampleName_ = "ttbb_powheg_dil";
     }
   }
   else if( insample==2300 ){
@@ -605,9 +609,10 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
   for( int iFile=0; iFile<int(mySample_inputDirs_.size()); iFile++ ){
     std::string treefilename = mySample_inputDirs_[iFile] + "trigger_analyzer*.root";
     std::cout << "  treefilename " << iFile << ": " << treefilename.c_str() << std::endl;
-    chain->Add(treefilename.c_str());
+    //chain->Add(treefilename.c_str());
   }
 
+  chain->Add("/home/puigh/work/TTH/Run2015_76x/CMSSW_7_6_3/src/TriggerRun2/TriggerAnalyzer/trigger_analyzer.root");
   //if( insample==2500 ) chain->Add("/eos/uscms/store/user/puigh/TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2_ext3-v1_triggerTree_v1/151115_164541/0000/trigger_analyzer_22*.root");
   //if( insample==2300 ) chain->Add("/eos/uscms/store/user/puigh/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1_triggerTree_v1/151115_164558/0000/trigger_analyzer_22*.root");
 
@@ -617,7 +622,7 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
 
   std::string csvefffilename = Form("/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_15/src/TriggerRun2/TriggerAnalyzer/backup_2015_12_12_HistoFiles/ttHbb_data2mc_treeReader_%s_histo.root", mySample_sampleName_.c_str());
 
-  // if( insample>=1001 && insample<=1008 ) csvefffilename = "/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_15/src/TriggerRun2/TriggerAnalyzer/backup_2015_12_05_HistoFiles/ttHbb_data2mc_treeReader_ttbar_histo_eff.root";
+  csvefffilename = "/home/puigh/work/TTH/Run2015_76x/CMSSW_7_6_3/src/TriggerRun2/TriggerAnalyzer/HistoFiles/ttHbb_data2mc_treeReader_ttbar_histo_eff.root";
 
   std::cout << "  csv eff filename = " << csvefffilename.c_str() << std::endl;
 
@@ -2089,6 +2094,11 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
   TH1D* h_jet_csv_l = new TH1D("h_jet_csv_l",";jet CSV", NcsvBins, -0.06, 1.01 );
   TH1D* h_jet_csv_a = new TH1D("h_jet_csv_a",";jet CSV", NcsvBins, -0.06, 1.01 );
 
+  TH1D* h_jet_cmva_b = new TH1D("h_jet_cmva_b",";jet CMVA", NcsvBins, -0.01, 1.01 );
+  TH1D* h_jet_cmva_c = new TH1D("h_jet_cmva_c",";jet CMVA", NcsvBins, -0.01, 1.01 );
+  TH1D* h_jet_cmva_l = new TH1D("h_jet_cmva_l",";jet CMVA", NcsvBins, -0.01, 1.01 );
+  TH1D* h_jet_cmva_a = new TH1D("h_jet_cmva_a",";jet CMVA", NcsvBins, -0.01, 1.01 );
+
   TH2D* h_b_csv_wgt = new TH2D("h_b_csv_wgt",";jet CSV;scale factor", NcsvBins, -0.06, 1.01, 200, 0, 2.0 );
   TH2D* h_b_csv_wgt2 = new TH2D("h_b_csv_wgt2",";jet CSV;scale factor", NcsvBins, -0.06, 1.01, 200, 0, 2.0 );
   TH2D* h_b_csv_diff_wgt2_wgt = new TH2D("h_b_csv_diff_wgt2_wgt",";jet CSV;scale factor difference", NcsvBins, -0.06, 1.01, 200, -1.0, 1.0 );
@@ -2222,7 +2232,7 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
   /////
   //////////////////////////////////////////////////////////////////////////
 
-  std::string ele_path_name = ( insample<0 ) ? "HLT_Ele27_eta2p1_WPLoose_Gsf_v" : "HLT_Ele27_WP85_Gsf_v";
+  std::string ele_path_name = ( insample<0 ) ? "" : "HLT_Ele27_WP85_Gsf_v";
   std::string mu_path_name  = ( insample<0 ) ? "HLT_IsoMu20_v" : "HLT_IsoMu20_v";
 
   int numEvents_all = 0;
@@ -2324,7 +2334,9 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
       double eta = eve->jet_eta_[iJet];
       int flavor = eve->jet_hadronFlavour_[iJet];
       double csv =  eve->jet_csv_[iJet];
+      double cmva =  eve->jet_cmva_[iJet];
 
+      
       if( csv < 0.0 ) csv = -0.05;
       if( csv > 1.0 ) csv = 1.0;
 
@@ -2355,6 +2367,11 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
       if( abs(flavor)==5 )      h_jet_csv_b->Fill(csv);
       else if( abs(flavor)==4 ) h_jet_csv_c->Fill(csv);
       else                      h_jet_csv_l->Fill(csv);
+
+      h_jet_cmva_a->Fill(csv);
+      if( abs(flavor)==5 )      h_jet_cmva_b->Fill(cmva);
+      else if( abs(flavor)==4 ) h_jet_cmva_c->Fill(cmva);
+      else                      h_jet_cmva_l->Fill(cmva);
 
       njet++;
       if( csv>0.89 ) nbtag++;
@@ -2570,13 +2587,14 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
 
 
     bool pass_trigger_ele = false;
-    if( insample<0 ) pass_trigger_ele = ( eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v_==1 );
-    else             pass_trigger_ele = ( eve->pass_HLT_Ele27_WP85_Gsf_v_==1 );
-
+    // if( insample<0 ) pass_trigger_ele = ( eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v_==1 );
+    // else             pass_trigger_ele = ( eve->pass_HLT_Ele27_WP85_Gsf_v_==1 );
+    pass_trigger_ele = ( eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v_==1 );
+    
     bool pass_trigger_mu  = false;
-    if( insample<0 ) pass_trigger_mu = ( eve->pass_HLT_IsoMu20_v_==1 );
-    else             pass_trigger_mu = ( eve->pass_HLT_IsoMu20_v_==1 );
-
+    // if( insample<0 ) pass_trigger_mu = ( eve->pass_HLT_IsoMu20_v_==1 );
+    // else             pass_trigger_mu = ( eve->pass_HLT_IsoMu20_v_==1 );
+    pass_trigger_mu = ( eve->pass_HLT_IsoMu20_v_==1 );
 
 
     if( insample<0 ){
@@ -2638,7 +2656,7 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
       if( isMuon ){
 	if( pt > 30 && abs(eta)<2.1 && isTight ) ind_mu.push_back(iLep);
 	// FIXME should use 0.25, but need to fix MiniAODHelper
-	if( pt > 15 && abs(eta)<2.4 && isLoose && relIsoR04 < 0.20 ) ind_mu_loose.push_back(iLep);
+	if( pt > 15 && abs(eta)<2.4 && isLoose && relIsoR04 < 0.25 ) ind_mu_loose.push_back(iLep);
       }
 
       if( !isMuon ){
@@ -2706,8 +2724,8 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
       TLorentzVector myLep2;
       myLep2.SetPtEtaPhiE( eve->lepton_pt_[lepInd2], eve->lepton_eta_[lepInd2], eve->lepton_phi_[lepInd2], eve->lepton_energy_[lepInd2] );
 
-      int charge1 = eve->lepton_trkCharge_[lepInd1];
-      int charge2 = eve->lepton_trkCharge_[lepInd2];
+      int charge1 = eve->lepton_charge_[lepInd1];
+      int charge2 = eve->lepton_charge_[lepInd2];
 
       //
       // REQUIRE OPPOSITE CHARGE
@@ -3109,8 +3127,8 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
 	double wgtCSV4 = wgt * wgt_csv4;
 
 
-	int fill_numJet  = std::min( MaxNjet, numJet );
-	int fill_numBtag = std::min( MaxNbtag, numBtag );
+	int fill_numJet  = std::min( MaxNjet-1, numJet );
+	int fill_numBtag = std::min( MaxNbtag-1, numBtag );
 
 	h_numJet_2l[iSys]->Fill(fill_numJet,wgt);
 	h_numJet_wgtCSV_2l[iSys]->Fill(fill_numJet,wgtCSV);
@@ -3504,8 +3522,8 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
       TLorentzVector myLep2;
       myLep2.SetPtEtaPhiE( eve->lepton_pt_[lepInd2], eve->lepton_eta_[lepInd2], eve->lepton_phi_[lepInd2], eve->lepton_energy_[lepInd2] );
 
-      int charge1 = eve->lepton_trkCharge_[lepInd1];
-      int charge2 = eve->lepton_trkCharge_[lepInd2];
+      int charge1 = eve->lepton_charge_[lepInd1];
+      int charge2 = eve->lepton_charge_[lepInd2];
     if( verbose_ ) std::cout << " ===> test 3.1.2 " << std::endl;
 
       //
@@ -3815,8 +3833,8 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
     if( verbose_ ) std::cout << " ===> test 3.1.7 " << std::endl;
 
 
-	int fill_numJet  = std::min( MaxNjet, numJet );
-	int fill_numBtag = std::min( MaxNbtag, numBtag );
+	int fill_numJet  = std::min( MaxNjet-1, numJet );
+	int fill_numBtag = std::min( MaxNbtag-1, numBtag );
 
 	h_numJet_em[iSys]->Fill(fill_numJet,wgt);
 	h_numJet_wgtCSV_em[iSys]->Fill(fill_numJet,wgtCSV);
@@ -4262,7 +4280,7 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
 	else my_jet_sf = reader.eval(jf, eta, pt, csv);
 
 	assert (my_jet_sf > 0.);
-	wgt_csv2 *= my_jet_sf;
+	KU_wgt_csv2 *= my_jet_sf;
       }
 
       // Calculate CSV weight
@@ -4340,8 +4358,8 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
       if( iSys==0 ) h_numEvents_perSys_wgtCSV2->Fill(-1,wgt);
 
 
-      int fill_numJet  = std::min( MaxNjet, numJet );
-      int fill_numBtag = std::min( MaxNbtag, numBtag );
+      int fill_numJet  = std::min( MaxNjet-1, numJet );
+      int fill_numBtag = std::min( MaxNbtag-1, numBtag );
 
       h_numJet[iSys]->Fill(fill_numJet,wgt);
       h_numJet_wgtCSV[iSys]->Fill(fill_numJet,wgtCSV);
@@ -4357,8 +4375,8 @@ void ttHbb_data2mc_treeReader( int insample=1, int maxNentries=-1, int Njobs=1, 
 
 
 
-      int fill_KU_numJet = std::min( MaxNjet, KU_numJet );
-      int fill_KU_numBtag = std::min( MaxNbtag, KU_numBtag );
+      int fill_KU_numJet = std::min( MaxNjet-1, KU_numJet );
+      int fill_KU_numBtag = std::min( MaxNbtag-1, KU_numBtag );
 
       h_KU_numJet[iSys]->Fill(fill_KU_numJet,wgt);
       h_KU_numJet_wgtCSV[iSys]->Fill(fill_KU_numJet,KU_wgtCSV);
