@@ -919,6 +919,8 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   int numpv=0;
   reco::Vertex vertex;
+  bool firstVertex = true;
+  bool goodFirstVertex = false;
   if( vtxHandle.isValid() ){
     for( reco::VertexCollection::const_iterator vtx = vtxs.begin(); vtx!=vtxs.end(); ++vtx ){
       bool isGood = ( !(vtx->isFake()) &&
@@ -926,6 +928,11 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		      (abs(vtx->z()) <= 24.0) &&
 		      (abs(vtx->position().Rho()) <= 2.0) 
 		      );
+
+      if( firstVertex ){
+	firstVertex = false;
+	if( isGood ) goodFirstVertex = true;
+      }
 
       if( !isGood ) continue;
 
@@ -935,6 +942,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     }
   }
 
+  eve->goodFirstVertex_ = ( goodFirstVertex );
   eve->PV_x_ = vertex.x();
   eve->PV_y_ = vertex.y();
   eve->PV_z_ = vertex.z();
@@ -1250,7 +1258,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_phi.push_back(iJet->phi());
     vec_jet_energy.push_back(iJet->energy());
     vec_jet_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    vec_jet_cmva.push_back(iJet->bDiscriminator("pfCombinedMVABJetTags"));
+    vec_jet_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_hadronFlavour.push_back(iJet->hadronFlavour());
     vec_jet_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
@@ -1286,7 +1294,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_nocc_phi.push_back(iJet->phi());
     vec_jet_nocc_energy.push_back(iJet->energy());
     vec_jet_nocc_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    vec_jet_nocc_cmva.push_back(iJet->bDiscriminator("pfCombinedMVABJetTags"));
+    vec_jet_nocc_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_nocc_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_nocc_hadronFlavour.push_back(iJet->hadronFlavour());
     vec_jet_nocc_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
@@ -1331,7 +1339,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JESup_phi.push_back(iJet->phi());
     vec_jet_JESup_energy.push_back(iJet->energy());
     vec_jet_JESup_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    vec_jet_JESup_cmva.push_back(iJet->bDiscriminator("pfCombinedMVABJetTags"));
+    vec_jet_JESup_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_JESup_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JESup_hadronFlavour.push_back(iJet->hadronFlavour());
     vec_jet_JESup_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
@@ -1374,7 +1382,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JESdown_phi.push_back(iJet->phi());
     vec_jet_JESdown_energy.push_back(iJet->energy());
     vec_jet_JESdown_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    vec_jet_JESdown_cmva.push_back(iJet->bDiscriminator("pfCombinedMVABJetTags"));
+    vec_jet_JESdown_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_JESdown_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JESdown_hadronFlavour.push_back(iJet->hadronFlavour());
     vec_jet_JESdown_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
@@ -1416,7 +1424,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JERup_phi.push_back(iJet->phi());
     vec_jet_JERup_energy.push_back(iJet->energy());
     vec_jet_JERup_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    vec_jet_JERup_cmva.push_back(iJet->bDiscriminator("pfCombinedMVABJetTags"));
+    vec_jet_JERup_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_JERup_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JERup_hadronFlavour.push_back(iJet->hadronFlavour());
     vec_jet_JERup_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
@@ -1459,7 +1467,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JERdown_phi.push_back(iJet->phi());
     vec_jet_JERdown_energy.push_back(iJet->energy());
     vec_jet_JERdown_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    vec_jet_JERdown_cmva.push_back(iJet->bDiscriminator("pfCombinedMVABJetTags"));
+    vec_jet_JERdown_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_JERdown_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JERdown_hadronFlavour.push_back(iJet->hadronFlavour());
     vec_jet_JERdown_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));

@@ -52,6 +52,7 @@ struct triggerStudyEventVars{
 
   int additionalJetEventId_;
 
+  bool goodFirstVertex_;
 
   /////
 
@@ -350,6 +351,8 @@ void triggerStudyEventVars::initialize(){
 
   additionalJetEventId_ = -99;
 
+  goodFirstVertex_ = false;
+  
   rho_ = -99;
   top_pt_ = -99;
   antitop_pt_ = -99;
