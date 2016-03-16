@@ -1,4 +1,6 @@
 import FWCore.ParameterSet.Config as cms
+import sys
+import os
 
 process = cms.Process("MAOD")
 
@@ -38,6 +40,35 @@ process.ak4PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
 	'ak4PFchsResidual'
 	)
 )
+
+######################
+process.load("CondCore.DBCommon.CondDBCommon_cfi")
+from CondCore.DBCommon.CondDBSetup_cfi import *
+process.jec = cms.ESSource("PoolDBESSource",
+      DBParameters = cms.PSet(
+        messageLevel = cms.untracked.int32(0)
+        ),
+      timetype = cms.string('runnumber'),
+      toGet = cms.VPSet(
+            cms.PSet(
+                record = cms.string('JetCorrectionsRecord'),
+                tag    = cms.string('JetCorrectorParametersCollection_Fall15_25nsV2_DATA_AK4PFchs'),
+                label  = cms.untracked.string('AK4PFchs')
+                ),
+            cms.PSet(
+                record = cms.string('JetCorrectionsRecord'),
+                tag    = cms.string('JetCorrectorParametersCollection_Fall15_25nsV2_DATA_AK8PFchs'),
+                label  = cms.untracked.string('AK8PFchs')
+                ),
+      ## here you add as many jet types as you need
+      ## note that the tag name is specific for the particular sqlite file 
+      ), 
+      connect = cms.string('sqlite:Fall15_25nsV2_DATA.db')
+)
+## add an es_prefer statement to resolve a possible conflict from simultaneous connection to a global tag
+process.es_prefer_jec = cms.ESPrefer('PoolDBESSource','jec')
+##################
+
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(

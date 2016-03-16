@@ -896,6 +896,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->additionalJetEventId_ = additionalJetEventId;
 
 
+  //int ttbarDecayMode = -99;
+  MiniAODHelper::TTbarDecayMode ttbarDecayMode = ( isData_ ) ? MiniAODHelper::TTbarDecayMode::ChNotDefined : miniAODhelper.GetTTbarDecay(mcparticles);
+  eve->ttbarDecayMode_ = (int)ttbarDecayMode;
+
   edm::Handle<l1extra::L1EtMissParticleCollection> l1HTs;
   iEvent.getByToken(l1HTMissToken,l1HTs);
 

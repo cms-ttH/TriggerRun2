@@ -51,6 +51,7 @@ struct triggerStudyEventVars{
   int numGenPVs_;
 
   int additionalJetEventId_;
+  int ttbarDecayMode_;
 
   bool goodFirstVertex_;
 
@@ -350,7 +351,8 @@ void triggerStudyEventVars::initialize(){
   numGenPVs_ = -99;
 
   additionalJetEventId_ = -99;
-
+  ttbarDecayMode_ = -99;
+  
   goodFirstVertex_ = false;
   
   rho_ = -99;
