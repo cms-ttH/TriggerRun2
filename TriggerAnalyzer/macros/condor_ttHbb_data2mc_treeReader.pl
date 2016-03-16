@@ -2,7 +2,7 @@
 
 $script = "ttHbb_data2mc_treeReader";       # Name of job
 
-$workingDir = "/uscms_data/d2/dpuigh/TTH/triggerRun2/CMSSW_7_4_15/src/TriggerRun2/TriggerAnalyzer";
+$workingDir = "/uscms_data/d2/dpuigh/TTH/Run2015_76x/CMSSW_7_6_3/src/TriggerRun2/TriggerAnalyzer";
 
 $sample = 2510;
 $intLumi = 2430;
@@ -71,7 +71,7 @@ print CONDORFILE "\n";
 print CONDORFILE "use_x509userproxy = true\n";
 print CONDORFILE "Should_Transfer_Files   = YES\n";
 print CONDORFILE "When_To_Transfer_Output = ON_EXIT\n";
-print CONDORFILE "Transfer_Input_Files = CSVv2.csv, CSVv2_TagCountTT.csv, ttH_BTV_CSVv2_13TeV_2015D_20151122.csv\n";
+print CONDORFILE "Transfer_Input_Files = CSVv2.csv, CSVv2_TagCountTT.csv, ttH_BTV_CSVv2_13TeV_2015D_20151122.csv, ttH_BTV_CSVv2_13TeV_2015D_2016_02_08.csv, ttH_BTV_CMVAv2_13TeV_2015D_2016_02_12.csv\n";
 print CONDORFILE "\n";
 print CONDORFILE "#+IsLocalJob             = true\n";
 print CONDORFILE "#Rank                    = TARGET.IsLocalSlot\n";
