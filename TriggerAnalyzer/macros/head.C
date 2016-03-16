@@ -6,7 +6,7 @@
   TString dummy2 = makeshared.ReplaceAll("-Wshadow ", "-std=c++0x ");
   gSystem->SetMakeSharedLib(makeshared);
   gSystem->Load("libFWCoreFWLite");
-  AutoLibraryLoader::enable();
+  FWLiteEnabler::enable();
 
   gSystem->Load("libDataFormatsFWLite.so");
   gSystem->Load("libDataFormatsCommon.so");

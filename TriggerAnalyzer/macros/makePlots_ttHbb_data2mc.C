@@ -47,7 +47,7 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 
   int NumSamples = 12;
   TFile* file[NumSamples];
-  file[0] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_SingleLepton_Run2015D_05Oct2015_PromptRecov4_histo.root");
+  file[0] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_SingleLepton_Run2015D_16Dec2015_histo.root");
   file[7] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttV_histo.root");
   file[6] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_singlet_histo.root");
 
@@ -60,30 +60,30 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
     file[9] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_EWK_histo.root");
   }
 
-  if( dirpostfix_.Contains("MGMLM") ){
-    file[5] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttlf_MGMLM_histo.root");
-    file[4] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttcc_MGMLM_histo.root");
-    file[3] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttb_MGMLM_histo.root");
-    file[2] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_tt2b_MGMLM_histo.root");
-    file[1] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttbb_MGMLM_histo.root");
+  if( dirpostfix_.Contains("madgraph") ){
+    file[5] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttlf_madgraph_histo.root");
+    file[4] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttcc_madgraph_histo.root");
+    file[3] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttb_madgraph_histo.root");
+    file[2] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_tt2b_madgraph_histo.root");
+    file[1] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttbb_madgraph_histo.root");
   }
-  else if( dirpostfix_.Contains("aMC") ){
-    file[5] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttlf_aMC_histo.root");
-    file[4] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttcc_aMC_histo.root");
-    file[3] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttb_aMC_histo.root");
-    file[2] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_tt2b_aMC_histo.root");
-    file[1] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttbb_aMC_histo.root");
+  else if( dirpostfix_.Contains("amcatnlo") ){
+    file[5] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttlf_amcatnlo_histo.root");
+    file[4] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttcc_amcatnlo_histo.root");
+    file[3] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttb_amcatnlo_histo.root");
+    file[2] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_tt2b_amcatnlo_histo.root");
+    file[1] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttbb_amcatnlo_histo.root");
   }
   else {
-    file[5] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttlf_histo.root");
-    file[4] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttcc_histo.root");
-    file[3] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttb_histo.root");
-    file[2] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_tt2b_histo.root");
-    file[1] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttbb_histo.root");
+    file[5] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttlf_powheg_histo.root");
+    file[4] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttcc_powheg_histo.root");
+    file[3] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttb_powheg_histo.root");
+    file[2] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_tt2b_powheg_histo.root");
+    file[1] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttbb_powheg_histo.root");
   }
 
-  file[10] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttHnonbb_histo.root");
-  file[11] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttHTobb_histo.root");
+  file[10] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttHnonbb_powheg_histo.root");
+  file[11] = new TFile(histo_dir_prefix + "/ttHbb_data2mc_treeReader_ttHTobb_powheg_histo.root");
 
 
 
@@ -121,7 +121,7 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 
 
 
-  TString dirprefix = "Images/Images_2015_12_15_ttHbb_data2mc" + dirpostfix_;
+  TString dirprefix = "Images/Images_2016_03_11_ttHbb_data2mc" + dirpostfix_;
   if( renormMC_ ) dirprefix += "_renormMC";
 
   dirprefix += "/";
@@ -174,12 +174,14 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
   sys_cat_labels.push_back("_CSVCFErr1Down");   //22
   sys_cat_labels.push_back("_CSVCFErr2Up");     //23
   sys_cat_labels.push_back("_CSVCFErr2Down");   //24
-  sys_cat_labels.push_back("_muFUp");           //25
-  sys_cat_labels.push_back("_muFDown");         //26
-  sys_cat_labels.push_back("_muRUp");           //27
-  sys_cat_labels.push_back("_muRDown");         //28
+  // sys_cat_labels.push_back("_muFUp");           //25
+  // sys_cat_labels.push_back("_muFDown");         //26
+  // sys_cat_labels.push_back("_muRUp");           //27
+  // sys_cat_labels.push_back("_muRDown");         //28
   sys_cat_labels.push_back("_muRmuFUp");        //29
   sys_cat_labels.push_back("_muRmuFDown");      //30
+  sys_cat_labels.push_back("_NNPDFUp");        //31
+  sys_cat_labels.push_back("_NNPDFDown");      //32
 
   int NumSysCat = int(sys_cat_labels.size());
 
@@ -187,17 +189,58 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
   // has cat and sys
   std::vector<TString> histoname1;
 
-
-  /*
   histoname1.push_back("h_jet_csv");
   histoname1.push_back("h_jet_csv_wgtCSV");
-  histoname1.push_back("h_jet_csv_wgtCSV2");
-  histoname1.push_back("h_jet_csv_wgtCSV3");
-  histoname1.push_back("h_jet_csv_wgtCSV4");
+
 
   histoname1.push_back("h_lepton_pt");
   histoname1.push_back("h_lepton_eta");
   histoname1.push_back("h_lepton_phi");
+
+  histoname1.push_back("h_lepton_pt_wgtCSV");
+  histoname1.push_back("h_lepton_eta_wgtCSV");
+  histoname1.push_back("h_lepton_phi_wgtCSV");
+  histoname1.push_back("h_lepton_d0_wgtCSV");
+  histoname1.push_back("h_lepton_dZ_wgtCSV");
+
+  histoname1.push_back("h_electron_pt_wgtCSV");
+  histoname1.push_back("h_electron_eta_wgtCSV");
+  histoname1.push_back("h_electron_phi_wgtCSV");
+  histoname1.push_back("h_electron_relIso_wgtCSV");
+  histoname1.push_back("h_electron_trigMVAOutput_wgtCSV");
+  histoname1.push_back("h_electron_d0_wgtCSV");
+  histoname1.push_back("h_electron_dZ_wgtCSV");
+
+  histoname1.push_back("h_muon_pt_wgtCSV");
+  histoname1.push_back("h_muon_eta_wgtCSV");
+  histoname1.push_back("h_muon_phi_wgtCSV");
+  histoname1.push_back("h_muon_relIso_wgtCSV");
+  histoname1.push_back("h_muon_d0_wgtCSV");
+  histoname1.push_back("h_muon_dZ_wgtCSV");
+
+  histoname1.push_back("h_jet_pt");
+  histoname1.push_back("h_jet_eta");
+  histoname1.push_back("h_jet_phi");
+  histoname1.push_back("h_jet_puMVA");
+
+  histoname1.push_back("h_jet_pt_wgtCSV");
+  histoname1.push_back("h_jet_eta_wgtCSV");
+  histoname1.push_back("h_jet_phi_wgtCSV");
+  histoname1.push_back("h_jet_puMVA_wgtCSV");
+
+
+  
+  histoname1.push_back("h_pfMET_pt");
+  histoname1.push_back("h_pfMET_phi");
+
+  histoname1.push_back("h_pfMET_pt_wgtCSV");
+  histoname1.push_back("h_pfMET_phi_wgtCSV");
+  
+  /*
+
+  histoname1.push_back("h_jet_csv_wgtCSV2");
+  histoname1.push_back("h_jet_csv_wgtCSV3");
+  histoname1.push_back("h_jet_csv_wgtCSV4");
 
   histoname1.push_back("h_electron_pt");
   histoname1.push_back("h_electron_eta");
@@ -209,16 +252,6 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
   histoname1.push_back("h_muon_eta");
   histoname1.push_back("h_muon_phi");
   histoname1.push_back("h_muon_relIso");
-
-  histoname1.push_back("h_jet_pt");
-  histoname1.push_back("h_jet_eta");
-  histoname1.push_back("h_jet_phi");
-  histoname1.push_back("h_jet_puMVA");
-
-  histoname1.push_back("h_jet_pt_wgtCSV");
-  histoname1.push_back("h_jet_eta_wgtCSV");
-  histoname1.push_back("h_jet_phi_wgtCSV");
-  histoname1.push_back("h_jet_puMVA_wgtCSV");
 
   histoname1.push_back("h_jet_pt_wgtCSV2");
   histoname1.push_back("h_jet_eta_wgtCSV2");
@@ -235,15 +268,11 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
   histoname1.push_back("h_jet_phi_wgtCSV4");
   histoname1.push_back("h_jet_puMVA_wgtCSV4");
 
-  histoname1.push_back("h_pfMET_pt");
-  histoname1.push_back("h_pfMET_phi");
   histoname1.push_back("h_pfMETNoHF_pt");
   histoname1.push_back("h_pfMETNoHF_phi");
   histoname1.push_back("h_puppiMET_pt");
   histoname1.push_back("h_puppiMET_phi");
 
-  histoname1.push_back("h_pfMET_pt_wgtCSV");
-  histoname1.push_back("h_pfMET_phi_wgtCSV");
   histoname1.push_back("h_mht_pt");
   histoname1.push_back("h_mht_phi");
 
@@ -258,73 +287,53 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
   // has sys but not cat
   std::vector<TString> histoname2;
 
-  histoname2.push_back("h_numBtag_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV2_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV3_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV4_4j_met30");
+  // histoname2.push_back("h_numBtag_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV2_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV3_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV4_4j_met30");
 
-  histoname2.push_back("h_numBtag_1e_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV_1e_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV2_1e_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV3_1e_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV4_1e_4j_met30");
+  // histoname2.push_back("h_numBtag_1e_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV_1e_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV2_1e_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV3_1e_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV4_1e_4j_met30");
 
-  histoname2.push_back("h_numBtag_1m_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV_1m_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV2_1m_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV3_1m_4j_met30");
-  histoname2.push_back("h_numBtag_wgtCSV4_1m_4j_met30");
+  // histoname2.push_back("h_numBtag_1m_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV_1m_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV2_1m_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV3_1m_4j_met30");
+  // histoname2.push_back("h_numBtag_wgtCSV4_1m_4j_met30");
 
 
   histoname2.push_back("h_numBtag_4j");
   histoname2.push_back("h_numBtag_wgtCSV_4j");
   histoname2.push_back("h_numBtag_wgtCSV2_4j");
-  histoname2.push_back("h_numBtag_wgtCSV3_4j");
-  histoname2.push_back("h_numBtag_wgtCSV4_4j");
+  // histoname2.push_back("h_numBtag_wgtCSV3_4j");
+  // histoname2.push_back("h_numBtag_wgtCSV4_4j");
   histoname2.push_back("h_numBtag_wgtCSV5_4j");
 
   histoname2.push_back("h_numBtag_1e_4j");
   histoname2.push_back("h_numBtag_wgtCSV_1e_4j");
-  histoname2.push_back("h_numBtag_wgtCSV2_1e_4j");
-  histoname2.push_back("h_numBtag_wgtCSV3_1e_4j");
-  histoname2.push_back("h_numBtag_wgtCSV4_1e_4j");
+  // histoname2.push_back("h_numBtag_wgtCSV2_1e_4j");
+  // histoname2.push_back("h_numBtag_wgtCSV3_1e_4j");
+  // histoname2.push_back("h_numBtag_wgtCSV4_1e_4j");
 
   histoname2.push_back("h_numBtag_1m_4j");
   histoname2.push_back("h_numBtag_wgtCSV_1m_4j");
-  histoname2.push_back("h_numBtag_wgtCSV2_1m_4j");
-  histoname2.push_back("h_numBtag_wgtCSV3_1m_4j");
-  histoname2.push_back("h_numBtag_wgtCSV4_1m_4j");
+  // histoname2.push_back("h_numBtag_wgtCSV2_1m_4j");
+  // histoname2.push_back("h_numBtag_wgtCSV3_1m_4j");
+  // histoname2.push_back("h_numBtag_wgtCSV4_1m_4j");
 
-  histoname2.push_back("h_KU_numBtag_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV2_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV3_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV4_4j");
 
-  histoname2.push_back("h_KU_numBtag_1e_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV_1e_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV2_1e_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV3_1e_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV4_1e_4j");
-
-  histoname2.push_back("h_KU_numBtag_1m_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV_1m_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV2_1m_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV3_1m_4j");
-  histoname2.push_back("h_KU_numBtag_wgtCSV4_1m_4j");
-
-  histoname2.push_back("h_numBtag_1m_4j");
-  histoname2.push_back("h_numBtag_wgtCSV_1m_4j");
-  histoname2.push_back("h_numBtag_wgtCSV2_1m_4j");
-  histoname2.push_back("h_numBtag_wgtCSV3_1m_4j");
-  histoname2.push_back("h_numBtag_wgtCSV4_1m_4j");
+  histoname2.push_back("h_numBtag_CMVA_4j");
+  histoname2.push_back("h_numBtag_CMVA_wgtCMVA_4j");
 
   histoname2.push_back("h_numJet_4j2t");
   histoname2.push_back("h_numJet_wgtCSV_4j2t");
-  histoname2.push_back("h_numJet_wgtCSV2_4j2t");
-  histoname2.push_back("h_numJet_wgtCSV3_4j2t");
-  histoname2.push_back("h_numJet_wgtCSV4_4j2t");
+  // histoname2.push_back("h_numJet_wgtCSV2_4j2t");
+  // histoname2.push_back("h_numJet_wgtCSV3_4j2t");
+  // histoname2.push_back("h_numJet_wgtCSV4_4j2t");
   histoname2.push_back("h_numJet_wgtCSV5_4j2t");
 
   // histoname2.push_back("h_numBtag_4j_met50");
@@ -357,6 +366,15 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
   histoname2.push_back("h_category_yield_wgtCSV5_1e");
   histoname2.push_back("h_category_yield_wgtCSV5_1m");
 
+  
+  histoname2.push_back("h_category_yield_cmva");
+  histoname2.push_back("h_category_yield_cmva_1e");
+  histoname2.push_back("h_category_yield_cmva_1m");
+
+  histoname2.push_back("h_category_yield_cmva_wgtCMVA");
+  histoname2.push_back("h_category_yield_cmva_wgtCMVA_1e");
+  histoname2.push_back("h_category_yield_cmva_wgtCMVA_1m");
+
   // histoname2.push_back("h_event_selection");
   // histoname2.push_back("h_mu_event_selection");
   // histoname2.push_back("h_ele_event_selection");
@@ -375,9 +393,9 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 
   histoname2.push_back("h_numBtag_eq4j");
   histoname2.push_back("h_numBtag_wgtCSV_eq4j");
-  histoname2.push_back("h_numBtag_wgtCSV2_eq4j");
-  histoname2.push_back("h_numBtag_wgtCSV3_eq4j");
-  histoname2.push_back("h_numBtag_wgtCSV4_eq4j");
+  // histoname2.push_back("h_numBtag_wgtCSV2_eq4j");
+  // histoname2.push_back("h_numBtag_wgtCSV3_eq4j");
+  // histoname2.push_back("h_numBtag_wgtCSV4_eq4j");
 
   // histoname2.push_back("h_numBtag_2l");
   // histoname2.push_back("h_numBtag_wgtCSV_2l");
@@ -420,8 +438,13 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 
   // //histoname2.push_back("h_deltaR_jet_lep");
 
-  // histoname2.push_back("h_numPVs_wgt");
-  // histoname2.push_back("h_numPVs_noPUwgt");
+  histoname2.push_back("h_numPVs_wgt");
+  histoname2.push_back("h_numPVs_noPUwgt");
+
+
+  histoname2.push_back("h_PV_x_wgt");
+  histoname2.push_back("h_PV_y_wgt");
+  histoname2.push_back("h_PV_z_wgt");
 
   // histoname2.push_back("h_pfMETNoHF_pt_2l");
   // histoname2.push_back("h_pfMETNoHF_pt_2e");
@@ -507,7 +530,7 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
     for( int iCat=0; iCat<NumCat; iCat++ ){
       TString suffix = "_" + cat_labels[iCat];
       TString new_name = histoname1[iHist] + suffix;
-      if( includeCatPlots_ ) histoname2.push_back(new_name);
+      if( includeCatPlots_ && (new_name.Contains("d0") || new_name.Contains("dZ")) ) histoname2.push_back(new_name);
     }
   }
 
@@ -518,7 +541,8 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
   // histoname3.push_back("h_category_yield_1m");
 
   histoname3.push_back("h_category_yield_wgtCSV");
-  histoname3.push_back("h_category_yield_wgtCSV5");
+  histoname3.push_back("h_category_yield_cmva_wgtCMVA");
+  //histoname3.push_back("h_category_yield_wgtCSV5");
   // histoname3.push_back("h_category_yield_wgtCSV_1e");
   // histoname3.push_back("h_category_yield_wgtCSV_1m");
 
@@ -583,10 +607,12 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
   if( includeFlavPlots_ ){
     histoname5.push_back("h_jet_csv");
     histoname5.push_back("h_jet_csv_wgtCSV");
-    histoname5.push_back("h_jet_csv_wgtCSV2");
-    histoname5.push_back("h_jet_csv_wgtCSV3");
-    histoname5.push_back("h_jet_csv_wgtCSV4");
-    histoname5.push_back("h_jet_csv_wgtCSV5");
+    //histoname5.push_back("h_jet_cmva");
+    //histoname5.push_back("h_jet_cmva_wgtCMVA");
+    // histoname5.push_back("h_jet_csv_wgtCSV2");
+    // histoname5.push_back("h_jet_csv_wgtCSV3");
+    // histoname5.push_back("h_jet_csv_wgtCSV4");
+    //histoname5.push_back("h_jet_csv_wgtCSV5");
   }
 
   std::vector<TString> jet_flavor_suffix;
@@ -597,9 +623,12 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
   int NumJetFlav = int(jet_flavor_suffix.size());
 
   Color_t jetflavcolor[NumFlavComb];
-  jetflavcolor[0] = kAzure+2;
+  // jetflavcolor[0] = kAzure+2;
+  // jetflavcolor[1] = kGreen+2;
+  // jetflavcolor[2] = kRed+1;
+  jetflavcolor[0] = kBlue;
   jetflavcolor[1] = kGreen+2;
-  jetflavcolor[2] = kRed+1;
+  jetflavcolor[2] = kRed;
 
 
   double lumi_err = 0.046;
@@ -608,7 +637,7 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 
   TGaxis::SetMaxDigits(4);
 
-  TString lumiinfo = "2.6 fb^{-1} (13 TeV)";
+  TString lumiinfo = "2.67 fb^{-1} (13 TeV)";
   TLatex LumiInfoLatex(0.70, 0.91, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
@@ -625,6 +654,26 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
   PublishInfoLatex.SetNDC();
   PublishInfoLatex.SetTextFont(52);
   PublishInfoLatex.SetTextSize(0.045); //SBOUTLE
+
+
+  
+  TString lumiinfo2 = "2.6 fb^{-1} (13 TeV, 25 ns)";
+  TLatex LumiInfoLatex2(0.63, 0.91, lumiinfo2);
+  LumiInfoLatex2.SetNDC(); LumiInfoLatex2.SetTextFont(42);
+  LumiInfoLatex2.SetTextSize(0.04);
+
+  //TString cmsinfo =   "CMS Preliminary";
+  //TString cmsinfo =   "CMS";
+  TLatex CMSInfoLatex2(0.155, 0.83, cmsinfo);
+  CMSInfoLatex2.SetNDC(); CMSInfoLatex2.SetTextFont(42);
+  CMSInfoLatex2.SetTextFont(61);
+  CMSInfoLatex2.SetTextSize(0.055); //SBOUTLE
+
+  //TString publishinfo =   "Preliminary"; //DPUIGH
+  TLatex PublishInfoLatex2(0.155, 0.77, publishinfo); //SBOUTLE
+  PublishInfoLatex2.SetNDC();
+  PublishInfoLatex2.SetTextFont(52);
+  PublishInfoLatex2.SetTextSize(0.045); //SBOUTLE
 
 
 
@@ -658,6 +707,7 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 
 
 
+  //histoname2.clear();
   for( int i=0; i<int(histoname2.size()); i++ ){
 
     TString temp = histoname2[i];
@@ -719,6 +769,10 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
     if( temp.Contains("_csv") )       rebin = 3;
     if( temp.Contains("_relIso") )    rebin = 5;
     if( temp.Contains("_jet_puMVA") ) rebin = 5;
+    if( temp.Contains("electron_d0") ) rebin = 2;
+    if( temp.Contains("electron_dZ") ) rebin = 2;
+    if( temp.Contains("muon_d0") ) rebin = 5;
+    if( temp.Contains("muon_dZ") ) rebin = 5;
 
     // if( temp.Contains("_diele_mass_closestZmass") ) rebin = 5;
 
@@ -793,7 +847,7 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
     double bkg_integral = hist_sum->Integral();
     double integral_ratio = data_integral / bkg_integral;
 
-    if( temp.Contains("numPV") ){
+    if( temp.Contains("numPV") || temp.Contains("_PV_") ){
       hist_sum->Scale(integral_ratio);
       for( int iSample=1; iSample<NumSamples; iSample++ ){
 	hist[iSample]->Scale(integral_ratio);
@@ -1036,6 +1090,9 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 
     bool rerange = false;
 
+    if( (temp.Contains("_electron_dZ")) ){ rerange=true; xmin = 0.0; xmax = 0.05; }
+    if( (temp.Contains("_electron_d0")) ){ rerange=true; xmin = 0.0; xmax = 0.05; }
+
     if( (temp.Contains("_jet_csv")) ){ rerange=true; xmin = -0.04; xmax = 1.028; }
     if( (temp.Contains("_HT")) ){ rerange=true; xmin = 100+0.0001; xmax = 1400-0.001; }
     if( (temp.Contains("_mht_pt")) ){ rerange=true; xmin = 0+0.0001; xmax = 200-0.001; }
@@ -1271,6 +1328,15 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
     }
     std::cout << " \\\\ \\hline" << std::endl;  
 
+    printf("%8s", "S/Sqrt(B)");
+    for( int iBin=0; iBin<NumBins; iBin++ ){
+      double tth = hist[NumSamples-1]->GetBinContent(iBin+1);
+      double sumb = hist_sum->GetBinContent(iBin+1);
+      double soversqrtb = ( sumb > 0. ) ? tth / sqrt(sumb) : 0.;
+      printf(" & %6.3f", soversqrtb);
+    }
+    std::cout << " \\\\ \\hline" << std::endl;  
+    
     std::cout << " \\end{tabular} " << std::endl;
 
 
@@ -1778,7 +1844,7 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
       temp_mh.ReplaceAll("h_","");
 
       //// horizontal legend
-      TLegend *legend = new TLegend(0.16,0.80,0.89,0.89);
+      TLegend *legend = new TLegend(0.62,0.60,0.85,0.89);
 
       legend->SetFillColor(kWhite);
       legend->SetLineColor(kWhite);
@@ -1786,12 +1852,14 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
       legend->SetTextFont(42);
       legend->SetTextSize(0.035);
 
-      legend->SetNColumns(5);
+      //legend->SetNColumns(2);
 
       int rebin = 1;
 
       if( temp.Contains("_csv") )       rebin = 3;
       if( temp.Contains("_csv") && (temp.Contains("j3t") || temp.Contains("j3t")) ) rebin = 6;
+      if( temp.Contains("_cmva") )       rebin = 3;
+      if( temp.Contains("_cmva") && (temp.Contains("j3t") || temp.Contains("j3t")) ) rebin = 6;
 
       double total_data = 0;
       double total_bkg  = 0;
@@ -1811,6 +1879,7 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 
 	  TString temp_sys = temp + sys_cat_labels[iSys];
 	  if( temp.Contains("_diLepMass") ) temp_sys = temp;
+	  if( temp.Contains("h_jet_cmva") ) temp_sys.ReplaceAll("h_jet_cmva","h_cmva_jet_cmva");
 
 	  hist_sys[iSample][iSys] = (TH1D*)file[iSample]->Get(temp_sys)->Clone(Form("%s_tmp_sys_jetFlav",temp_sys.Data()));;
 	  hist_sys[iSample][iSys]->Rebin(rebin);
@@ -1921,7 +1990,10 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 
 	hist_bkg_sum_flav[iFlav]->SetFillColor(jetflavcolor[iFlav]);
 
-	legend->AddEntry(hist_bkg_sum_flav[iFlav],jet_flavor_suffix[iFlav],"f");
+	//legend->AddEntry(hist_bkg_sum_flav[iFlav],jet_flavor_suffix[iFlav],"f");
+	if( jet_flavor_suffix[iFlav]=="bFlav" ) legend->AddEntry(hist_bkg_sum_flav[iFlav],"b","f");
+	if( jet_flavor_suffix[iFlav]=="cFlav" ) legend->AddEntry(hist_bkg_sum_flav[iFlav],"c","f");
+	if( jet_flavor_suffix[iFlav]=="lFlav" ) legend->AddEntry(hist_bkg_sum_flav[iFlav],"udsg","f");
       }
       //legend->AddEntry(hist[NumSamples-2],histLabels[NumSamples-2]+Form(" (x%d)",int(scale_ttH+0.0001)),"l");
 
@@ -2074,7 +2146,7 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 	myRatio->GetXaxis()->SetLabelOffset(0.04);
       }
       myRatio->GetXaxis()->SetTitleSize(0.12);
-      myRatio->GetYaxis()->SetTitle("Data/Bkg");
+      myRatio->GetYaxis()->SetTitle("Data/MC");
       myRatio->GetYaxis()->SetTitleSize(0.09);
       myRatio->GetYaxis()->SetTitleOffset(.55);
       myC1->cd(2);
@@ -2097,7 +2169,8 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 
       hist[0]->SetStats(0);
 
-      hist[0]->GetYaxis()->SetTitleOffset(1.2);
+      //hist[0]->GetYaxis()->SetTitleOffset(1.2);
+      hist[0]->GetYaxis()->SetTitleOffset(1.0);
       hist[0]->GetYaxis()->SetTitleSize(0.05);
 
       hist[0]->GetYaxis()->SetTitle("Number of Events");
@@ -2134,6 +2207,12 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 	myRatio->GetXaxis()->SetRangeUser(xmin,xmax);
       }
 
+
+      if( temp.Contains("csv") ){
+	hist[0]->GetYaxis()->SetTitle("Jets/0.024");
+	myRatio->GetXaxis()->SetTitle("CSVv2 Discriminator");
+      }
+      
       // if( temp.Contains("_mass") ){
       //   hist[0]->GetXaxis()->SetRangeUser(40.,140.);
       //   myRatio->GetXaxis()->SetRangeUser(40.,140.);
@@ -2172,9 +2251,9 @@ void makePlots_ttHbb_data2mc( TString dirpostfix_ = "", bool printPDF_ = false, 
 
       legend->Draw();
 
-      LumiInfoLatex.Draw();
-      CMSInfoLatex.Draw();
-      PublishInfoLatex.Draw();
+      LumiInfoLatex2.Draw();
+      CMSInfoLatex2.Draw();
+      PublishInfoLatex2.Draw();
 
       myC1->cd(2);
       myRatio->SetLineWidth(2);
