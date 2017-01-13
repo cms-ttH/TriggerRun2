@@ -118,37 +118,40 @@ class TriggerAnalyzer : public edm::EDAnalyzer {
       //virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
 
       // ----------member data ---------------------------
-  edm::EDGetTokenT<L1GlobalTriggerReadoutRecord> gtReadoutRecordToken;
+  // edm::EDGetTokenT<L1GlobalTriggerReadoutRecord> gtReadoutRecordToken;
 
-  edm::EDGetTokenT <edm::TriggerResults> triggerResultsToken;
-  edm::EDGetTokenT <trigger::TriggerEvent> triggerEventToken;
-  edm::EDGetTokenT <edm::TriggerResults> filterResultsToken;
-  edm::EDGetTokenT <pat::TriggerObjectStandAloneCollection> triggerObjectsToken;
+  // edm::EDGetTokenT <edm::TriggerResults> triggerResultsToken;
+  // edm::EDGetTokenT <trigger::TriggerEvent> triggerEventToken;
+  // edm::EDGetTokenT <edm::TriggerResults> filterResultsToken;
+  // edm::EDGetTokenT <pat::TriggerObjectStandAloneCollection> triggerObjectsToken;
 
   edm::EDGetTokenT <reco::VertexCollection> vertexToken;
   edm::EDGetTokenT <reco::VertexCompositePtrCandidateCollection> secondaryVertexToken;
-  edm::EDGetTokenT <edm::View<pat::Electron> > electronToken;
+  // edm::EDGetTokenT <edm::View<pat::Electron> > electronToken;  // for MVA IDs
+  edm::EDGetTokenT <pat::ElectronCollection> electronToken;
   edm::EDGetTokenT <pat::MuonCollection> muonToken;
   edm::EDGetTokenT <pat::JetCollection> jetToken;
   edm::EDGetTokenT <pat::METCollection> pfMetToken;
-  edm::EDGetTokenT <pat::METCollection> pfMetNoHFToken;
-  edm::EDGetTokenT <pat::METCollection> puppiMetToken;
+  //  edm::EDGetTokenT <pat::METCollection> pfMetNoHFToken;
+  //  edm::EDGetTokenT <pat::METCollection> puppiMetToken;
 
   edm::EDGetTokenT <pat::PackedCandidateCollection> packedpfToken;
 
   edm::EDGetTokenT <reco::BeamSpot> beamspotToken;
-  edm::EDGetTokenT <reco::ConversionCollection> EDMConversionCollectionToken;
+  // edm::EDGetTokenT <reco::ConversionCollection> EDMConversionCollectionToken;
   edm::EDGetTokenT <double> rhoToken;
   edm::EDGetTokenT <reco::GenParticleCollection> mcparicleToken;
   edm::EDGetTokenT <std::vector< PileupSummaryInfo > > puInfoToken;
+
+  edm::EDGetTokenT<reco::GenJetCollection> genJetsToken;
 
   edm::EDGetTokenT <GenEventInfoProduct> genInfoProductToken;
   edm::EDGetTokenT <LHEEventProduct> lheEventProductToken;
 
   edm::EDGetTokenT <l1extra::L1EtMissParticleCollection> l1HTMissToken;
 
-  edm::EDGetTokenT<edm::ValueMap<float> > eleMVAvaluesToken; // values of electron mva
-  edm::EDGetTokenT<edm::ValueMap<int> >   eleMVAcategoriesToken;  // category of electron mva
+  // edm::EDGetTokenT<edm::ValueMap<float> > eleMVAvaluesToken; // values of electron mva
+  // edm::EDGetTokenT<edm::ValueMap<int> >   eleMVAcategoriesToken;  // category of electron mva
   
   const edm::EDGetTokenT<int> genTtbarIdToken_;
 
@@ -204,8 +207,8 @@ class TriggerAnalyzer : public edm::EDAnalyzer {
 
 
   // Declare histograms
-  TH1D *h_hlt;
-  TH1D *h_flt;
+  // TH1D *h_hlt;
+  // TH1D *h_flt;
 
   TH1D* h_numJet;
   TH1D* h_numTag;
@@ -240,24 +243,26 @@ TriggerAnalyzer::TriggerAnalyzer(const edm::ParameterSet& iConfig):
   hltTag = iConfig.getUntrackedParameter("HLTsource",std::string("HLT"));
   filterTag = iConfig.getUntrackedParameter("PATsource",std::string("PAT"));
 
-  gtReadoutRecordToken = consumes <L1GlobalTriggerReadoutRecord> (edm::InputTag(std::string("gtDigis"), std::string(""), std::string("RECO")));
+  // gtReadoutRecordToken = consumes <L1GlobalTriggerReadoutRecord> (edm::InputTag(std::string("gtDigis"), std::string(""), std::string("RECO")));
 
-  triggerResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), hltTag));
-  triggerEventToken = consumes <trigger::TriggerEvent> (edm::InputTag(std::string("hltTriggerSummaryAOD"), std::string(""), hltTag));
-  filterResultsToken  = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), filterTag));
-  triggerObjectsToken = consumes <pat::TriggerObjectStandAloneCollection> (edm::InputTag(std::string("selectedPatTrigger")));
+  // triggerResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), hltTag));
+  // triggerEventToken = consumes <trigger::TriggerEvent> (edm::InputTag(std::string("hltTriggerSummaryAOD"), std::string(""), hltTag));
+  // filterResultsToken  = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), filterTag));
+  // triggerObjectsToken = consumes <pat::TriggerObjectStandAloneCollection> (edm::InputTag(std::string("selectedPatTrigger")));
 
 
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
   secondaryVertexToken = consumes <reco::VertexCompositePtrCandidateCollection> (edm::InputTag(std::string("slimmedSecondaryVertices")));
-  electronToken = consumes <edm::View<pat::Electron> > (edm::InputTag(std::string("slimmedElectrons")));
+  // electronToken = consumes <edm::View<pat::Electron> > (edm::InputTag(std::string("slimmedElectrons")));
+  electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
   muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
+  // jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets"))); // BTV HIP mitigation, no longer needed
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
   pfMetToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
   //pfMetNoHFToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETsNoHF")));
   /// FIXME
-  pfMetNoHFToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
-  puppiMetToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETsPuppi")));
+  //  pfMetNoHFToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
+  //  puppiMetToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETsPuppi")));
 
   packedpfToken = consumes <pat::PackedCandidateCollection> (edm::InputTag(std::string("packedPFCandidates")));
 
@@ -265,7 +270,9 @@ TriggerAnalyzer::TriggerAnalyzer(const edm::ParameterSet& iConfig):
   rhoToken = consumes <double> (edm::InputTag(std::string("fixedGridRhoFastjetAll")));
   mcparicleToken = consumes <reco::GenParticleCollection> (edm::InputTag(std::string("prunedGenParticles")));
   puInfoToken = consumes <std::vector< PileupSummaryInfo > > (edm::InputTag(std::string("slimmedAddPileupInfo")));
-  EDMConversionCollectionToken = consumes <reco::ConversionCollection > (edm::InputTag("reducedEgamma","reducedConversions",""));
+  // EDMConversionCollectionToken = consumes <reco::ConversionCollection > (edm::InputTag("reducedEgamma","reducedConversions",""));
+
+  genJetsToken = consumes <reco::GenJetCollection> (edm::InputTag(std::string("slimmedGenJets")) );
 
   genInfoProductToken = consumes <GenEventInfoProduct> (edm::InputTag(std::string("generator")));
   lheEventProductToken = consumes <LHEEventProduct> (edm::InputTag(std::string("externalLHEProducer")));
@@ -273,8 +280,8 @@ TriggerAnalyzer::TriggerAnalyzer(const edm::ParameterSet& iConfig):
 
   l1HTMissToken = consumes <l1extra::L1EtMissParticleCollection> (edm::InputTag(std::string("l1extraParticles"), std::string("MHT")));
 
-  eleMVAvaluesToken = consumes<edm::ValueMap<float> >(iConfig.getParameter<edm::InputTag>("electronMVAvalues"));
-  eleMVAcategoriesToken = consumes<edm::ValueMap<int> >(iConfig.getParameter<edm::InputTag>("electronMVAcategories"));
+  // eleMVAvaluesToken = consumes<edm::ValueMap<float> >(iConfig.getParameter<edm::InputTag>("electronMVAvalues"));
+  // eleMVAcategoriesToken = consumes<edm::ValueMap<int> >(iConfig.getParameter<edm::InputTag>("electronMVAcategories"));
 
 
   ptmax = 500.;
@@ -319,7 +326,7 @@ TriggerAnalyzer::TriggerAnalyzer(const edm::ParameterSet& iConfig):
 
   miniAODhelper.SetUp(era, insample_, iAnalysisType, isData);
 
-  miniAODhelper.SetJetCorrectorUncertainty();
+  // miniAODhelper.SetJetCorrectorUncertainty();
 
 }
 
@@ -362,347 +369,347 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   if( debug_ ) std::cout << " ====> test 0.1 " << std::endl;
 
-  h_hlt->Fill(0.,1);
-  if( debug_ ) std::cout << " ====> test 0.2 " << std::endl;
+  // h_hlt->Fill(0.,1);
+  // if( debug_ ) std::cout << " ====> test 0.2 " << std::endl;
 
-  h_flt->Fill(0.,1);
-  if( debug_ ) std::cout << " ====> test 0.3 " << std::endl;
+  // h_flt->Fill(0.,1);
+  // if( debug_ ) std::cout << " ====> test 0.3 " << std::endl;
 
-  edm::Handle<L1GlobalTriggerReadoutRecord> gtReadoutRecord;
-  iEvent.getByToken(gtReadoutRecordToken, gtReadoutRecord);
-  if( debug_ ) std::cout << " ====> test 0.4 " << std::endl;
+  // edm::Handle<L1GlobalTriggerReadoutRecord> gtReadoutRecord;
+  // iEvent.getByToken(gtReadoutRecordToken, gtReadoutRecord);
+  // if( debug_ ) std::cout << " ====> test 0.4 " << std::endl;
 
-  edm::Handle<edm::TriggerResults> triggerResults;
-  iEvent.getByToken(triggerResultsToken, triggerResults);
-  if( debug_ ) std::cout << " ====> test 0.5 " << std::endl;
+  // edm::Handle<edm::TriggerResults> triggerResults;
+  // iEvent.getByToken(triggerResultsToken, triggerResults);
+  // if( debug_ ) std::cout << " ====> test 0.5 " << std::endl;
 
-  edm::Handle<trigger::TriggerEvent> triggerEventAOD;
-  iEvent.getByToken(triggerEventToken, triggerEventAOD);
-  if( debug_ ) std::cout << " ====> test 0.6 " << std::endl;
+  // edm::Handle<trigger::TriggerEvent> triggerEventAOD;
+  // iEvent.getByToken(triggerEventToken, triggerEventAOD);
+  // if( debug_ ) std::cout << " ====> test 0.6 " << std::endl;
 
-  edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
-  iEvent.getByToken(triggerObjectsToken, triggerObjects);
+  // edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
+  // iEvent.getByToken(triggerObjectsToken, triggerObjects);
 
-  if( debug_ ) std::cout << " ====> test 1 " << std::endl;
+  // if( debug_ ) std::cout << " ====> test 1 " << std::endl;
 
   // Get Trigger and Event Handles
-  edm::ESHandle<L1GtTriggerMenu> menuRcd;
-  iSetup.get<L1GtTriggerMenuRcd>().get(menuRcd) ;
-  const L1GtTriggerMenu* menu = menuRcd.product();
+  // edm::ESHandle<L1GtTriggerMenu> menuRcd;
+  // iSetup.get<L1GtTriggerMenuRcd>().get(menuRcd) ;
+  // const L1GtTriggerMenu* menu = menuRcd.product();
 
   // vint    l1t_accept;
   // vstring l1t_name;
-  int pass_L1_SingleEG25 = -1;
-  int pass_L1_SingleMu16 = -1;
-  //bool passL1HTT100 = false;
-  if( gtReadoutRecord.isValid() ){
-    const DecisionWord& gtDecisionWord = gtReadoutRecord->decisionWord();
+  // int pass_L1_SingleEG25 = -1;
+  // int pass_L1_SingleMu16 = -1;
+  // //bool passL1HTT100 = false;
+  // if( gtReadoutRecord.isValid() ){
+  //   const DecisionWord& gtDecisionWord = gtReadoutRecord->decisionWord();
 
-    // L1 algos
-    for( CItAlgo algo = menu->gtAlgorithmMap().begin(); algo!=menu->gtAlgorithmMap().end(); ++algo) {
-      int algoBitNumber = (algo->second).algoBitNumber();
+  //   // L1 algos
+  //   for( CItAlgo algo = menu->gtAlgorithmMap().begin(); algo!=menu->gtAlgorithmMap().end(); ++algo) {
+  //     int algoBitNumber = (algo->second).algoBitNumber();
 
-      std::string name = (algo->second).algoName();
-      bool accept = gtDecisionWord.at(algoBitNumber);
-      int prescaleFactor = -1;
+  //     std::string name = (algo->second).algoName();
+  //     bool accept = gtDecisionWord.at(algoBitNumber);
+  //     int prescaleFactor = -1;
 
-      //if( name=="L1_HTT100" && accept ) passL1HTT100 = true;
+  //     //if( name=="L1_HTT100" && accept ) passL1HTT100 = true;
 
-      if( name=="L1_SingleEG25" ) pass_L1_SingleEG25 = ( accept ) ? 1 : 0;
-      if( name=="L1_SingleMu16" ) pass_L1_SingleMu16 = ( accept ) ? 1 : 0;
+  //     if( name=="L1_SingleEG25" ) pass_L1_SingleEG25 = ( accept ) ? 1 : 0;
+  //     if( name=="L1_SingleMu16" ) pass_L1_SingleMu16 = ( accept ) ? 1 : 0;
 
-      // int is_accept = ( accept ) ? 1 : 0;
-      // l1t_accept.push_back(is_accept);
-      // l1t_name.push_back(name);
+  //     // int is_accept = ( accept ) ? 1 : 0;
+  //     // l1t_accept.push_back(is_accept);
+  //     // l1t_name.push_back(name);
 
-      if( accept ) l1talgo_cppath_[name]+=1;
-      if( verbose_ ) std::cout << " =====>  L1T algo: path name = " << (algo->second).algoName() << ",\t prescale = " << prescaleFactor << ",\t pass = " << gtDecisionWord.at(algoBitNumber) << std::endl; 
-    }
-  }
+  //     if( accept ) l1talgo_cppath_[name]+=1;
+  //     if( verbose_ ) std::cout << " =====>  L1T algo: path name = " << (algo->second).algoName() << ",\t prescale = " << prescaleFactor << ",\t pass = " << gtDecisionWord.at(algoBitNumber) << std::endl; 
+  //   }
+  // }
 
-  if( debug_ ) std::cout << " ====> test 2 " << std::endl;
+  // if( debug_ ) std::cout << " ====> test 2 " << std::endl;
 
-  eve->pass_L1_SingleEG25_ = pass_L1_SingleEG25;
-  eve->pass_L1_SingleMu16_ = pass_L1_SingleMu16;
+  // eve->pass_L1_SingleEG25_ = pass_L1_SingleEG25;
+  // eve->pass_L1_SingleMu16_ = pass_L1_SingleMu16;
   //eve->l1t_accept_ = l1t_accept;
   //eve->l1t_name_   = l1t_name;
 
 
 
-  std::vector<TLorentzVector> triggerObjects_L1SingleEG25;
-  std::vector<TLorentzVector> triggerObjects_hltEle;
+  // std::vector<TLorentzVector> triggerObjects_L1SingleEG25;
+  // std::vector<TLorentzVector> triggerObjects_hltEle;
 
-  std::vector<TLorentzVector> triggerObjects_hltJet30;
-  std::vector<TLorentzVector> triggerObjects_hltBtagJet30;
-  std::vector<TLorentzVector> triggerObjects_hltPFHT200Jet30;
+  // std::vector<TLorentzVector> triggerObjects_hltJet30;
+  // std::vector<TLorentzVector> triggerObjects_hltBtagJet30;
+  // std::vector<TLorentzVector> triggerObjects_hltPFHT200Jet30;
 
-  std::vector<std::string> vec_hltEle27WP85Gsf_filter;
+  // std::vector<std::string> vec_hltEle27WP85Gsf_filter;
 
-  std::vector<int> vec_hltPFHT200Jet30_id;
+  // std::vector<int> vec_hltPFHT200Jet30_id;
 
-  if( triggerObjects.isValid() && triggerResults.isValid() ){
-    const edm::TriggerNames &names = iEvent.triggerNames(*triggerResults);
+  // if( triggerObjects.isValid() && triggerResults.isValid() ){
+  //   const edm::TriggerNames &names = iEvent.triggerNames(*triggerResults);
 
-    for (pat::TriggerObjectStandAlone obj : *triggerObjects) { // note: not "const &" since we want to call unpackPathNames
-      obj.unpackPathNames(names);
+  //   for (pat::TriggerObjectStandAlone obj : *triggerObjects) { // note: not "const &" since we want to call unpackPathNames
+  //     obj.unpackPathNames(names);
  
-      // Print trigger object collection and type
+  //     // Print trigger object collection and type
       
-      std::string collectionName = std::string( obj.collection() );
+  //     std::string collectionName = std::string( obj.collection() );
 
-      TLorentzVector obj_TLV;
-      obj_TLV.SetPxPyPzE( obj.px(), obj.py(), obj.pz(), obj.energy());
+  //     TLorentzVector obj_TLV;
+  //     obj_TLV.SetPxPyPzE( obj.px(), obj.py(), obj.pz(), obj.energy());
 
-      for (unsigned h = 0; h < obj.filterLabels().size(); ++h){
+  //     for (unsigned h = 0; h < obj.filterLabels().size(); ++h){
 
-	if( obj.filterLabels()[h]=="hltL1sL1SingleEG25" ) triggerObjects_L1SingleEG25.push_back(obj_TLV);
+  // 	if( obj.filterLabels()[h]=="hltL1sL1SingleEG25" ) triggerObjects_L1SingleEG25.push_back(obj_TLV);
 
-	if( obj.filterLabels()[h]=="hltL1sL1SingleEG25" ||
-	    obj.filterLabels()[h]=="hltL1sL1SingleIsoEG22erOrSingleEG25" ||
-	    obj.filterLabels()[h]=="hltL1sL1SingleEG20ORSingleIsoEG18erORSingleIsoEG20ORSingleIsoEG20erORSingleIsoEG22erORSingleEG25" ||
-	    obj.filterLabels()[h]=="hltL1EG25Ele27WP85GsfTrackIsoFilter" ||
-	    obj.filterLabels()[h]=="hltEle27WPLooseGsfTrackIsoFilter" ||
-	    obj.filterLabels()[h]=="hltEle23WPLooseGsfTrackIsoFilter" ||
-	    obj.filterLabels()[h]=="hltL1sL1SingleMu16" ||
-	    obj.filterLabels()[h]=="hltL3crIsoL1sMu16L1f0L2f10QL3f20QL3trkIsoFiltered0p09" ||
-	    obj.filterLabels()[h].find("hltL1sL1EG25erHTT")!=std::string::npos ||
-	    obj.filterLabels()[h]=="hltL1sL1EG25erHTT125" ||
-	    obj.filterLabels()[h]=="hltL1EGHttEle27WPLooseGsfTrackIsoFilter" ||
-	    obj.filterLabels()[h]=="hltL1EGHttEle27WP85GsfTrackIsoFilter" ){
-	  triggerObjects_hltEle.push_back(obj_TLV);
-	  vec_hltEle27WP85Gsf_filter.push_back(obj.filterLabels()[h]);
-	}
+  // 	if( obj.filterLabels()[h]=="hltL1sL1SingleEG25" ||
+  // 	    obj.filterLabels()[h]=="hltL1sL1SingleIsoEG22erOrSingleEG25" ||
+  // 	    obj.filterLabels()[h]=="hltL1sL1SingleEG20ORSingleIsoEG18erORSingleIsoEG20ORSingleIsoEG20erORSingleIsoEG22erORSingleEG25" ||
+  // 	    obj.filterLabels()[h]=="hltL1EG25Ele27WP85GsfTrackIsoFilter" ||
+  // 	    obj.filterLabels()[h]=="hltEle27WPLooseGsfTrackIsoFilter" ||
+  // 	    obj.filterLabels()[h]=="hltEle23WPLooseGsfTrackIsoFilter" ||
+  // 	    obj.filterLabels()[h]=="hltL1sL1SingleMu16" ||
+  // 	    obj.filterLabels()[h]=="hltL3crIsoL1sMu16L1f0L2f10QL3f20QL3trkIsoFiltered0p09" ||
+  // 	    obj.filterLabels()[h].find("hltL1sL1EG25erHTT")!=std::string::npos ||
+  // 	    obj.filterLabels()[h]=="hltL1sL1EG25erHTT125" ||
+  // 	    obj.filterLabels()[h]=="hltL1EGHttEle27WPLooseGsfTrackIsoFilter" ||
+  // 	    obj.filterLabels()[h]=="hltL1EGHttEle27WP85GsfTrackIsoFilter" ){
+  // 	  triggerObjects_hltEle.push_back(obj_TLV);
+  // 	  vec_hltEle27WP85Gsf_filter.push_back(obj.filterLabels()[h]);
+  // 	}
 
-	if( obj.filterLabels()[h]=="hltPFHT200Jet30" ){
-	  triggerObjects_hltPFHT200Jet30.push_back(obj_TLV);
-	  vec_hltPFHT200Jet30_id.push_back(obj.filterIds()[h]);
-	}
+  // 	if( obj.filterLabels()[h]=="hltPFHT200Jet30" ){
+  // 	  triggerObjects_hltPFHT200Jet30.push_back(obj_TLV);
+  // 	  vec_hltPFHT200Jet30_id.push_back(obj.filterIds()[h]);
+  // 	}
 
-	if( obj.filterLabels()[h]=="hltJetFilterSingleTopEle27" ) triggerObjects_hltJet30.push_back(obj_TLV);
-	if( obj.filterLabels()[h]=="hltCSVFilterSingleTop" ) triggerObjects_hltBtagJet30.push_back(obj_TLV);
+  // 	if( obj.filterLabels()[h]=="hltJetFilterSingleTopEle27" ) triggerObjects_hltJet30.push_back(obj_TLV);
+  // 	if( obj.filterLabels()[h]=="hltCSVFilterSingleTop" ) triggerObjects_hltBtagJet30.push_back(obj_TLV);
 
-	if( (verbose_ && dumpHLT_) || (false && numEvents_<200) ) printf(" obj, filter %d: pt = %4.1f, filter = %s \n", h, obj.pt(), (obj.filterLabels()[h]).c_str());
-      }
-    }
-  }
-
-
-  std::vector<double> vec_hltL1SingleEG25_pt;
-  std::vector<double> vec_hltL1SingleEG25_eta;
-  std::vector<double> vec_hltL1SingleEG25_phi;
-  for( int iL1TObj = 0; iL1TObj < int(triggerObjects_L1SingleEG25.size()); iL1TObj++ ){ 
-    vec_hltL1SingleEG25_pt.push_back(triggerObjects_L1SingleEG25[iL1TObj].Pt());
-    vec_hltL1SingleEG25_eta.push_back(triggerObjects_L1SingleEG25[iL1TObj].Eta());
-    vec_hltL1SingleEG25_phi.push_back(triggerObjects_L1SingleEG25[iL1TObj].Phi());
-  }
-  eve->hltL1SingleEG25_pt_  = vec_hltL1SingleEG25_pt;
-  eve->hltL1SingleEG25_eta_ = vec_hltL1SingleEG25_eta;
-  eve->hltL1SingleEG25_phi_ = vec_hltL1SingleEG25_phi;
-
-  std::vector<double> vec_hltEle27WP85Gsf_pt;
-  std::vector<double> vec_hltEle27WP85Gsf_eta;
-  std::vector<double> vec_hltEle27WP85Gsf_phi;
-  for( int iHLTObj = 0; iHLTObj < int(triggerObjects_hltEle.size()); iHLTObj++ ){ 
-    vec_hltEle27WP85Gsf_pt.push_back(triggerObjects_hltEle[iHLTObj].Pt());
-    vec_hltEle27WP85Gsf_eta.push_back(triggerObjects_hltEle[iHLTObj].Eta());
-    vec_hltEle27WP85Gsf_phi.push_back(triggerObjects_hltEle[iHLTObj].Phi());
-  }
-  eve->hltEle27WP85Gsf_pt_  = vec_hltEle27WP85Gsf_pt;
-  eve->hltEle27WP85Gsf_eta_ = vec_hltEle27WP85Gsf_eta;
-  eve->hltEle27WP85Gsf_phi_ = vec_hltEle27WP85Gsf_phi;
-  eve->hltEle27WP85Gsf_filter_ = vec_hltEle27WP85Gsf_filter;
+  // 	if( (verbose_ && dumpHLT_) || (false && numEvents_<200) ) printf(" obj, filter %d: pt = %4.1f, filter = %s \n", h, obj.pt(), (obj.filterLabels()[h]).c_str());
+  //     }
+  //   }
+  // }
 
 
-  std::vector<double> vec_hltJet30_pt;
-  std::vector<double> vec_hltJet30_eta;
-  std::vector<double> vec_hltJet30_phi;
-  for( int iHLTObj = 0; iHLTObj < int(triggerObjects_hltJet30.size()); iHLTObj++ ){ 
-    vec_hltJet30_pt.push_back(triggerObjects_hltJet30[iHLTObj].Pt());
-    vec_hltJet30_eta.push_back(triggerObjects_hltJet30[iHLTObj].Eta());
-    vec_hltJet30_phi.push_back(triggerObjects_hltJet30[iHLTObj].Phi());
-  }
-  eve->hltJet30_pt_  = vec_hltJet30_pt;
-  eve->hltJet30_eta_ = vec_hltJet30_eta;
-  eve->hltJet30_phi_ = vec_hltJet30_phi;
+  // std::vector<double> vec_hltL1SingleEG25_pt;
+  // std::vector<double> vec_hltL1SingleEG25_eta;
+  // std::vector<double> vec_hltL1SingleEG25_phi;
+  // for( int iL1TObj = 0; iL1TObj < int(triggerObjects_L1SingleEG25.size()); iL1TObj++ ){ 
+  //   vec_hltL1SingleEG25_pt.push_back(triggerObjects_L1SingleEG25[iL1TObj].Pt());
+  //   vec_hltL1SingleEG25_eta.push_back(triggerObjects_L1SingleEG25[iL1TObj].Eta());
+  //   vec_hltL1SingleEG25_phi.push_back(triggerObjects_L1SingleEG25[iL1TObj].Phi());
+  // }
+  // eve->hltL1SingleEG25_pt_  = vec_hltL1SingleEG25_pt;
+  // eve->hltL1SingleEG25_eta_ = vec_hltL1SingleEG25_eta;
+  // eve->hltL1SingleEG25_phi_ = vec_hltL1SingleEG25_phi;
+
+  // std::vector<double> vec_hltEle27WP85Gsf_pt;
+  // std::vector<double> vec_hltEle27WP85Gsf_eta;
+  // std::vector<double> vec_hltEle27WP85Gsf_phi;
+  // for( int iHLTObj = 0; iHLTObj < int(triggerObjects_hltEle.size()); iHLTObj++ ){ 
+  //   vec_hltEle27WP85Gsf_pt.push_back(triggerObjects_hltEle[iHLTObj].Pt());
+  //   vec_hltEle27WP85Gsf_eta.push_back(triggerObjects_hltEle[iHLTObj].Eta());
+  //   vec_hltEle27WP85Gsf_phi.push_back(triggerObjects_hltEle[iHLTObj].Phi());
+  // }
+  // eve->hltEle27WP85Gsf_pt_  = vec_hltEle27WP85Gsf_pt;
+  // eve->hltEle27WP85Gsf_eta_ = vec_hltEle27WP85Gsf_eta;
+  // eve->hltEle27WP85Gsf_phi_ = vec_hltEle27WP85Gsf_phi;
+  // eve->hltEle27WP85Gsf_filter_ = vec_hltEle27WP85Gsf_filter;
 
 
-  std::vector<double> vec_hltBtagJet30_pt;
-  std::vector<double> vec_hltBtagJet30_eta;
-  std::vector<double> vec_hltBtagJet30_phi;
-  for( int iHLTObj = 0; iHLTObj < int(triggerObjects_hltBtagJet30.size()); iHLTObj++ ){ 
-    vec_hltBtagJet30_pt.push_back(triggerObjects_hltBtagJet30[iHLTObj].Pt());
-    vec_hltBtagJet30_eta.push_back(triggerObjects_hltBtagJet30[iHLTObj].Eta());
-    vec_hltBtagJet30_phi.push_back(triggerObjects_hltBtagJet30[iHLTObj].Phi());
-  }
-  eve->hltBtagJet30_pt_  = vec_hltBtagJet30_pt;
-  eve->hltBtagJet30_eta_ = vec_hltBtagJet30_eta;
-  eve->hltBtagJet30_phi_ = vec_hltBtagJet30_phi;
+  // std::vector<double> vec_hltJet30_pt;
+  // std::vector<double> vec_hltJet30_eta;
+  // std::vector<double> vec_hltJet30_phi;
+  // for( int iHLTObj = 0; iHLTObj < int(triggerObjects_hltJet30.size()); iHLTObj++ ){ 
+  //   vec_hltJet30_pt.push_back(triggerObjects_hltJet30[iHLTObj].Pt());
+  //   vec_hltJet30_eta.push_back(triggerObjects_hltJet30[iHLTObj].Eta());
+  //   vec_hltJet30_phi.push_back(triggerObjects_hltJet30[iHLTObj].Phi());
+  // }
+  // eve->hltJet30_pt_  = vec_hltJet30_pt;
+  // eve->hltJet30_eta_ = vec_hltJet30_eta;
+  // eve->hltJet30_phi_ = vec_hltJet30_phi;
 
 
-  std::vector<double> vec_hltPFHT200Jet30_pt;
-  std::vector<double> vec_hltPFHT200Jet30_eta;
-  std::vector<double> vec_hltPFHT200Jet30_phi;
-  for( int iHLTObj = 0; iHLTObj < int(triggerObjects_hltPFHT200Jet30.size()); iHLTObj++ ){ 
-    vec_hltPFHT200Jet30_pt.push_back(triggerObjects_hltPFHT200Jet30[iHLTObj].Pt());
-    vec_hltPFHT200Jet30_eta.push_back(triggerObjects_hltPFHT200Jet30[iHLTObj].Eta());
-    vec_hltPFHT200Jet30_phi.push_back(triggerObjects_hltPFHT200Jet30[iHLTObj].Phi());
-  }
-  eve->hltPFHT200Jet30_pt_  = vec_hltPFHT200Jet30_pt;
-  eve->hltPFHT200Jet30_eta_ = vec_hltPFHT200Jet30_eta;
-  eve->hltPFHT200Jet30_phi_ = vec_hltPFHT200Jet30_phi;
-  eve->hltPFHT200Jet30_id_  = vec_hltPFHT200Jet30_id;
+  // std::vector<double> vec_hltBtagJet30_pt;
+  // std::vector<double> vec_hltBtagJet30_eta;
+  // std::vector<double> vec_hltBtagJet30_phi;
+  // for( int iHLTObj = 0; iHLTObj < int(triggerObjects_hltBtagJet30.size()); iHLTObj++ ){ 
+  //   vec_hltBtagJet30_pt.push_back(triggerObjects_hltBtagJet30[iHLTObj].Pt());
+  //   vec_hltBtagJet30_eta.push_back(triggerObjects_hltBtagJet30[iHLTObj].Eta());
+  //   vec_hltBtagJet30_phi.push_back(triggerObjects_hltBtagJet30[iHLTObj].Phi());
+  // }
+  // eve->hltBtagJet30_pt_  = vec_hltBtagJet30_pt;
+  // eve->hltBtagJet30_eta_ = vec_hltBtagJet30_eta;
+  // eve->hltBtagJet30_phi_ = vec_hltBtagJet30_phi;
+
+
+  // std::vector<double> vec_hltPFHT200Jet30_pt;
+  // std::vector<double> vec_hltPFHT200Jet30_eta;
+  // std::vector<double> vec_hltPFHT200Jet30_phi;
+  // for( int iHLTObj = 0; iHLTObj < int(triggerObjects_hltPFHT200Jet30.size()); iHLTObj++ ){ 
+  //   vec_hltPFHT200Jet30_pt.push_back(triggerObjects_hltPFHT200Jet30[iHLTObj].Pt());
+  //   vec_hltPFHT200Jet30_eta.push_back(triggerObjects_hltPFHT200Jet30[iHLTObj].Eta());
+  //   vec_hltPFHT200Jet30_phi.push_back(triggerObjects_hltPFHT200Jet30[iHLTObj].Phi());
+  // }
+  // eve->hltPFHT200Jet30_pt_  = vec_hltPFHT200Jet30_pt;
+  // eve->hltPFHT200Jet30_eta_ = vec_hltPFHT200Jet30_eta;
+  // eve->hltPFHT200Jet30_phi_ = vec_hltPFHT200Jet30_phi;
+  // eve->hltPFHT200Jet30_id_  = vec_hltPFHT200Jet30_id;
 
 
   if( debug_ ) std::cout << " ====> test 3 " << std::endl;
 
   ////
   
-  int pass_HLT_Ele27_eta2p1_WP75_Gsf_v = -1;
-  int pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v = -1;
-  int pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v = -1;
-  int pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v = -1;
+  // int pass_HLT_Ele27_eta2p1_WP75_Gsf_v = -1;
+  // int pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v = -1;
+  // int pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v = -1;
+  // int pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v = -1;
 
-  int pass_HLT_Ele25WP60_SC4_Mass55_v = -1;
-  int pass_HLT_Ele27_WP85_Gsf_v = -1;
-  int pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v = -1;
-
-
-  int pass_HLT_Ele27_eta2p1_WPTight_Gsf_v = -1;
-  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v = -1;
-  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v = -1;
-  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v = -1;
-  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v = -1;
-
-  int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v = -1;
+  // int pass_HLT_Ele25WP60_SC4_Mass55_v = -1;
+  // int pass_HLT_Ele27_WP85_Gsf_v = -1;
+  // int pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v = -1;
 
 
-  int pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v = -1;
-  int pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v = -1;
-  int pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v = -1;
-  int pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v = -1;
-  int pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v = -1;
+  // int pass_HLT_Ele27_eta2p1_WPTight_Gsf_v = -1;
+  // int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v = -1;
+  // int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v = -1;
+  // int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v = -1;
+  // int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v = -1;
 
-  int pass_HLT_IsoMu20_v = -1;
-  int pass_HLT_IsoMu18_v = -1;
-  int pass_HLT_IsoMu17_eta2p1_v = -1;
-  int pass_HLT_IsoTkMu20_v = -1;
-  int pass_HLT_Ele23_WPLoose_Gsf_v = -1;
+  // int pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v = -1;
 
-  int pass_HLT_Ele22_eta2p1_WP75_Gsf_v = -1;
-  int pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v = -1;
-  int pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v = -1;
-  int pass_HLT_PFHT450_SixJet40_PFBTagCSV_v = -1;
-  int pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v = -1;
+
+  // int pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v = -1;
+  // int pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v = -1;
+  // int pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v = -1;
+  // int pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v = -1;
+  // int pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v = -1;
+
+  // int pass_HLT_IsoMu20_v = -1;
+  // int pass_HLT_IsoMu18_v = -1;
+  // int pass_HLT_IsoMu17_eta2p1_v = -1;
+  // int pass_HLT_IsoTkMu20_v = -1;
+  // int pass_HLT_Ele23_WPLoose_Gsf_v = -1;
+
+  // int pass_HLT_Ele22_eta2p1_WP75_Gsf_v = -1;
+  // int pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v = -1;
+  // int pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v = -1;
+  // int pass_HLT_PFHT450_SixJet40_PFBTagCSV_v = -1;
+  // int pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v = -1;
 
 
   //////
 
-  if( triggerResults.isValid() ){
-    std::vector<std::string> triggerNames = hlt_config_.triggerNames();
+  // if( triggerResults.isValid() ){
+  //   std::vector<std::string> triggerNames = hlt_config_.triggerNames();
 
-    for( unsigned int iPath=0; iPath<triggerNames.size(); iPath++ ){
-      std::string pathName = triggerNames[iPath];
-      unsigned int hltIndex = hlt_config_.triggerIndex(pathName);
+  //   for( unsigned int iPath=0; iPath<triggerNames.size(); iPath++ ){
+  //     std::string pathName = triggerNames[iPath];
+  //     unsigned int hltIndex = hlt_config_.triggerIndex(pathName);
 
-      if( hltIndex >= triggerResults->size() ) continue;
+  //     if( hltIndex >= triggerResults->size() ) continue;
 
-      int accept = triggerResults->accept(hltIndex);
-      int prescale = -1;//hlt_config_.prescaleValue(iEvent, iSetup, pathName);
+  //     int accept = triggerResults->accept(hltIndex);
+  //     int prescale = -1;//hlt_config_.prescaleValue(iEvent, iSetup, pathName);
 
-      if( verbose_ && dumpHLT_ ) std::cout << " =====>  HLT: path name = " << pathName << ",\t prescale = " << prescale << ",\t pass = " << accept << std::endl; 
+  //     if( verbose_ && dumpHLT_ ) std::cout << " =====>  HLT: path name = " << pathName << ",\t prescale = " << prescale << ",\t pass = " << accept << std::endl; 
 
-      std::string pathNameNoVer = hlt_config_.removeVersion(pathName);
+  //     std::string pathNameNoVer = hlt_config_.removeVersion(pathName);
 
-      if( accept ) hlt_cppath_[pathNameNoVer]+=1;
-
-
-      if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WP75_Gsf_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v")!=std::string::npos )        pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v")!=std::string::npos )  pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v = (accept) ? 1 : 0;
-
-      if( pathName.find("HLT_Ele25WP60_SC4_Mass55_v")!=std::string::npos )        pass_HLT_Ele25WP60_SC4_Mass55_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Ele27_WP85_Gsf_v")!=std::string::npos )              pass_HLT_Ele27_WP85_Gsf_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Ele27_eta2p1_WP85_Gsf_HT200_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v = (accept) ? 1 : 0;
-
-      if( pathName.find("HLT_Ele27_eta2p1_WPTight_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WPTight_Gsf_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v")!=std::string::npos )        pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v")!=std::string::npos )  pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v = (accept) ? 1 : 0;
-
-      if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v = (accept) ? 1 : 0;
-
-      if( pathName.find("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")!=std::string::npos ) pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v")!=std::string::npos ) pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v")!=std::string::npos ) pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")!=std::string::npos ) pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")!=std::string::npos ) pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v = (accept) ? 1 : 0;
-
-      if( pathName.find("HLT_IsoMu20_v")!=std::string::npos ) pass_HLT_IsoMu20_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_IsoMu18_v")!=std::string::npos ) pass_HLT_IsoMu18_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_IsoMu17_eta2p1_v")!=std::string::npos ) pass_HLT_IsoMu17_eta2p1_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_IsoTkMu20_v")!=std::string::npos ) pass_HLT_IsoTkMu20_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_Ele23_WPLoose_Gsf_v")!=std::string::npos ) pass_HLT_Ele23_WPLoose_Gsf_v = (accept) ? 1 : 0;
-
-      if( pathName.find("HLT_Ele22_eta2p1_WP75_Gsf_v")!=std::string::npos ) pass_HLT_Ele22_eta2p1_WP75_Gsf_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_PFHT450_SixJet40_PFBTagCSV0p72_v")!=std::string::npos ) pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v")!=std::string::npos ) pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_PFHT450_SixJet40_PFBTagCSV_v")!=std::string::npos ) pass_HLT_PFHT450_SixJet40_PFBTagCSV_v = (accept) ? 1 : 0;
-      if( pathName.find("HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v")!=std::string::npos ) pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v = (accept) ? 1 : 0;
+  //     if( accept ) hlt_cppath_[pathNameNoVer]+=1;
 
 
-      if( accept ){
-	TAxis * axis = h_hlt->GetXaxis();
-	if( !axis ) continue;
-	int bin_num = axis->FindBin(pathNameNoVer.c_str());
-	int bn = bin_num - 1;
-	h_hlt->Fill(bn, 1);
-      }
-    }
-  }
-  else{
-    std::cout << "Trigger results not valid for tag " << hltTag << std::endl;
-  }
+  //     if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WP75_Gsf_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v")!=std::string::npos )        pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v")!=std::string::npos )  pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v = (accept) ? 1 : 0;
+
+  //     if( pathName.find("HLT_Ele25WP60_SC4_Mass55_v")!=std::string::npos )        pass_HLT_Ele25WP60_SC4_Mass55_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Ele27_WP85_Gsf_v")!=std::string::npos )              pass_HLT_Ele27_WP85_Gsf_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Ele27_eta2p1_WP85_Gsf_HT200_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v = (accept) ? 1 : 0;
+
+  //     if( pathName.find("HLT_Ele27_eta2p1_WPTight_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WPTight_Gsf_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_v")!=std::string::npos )                          pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v")!=std::string::npos )        pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v")!=std::string::npos )  pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v = (accept) ? 1 : 0;
+
+  //     if( pathName.find("HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v")!=std::string::npos ) pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v = (accept) ? 1 : 0;
+
+  //     if( pathName.find("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")!=std::string::npos ) pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v")!=std::string::npos ) pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v")!=std::string::npos ) pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")!=std::string::npos ) pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")!=std::string::npos ) pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v = (accept) ? 1 : 0;
+
+  //     if( pathName.find("HLT_IsoMu20_v")!=std::string::npos ) pass_HLT_IsoMu20_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_IsoMu18_v")!=std::string::npos ) pass_HLT_IsoMu18_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_IsoMu17_eta2p1_v")!=std::string::npos ) pass_HLT_IsoMu17_eta2p1_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_IsoTkMu20_v")!=std::string::npos ) pass_HLT_IsoTkMu20_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_Ele23_WPLoose_Gsf_v")!=std::string::npos ) pass_HLT_Ele23_WPLoose_Gsf_v = (accept) ? 1 : 0;
+
+  //     if( pathName.find("HLT_Ele22_eta2p1_WP75_Gsf_v")!=std::string::npos ) pass_HLT_Ele22_eta2p1_WP75_Gsf_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_PFHT450_SixJet40_PFBTagCSV0p72_v")!=std::string::npos ) pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v")!=std::string::npos ) pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_PFHT450_SixJet40_PFBTagCSV_v")!=std::string::npos ) pass_HLT_PFHT450_SixJet40_PFBTagCSV_v = (accept) ? 1 : 0;
+  //     if( pathName.find("HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v")!=std::string::npos ) pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v = (accept) ? 1 : 0;
+
+
+  //     if( accept ){
+  // 	TAxis * axis = h_hlt->GetXaxis();
+  // 	if( !axis ) continue;
+  // 	int bin_num = axis->FindBin(pathNameNoVer.c_str());
+  // 	int bn = bin_num - 1;
+  // 	h_hlt->Fill(bn, 1);
+  //     }
+  //   }
+  // }
+  // else{
+  //   std::cout << "Trigger results not valid for tag " << hltTag << std::endl;
+  // }
 
 
 
 
-  eve->pass_HLT_Ele27_eta2p1_WP75_Gsf_v_                          = pass_HLT_Ele27_eta2p1_WP75_Gsf_v;
-  eve->pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v_ = pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v;
-  eve->pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v_        = pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v;
-  eve->pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v_  = pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v;
+  // eve->pass_HLT_Ele27_eta2p1_WP75_Gsf_v_                          = pass_HLT_Ele27_eta2p1_WP75_Gsf_v;
+  // eve->pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v_ = pass_HLT_Ele27_eta2p1_WP75_Gsf_CentralPFJet30_BTagCSV07_v;
+  // eve->pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v_        = pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet30_v;
+  // eve->pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v_  = pass_HLT_Ele27_eta2p1_WP75_Gsf_TriCentralPFJet50_40_30_v;
 
-  eve->pass_HLT_Ele25WP60_SC4_Mass55_v_        = pass_HLT_Ele25WP60_SC4_Mass55_v;
-  eve->pass_HLT_Ele27_WP85_Gsf_v_              = pass_HLT_Ele27_WP85_Gsf_v;
-  eve->pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v_ = pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v;
+  // eve->pass_HLT_Ele25WP60_SC4_Mass55_v_        = pass_HLT_Ele25WP60_SC4_Mass55_v;
+  // eve->pass_HLT_Ele27_WP85_Gsf_v_              = pass_HLT_Ele27_WP85_Gsf_v;
+  // eve->pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v_ = pass_HLT_Ele27_eta2p1_WP85_Gsf_HT200_v;
 
-  eve->pass_HLT_Ele27_eta2p1_WPTight_Gsf_v_                          = pass_HLT_Ele27_eta2p1_WPTight_Gsf_v;
-  eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v_                          = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v;
-  eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v_ = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v;
-  eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v_        = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v;
-  eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v_  = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v;
+  // eve->pass_HLT_Ele27_eta2p1_WPTight_Gsf_v_                          = pass_HLT_Ele27_eta2p1_WPTight_Gsf_v;
+  // eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v_                          = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_v;
+  // eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v_ = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_CentralPFJet30_BTagCSV07_v;
+  // eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v_        = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v;
+  // eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v_  = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet50_40_30_v;
 
-  eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v_ = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v;
+  // eve->pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v_ = pass_HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v;
 
 
-  eve->pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v;
-  eve->pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v;
-  eve->pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_ = pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v;
-  eve->pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ = pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v;
-  eve->pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_ = pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v;
+  // eve->pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = pass_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v;
+  // eve->pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = pass_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v;
+  // eve->pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_ = pass_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v;
+  // eve->pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ = pass_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v;
+  // eve->pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_ = pass_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v;
 
-  eve->pass_HLT_IsoMu20_v_ = pass_HLT_IsoMu20_v;
-  eve->pass_HLT_IsoMu18_v_ = pass_HLT_IsoMu18_v;
-  eve->pass_HLT_IsoMu17_eta2p1_v_ = pass_HLT_IsoMu17_eta2p1_v;
-  eve->pass_HLT_IsoTkMu20_v_ = pass_HLT_IsoTkMu20_v;
-  eve->pass_HLT_Ele23_WPLoose_Gsf_v_ = pass_HLT_Ele23_WPLoose_Gsf_v;
+  // eve->pass_HLT_IsoMu20_v_ = pass_HLT_IsoMu20_v;
+  // eve->pass_HLT_IsoMu18_v_ = pass_HLT_IsoMu18_v;
+  // eve->pass_HLT_IsoMu17_eta2p1_v_ = pass_HLT_IsoMu17_eta2p1_v;
+  // eve->pass_HLT_IsoTkMu20_v_ = pass_HLT_IsoTkMu20_v;
+  // eve->pass_HLT_Ele23_WPLoose_Gsf_v_ = pass_HLT_Ele23_WPLoose_Gsf_v;
 
-  eve->pass_HLT_Ele22_eta2p1_WP75_Gsf_v_ = pass_HLT_Ele22_eta2p1_WP75_Gsf_v;
-  eve->pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v_ = pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v;
-  eve->pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v_ = pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v;
-  eve->pass_HLT_PFHT450_SixJet40_PFBTagCSV_v_ = pass_HLT_PFHT450_SixJet40_PFBTagCSV_v;
-  eve->pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v_ = pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v;
+  // eve->pass_HLT_Ele22_eta2p1_WP75_Gsf_v_ = pass_HLT_Ele22_eta2p1_WP75_Gsf_v;
+  // eve->pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v_ = pass_HLT_PFHT450_SixJet40_PFBTagCSV0p72_v;
+  // eve->pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v_ = pass_HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v;
+  // eve->pass_HLT_PFHT450_SixJet40_PFBTagCSV_v_ = pass_HLT_PFHT450_SixJet40_PFBTagCSV_v;
+  // eve->pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v_ = pass_HLT_PFHT400_SixJet30_BTagCSV0p5_2PFBTagCSV_v;
 
 
   if( debug_ ) std::cout << " ====> test 4 " << std::endl;
@@ -715,51 +722,51 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   if( debug_ ) std::cout << " ====> test 6 " << std::endl;
 
-  edm::Handle<edm::TriggerResults> filterResults;
-  iEvent.getByToken(filterResultsToken, filterResults);
+  // edm::Handle<edm::TriggerResults> filterResults;
+  // iEvent.getByToken(filterResultsToken, filterResults);
 
-  vint    flt_accept;
-  vstring flt_name;
-  if( filterResults.isValid() ){
-    std::vector<std::string> triggerNames = filter_config_.triggerNames();
+  // vint    flt_accept;
+  // vstring flt_name;
+  // if( filterResults.isValid() ){
+  //   std::vector<std::string> triggerNames = filter_config_.triggerNames();
 
-    for( unsigned int iPath=0; iPath<triggerNames.size(); iPath++ ){
-      std::string pathName = triggerNames[iPath];
-      unsigned int hltIndex = filter_config_.triggerIndex(pathName);
+  //   for( unsigned int iPath=0; iPath<triggerNames.size(); iPath++ ){
+  //     std::string pathName = triggerNames[iPath];
+  //     unsigned int hltIndex = filter_config_.triggerIndex(pathName);
 
-      unsigned int filterResultsSize = filterResults->size();
+  //     unsigned int filterResultsSize = filterResults->size();
 
-      if( hltIndex >= filterResultsSize ) continue;
+  //     if( hltIndex >= filterResultsSize ) continue;
 
-      int accept = filterResults->accept(hltIndex);
+  //     int accept = filterResults->accept(hltIndex);
 
-      int prescale = -1;//filter_config_.prescaleValue(iEvent, iSetup, pathName);
+  //     int prescale = -1;//filter_config_.prescaleValue(iEvent, iSetup, pathName);
 
-      if( verbose_ && dumpHLT_ ) std::cout << " =====>  Filter: path name = " << pathName << ",\t prescale = " << prescale << ",\t pass = " << accept << std::endl; 
+  //     if( verbose_ && dumpHLT_ ) std::cout << " =====>  Filter: path name = " << pathName << ",\t prescale = " << prescale << ",\t pass = " << accept << std::endl; 
 
-      std::string pathNameNoVer = filter_config_.removeVersion(pathName);
+  //     std::string pathNameNoVer = filter_config_.removeVersion(pathName);
 
-      if( accept ) flt_cppath_[pathNameNoVer]+=1;
+  //     if( accept ) flt_cppath_[pathNameNoVer]+=1;
 
-      flt_accept.push_back(accept);
-      flt_name.push_back(pathName);
+  //     flt_accept.push_back(accept);
+  //     flt_name.push_back(pathName);
 
-      if( accept ){
-	TAxis * axis = h_flt->GetXaxis();
-	if( !axis ) continue;
-	int bin_num = axis->FindBin(pathNameNoVer.c_str());
-	int bn = bin_num - 1;
-	h_flt->Fill(bn, 1);
-      }
-    }
-  }
-  else{
-    std::cout << "Trigger results not valid for tag " << filterTag << std::endl;
-  }
+  //     if( accept ){
+  // 	TAxis * axis = h_flt->GetXaxis();
+  // 	if( !axis ) continue;
+  // 	int bin_num = axis->FindBin(pathNameNoVer.c_str());
+  // 	int bn = bin_num - 1;
+  // 	h_flt->Fill(bn, 1);
+  //     }
+  //   }
+  // }
+  // else{
+  //   std::cout << "Trigger results not valid for tag " << filterTag << std::endl;
+  // }
 
 
-  eve->flt_accept_ = flt_accept;
-  eve->flt_name_   = flt_name;
+  // eve->flt_accept_ = flt_accept;
+  // eve->flt_name_   = flt_name;
 
   if( debug_ ) std::cout << " ====> test 7 " << std::endl;
 
@@ -771,15 +778,15 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   edm::Handle<reco::VertexCompositePtrCandidateCollection> secondaryVtxs;
   iEvent.getByToken(secondaryVertexToken,secondaryVtxs);
 
-  //edm::Handle<pat::ElectronCollection> h_electrons;
-  edm::Handle<edm::View<pat::Electron> > h_electrons;
-  iEvent.getByToken(electronToken,h_electrons);
+  edm::Handle<pat::ElectronCollection> electrons;
+  // edm::Handle<edm::View<pat::Electron> > h_electrons;
+  iEvent.getByToken(electronToken,electrons);
 
-  edm::Handle<edm::ValueMap<float> > h_mvaValues; 
-  iEvent.getByToken(eleMVAvaluesToken,h_mvaValues);
+  // edm::Handle<edm::ValueMap<float> > h_mvaValues; 
+  // iEvent.getByToken(eleMVAvaluesToken,h_mvaValues);
 
-  edm::Handle<edm::ValueMap<int> > h_mvaCategories;
-  iEvent.getByToken(eleMVAcategoriesToken,h_mvaCategories);
+  // edm::Handle<edm::ValueMap<int> > h_mvaCategories;
+  // iEvent.getByToken(eleMVAcategoriesToken,h_mvaCategories);
 	
   edm::Handle<pat::MuonCollection> muons;
   iEvent.getByToken(muonToken,muons);
@@ -790,11 +797,11 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   edm::Handle<pat::METCollection> pfmet;
   iEvent.getByToken(pfMetToken,pfmet);
 
-  edm::Handle<pat::METCollection> pfmetnohf;
-  iEvent.getByToken(pfMetNoHFToken,pfmetnohf);
+  // edm::Handle<pat::METCollection> pfmetnohf;
+  // iEvent.getByToken(pfMetNoHFToken,pfmetnohf);
 
-  edm::Handle<pat::METCollection> puppimet;
-  iEvent.getByToken(puppiMetToken,puppimet);
+  // edm::Handle<pat::METCollection> puppimet;
+  // iEvent.getByToken(puppiMetToken,puppimet);
 
   edm::Handle<pat::PackedCandidateCollection> packedPFcands;
   iEvent.getByToken(packedpfToken,packedPFcands);
@@ -803,27 +810,29 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   edm::Handle<reco::BeamSpot> bsHandle;
   iEvent.getByToken(beamspotToken,bsHandle);
 
-  edm::Handle<reco::ConversionCollection> h_conversioncollection;
-  iEvent.getByToken( EDMConversionCollectionToken,h_conversioncollection );
+  // edm::Handle<reco::ConversionCollection> h_conversioncollection;
+  // iEvent.getByToken( EDMConversionCollectionToken,h_conversioncollection );
 
   edm::Handle<reco::GenParticleCollection> mcparticles;
   iEvent.getByToken(mcparicleToken,mcparticles);
 
+  edm::Handle<reco::GenJetCollection> genjetCollection;
+  iEvent.getByToken( genJetsToken , genjetCollection );
 
-  double top_pt = -99;
-  double antitop_pt = -99;
-  if( mcparticles.isValid() ){
-    for( size_t k = 0; k < mcparticles->size(); k++ ){
-      const reco::Candidate & mcParticle = (*mcparticles)[k];
-      int pdgId = mcParticle.pdgId();
-      double pt = mcParticle.pt();
-      if( pdgId==6 )       top_pt = pt;
-      else if( pdgId==-6 ) antitop_pt = pt;
-    }
-  }
+  // double top_pt = -99;
+  // double antitop_pt = -99;
+  // if( mcparticles.isValid() ){
+  //   for( size_t k = 0; k < mcparticles->size(); k++ ){
+  //     const reco::Candidate & mcParticle = (*mcparticles)[k];
+  //     int pdgId = mcParticle.pdgId();
+  //     double pt = mcParticle.pt();
+  //     if( pdgId==6 )       top_pt = pt;
+  //     else if( pdgId==-6 ) antitop_pt = pt;
+  //   }
+  // }
 
-  eve->top_pt_ = top_pt;
-  eve->antitop_pt_ = antitop_pt;
+  // eve->top_pt_ = top_pt;
+  // eve->antitop_pt_ = antitop_pt;
 
 
   edm::Handle<double> rhoHandle;
@@ -842,50 +851,50 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   iEvent.getByToken(genInfoProductToken,GenEventInfoHandle);
 
   double GenEventInfoWeight = 1.0;
-  double qScale=-99, pthat=-99;
-  if( GenEventInfoHandle.isValid() ){
-    GenEventInfoWeight = GenEventInfoHandle.product()->weight();
-    qScale = GenEventInfoHandle->qScale();
-    pthat = ( GenEventInfoHandle->hasBinningValues() ? (GenEventInfoHandle->binningValues())[0] : 0.0);
-  }
+  // double qScale=-99, pthat=-99;
+  // if( GenEventInfoHandle.isValid() ){
+  //   GenEventInfoWeight = GenEventInfoHandle.product()->weight();
+  //   qScale = GenEventInfoHandle->qScale();
+  //   pthat = ( GenEventInfoHandle->hasBinningValues() ? (GenEventInfoHandle->binningValues())[0] : 0.0);
+  // }
 
-  eve->qscale_ = qScale;
-  eve->pthat_ = pthat;
+  // eve->qscale_ = qScale;
+  // eve->pthat_ = pthat;
 
 
 
   edm::Handle<LHEEventProduct> LHEEventProductHandle;
   iEvent.getByToken(lheEventProductToken,LHEEventProductHandle);
 
-  double originalXWGTUP=-99;
-  vdouble LHEEvent_weights; 
-  double lheHT = 0;
-  if( LHEEventProductHandle.isValid() ){
-    unsigned int NumEventWeights = LHEEventProductHandle->weights().size();
-    originalXWGTUP = LHEEventProductHandle->originalXWGTUP();
-    for( unsigned int iWgt=0; iWgt < NumEventWeights; iWgt++ ){
-      double evtWgt = LHEEventProductHandle->weights()[iWgt].wgt;
-      LHEEvent_weights.push_back(evtWgt);
-    }
+  // double originalXWGTUP=-99;
+  // vdouble LHEEvent_weights; 
+  // double lheHT = 0;
+  // if( LHEEventProductHandle.isValid() ){
+  //   unsigned int NumEventWeights = LHEEventProductHandle->weights().size();
+  //   originalXWGTUP = LHEEventProductHandle->originalXWGTUP();
+  //   for( unsigned int iWgt=0; iWgt < NumEventWeights; iWgt++ ){
+  //     double evtWgt = LHEEventProductHandle->weights()[iWgt].wgt;
+  //     LHEEvent_weights.push_back(evtWgt);
+  //   }
 
-    for( int i = 0; i < LHEEventProductHandle->hepeup().NUP; ++i ){
+  //   for( int i = 0; i < LHEEventProductHandle->hepeup().NUP; ++i ){
 
-      int id = LHEEventProductHandle->hepeup().IDUP[i];
-      int status = LHEEventProductHandle->hepeup().ISTUP[i];
-      int absId = abs(id);
+  //     int id = LHEEventProductHandle->hepeup().IDUP[i];
+  //     int status = LHEEventProductHandle->hepeup().ISTUP[i];
+  //     int absId = abs(id);
 
-      if( status==1 && ( absId==21 || (absId>0 && absId<7) ) ){
-	double px = LHEEventProductHandle->hepeup().PUP[i][0];
-	double py = LHEEventProductHandle->hepeup().PUP[i][1];
+  //     if( status==1 && ( absId==21 || (absId>0 && absId<7) ) ){
+  // 	double px = LHEEventProductHandle->hepeup().PUP[i][0];
+  // 	double py = LHEEventProductHandle->hepeup().PUP[i][1];
 
-	lheHT += sqrt( px*px + py*py );
-      }
-    }
-  }
+  // 	lheHT += sqrt( px*px + py*py );
+  //     }
+  //   }
+  // }
 
-  eve->originalXWGTUP_ = originalXWGTUP;
-  eve->LHEEvent_weights_ = LHEEvent_weights;
-  eve->lheHT_ = lheHT;
+  // eve->originalXWGTUP_ = originalXWGTUP;
+  // eve->LHEEvent_weights_ = LHEEvent_weights;
+  // eve->lheHT_ = lheHT;
 
 
   edm::Handle<int> genTtbarId;
@@ -1008,11 +1017,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   double wgt = 1;
 
-  double xSec = mySample_xSec_;
-  double nGen = mySample_nGen_;
+  // double xSec = mySample_xSec_;
+  // double nGen = mySample_nGen_;
 
-  wgt = intLumi_ * xSec / nGen;
-
+  //  wgt = intLumi_ * xSec / nGen;
 
   eve->wgt_generator_ = GenEventInfoWeight;
 
@@ -1021,37 +1029,37 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->numGenPVs_ = numGenPV;
 
 
-  double L1HTT = -999;
-  double L1HTT_bxm2 = -999;
-  double L1HTT_bxm1 = -999;
-  double L1HTT_bxp1 = -999;
-  double L1HTT_bxp2 = -999;
-  if( l1HTs.isValid() ){
-    //L1HTT = l1HTs->front().etTotal();
-    //std::cout << " use event L1HTT = " << L1HTT << "\t passL1HTT100 = " << passL1HTT100 << std::endl;
-    for( l1extra::L1EtMissParticleCollection::const_iterator iL1HT = l1HTs->begin(); iL1HT!=l1HTs->end(); ++iL1HT ){
-      double etTotal = iL1HT->etTotal();
-      int bx = iL1HT->bx();
+  // double L1HTT = -999;
+  // double L1HTT_bxm2 = -999;
+  // double L1HTT_bxm1 = -999;
+  // double L1HTT_bxp1 = -999;
+  // double L1HTT_bxp2 = -999;
+  // if( l1HTs.isValid() ){
+  //   //L1HTT = l1HTs->front().etTotal();
+  //   //std::cout << " use event L1HTT = " << L1HTT << "\t passL1HTT100 = " << passL1HTT100 << std::endl;
+  //   for( l1extra::L1EtMissParticleCollection::const_iterator iL1HT = l1HTs->begin(); iL1HT!=l1HTs->end(); ++iL1HT ){
+  //     double etTotal = iL1HT->etTotal();
+  //     int bx = iL1HT->bx();
 
-      if( bx==0 && L1HTT < -1 ) L1HTT = etTotal;
+  //     if( bx==0 && L1HTT < -1 ) L1HTT = etTotal;
 
-      if( bx==-2 )      L1HTT_bxm2 = etTotal;
-      else if( bx==-1 ) L1HTT_bxm1 = etTotal;
-      else if( bx==1  ) L1HTT_bxp1 = etTotal;
-      else if( bx==2  ) L1HTT_bxp2 = etTotal;
+  //     if( bx==-2 )      L1HTT_bxm2 = etTotal;
+  //     else if( bx==-1 ) L1HTT_bxm1 = etTotal;
+  //     else if( bx==1  ) L1HTT_bxp1 = etTotal;
+  //     else if( bx==2  ) L1HTT_bxp2 = etTotal;
 
-      //printf(" iL1HT %d: etTotal = %4.1f \t bx = %d \n", int(iL1HT - l1HTs->begin()), etTotal, bx);
-    }
-  }
-  else{ 
-    std::cout << " l1HTs Handle not valid!! " << std::endl;
-  }
+  //     //printf(" iL1HT %d: etTotal = %4.1f \t bx = %d \n", int(iL1HT - l1HTs->begin()), etTotal, bx);
+  //   }
+  // }
+  // else{ 
+  //   std::cout << " l1HTs Handle not valid!! " << std::endl;
+  // }
 
-  eve->L1HTT_ = L1HTT;
-  eve->L1HTT_bxm2_ = L1HTT_bxm2;
-  eve->L1HTT_bxm1_ = L1HTT_bxm1;
-  eve->L1HTT_bxp1_ = L1HTT_bxp1;
-  eve->L1HTT_bxp2_ = L1HTT_bxp2;
+  // eve->L1HTT_ = L1HTT;
+  // eve->L1HTT_bxm2_ = L1HTT_bxm2;
+  // eve->L1HTT_bxm1_ = L1HTT_bxm1;
+  // eve->L1HTT_bxp1_ = L1HTT_bxp1;
+  // eve->L1HTT_bxp2_ = L1HTT_bxp2;
 
 
   if( debug_ ) std::cout << " ====> test 12 " << std::endl;
@@ -1062,13 +1070,13 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   ///
   ////////
 
-  //miniAODhelper.SetElectronMVAinfo(h_conversioncollection, bsHandle);
+  // //miniAODhelper.SetElectronMVAinfo(h_conversioncollection, bsHandle);
 
-  std::vector<pat::Electron> electrons = miniAODhelper.GetElectronsWithMVAid( h_electrons, h_mvaValues, h_mvaCategories );
+  // std::vector<pat::Electron> electrons = miniAODhelper.GetElectronsWithMVAid( h_electrons, h_mvaValues, h_mvaCategories ); // MVA ID
     
   // std::vector<pat::Electron> selectedElectrons_tight = miniAODhelper.GetSelectedElectrons( *electrons, minTightLeptonPt, electronID::electronSpring15M, 2.1 );
   //std::vector<pat::Electron> selectedElectrons_loose = miniAODhelper.GetSelectedElectrons( *electrons, minLooseLeptonPt, electronID::electronEndOf15MVAmedium, 2.4 );
-  std::vector<pat::Electron> selectedElectrons_loose = miniAODhelper.GetSelectedElectrons( electrons, minLooseLeptonPt, electronID::electronEndOf15MVA80, 2.4 );
+  std::vector<pat::Electron> selectedElectrons_loose = miniAODhelper.GetSelectedElectrons( *electrons, minLooseLeptonPt, electronID::electron80XCutBasedM, 2.4 );
 
   // int numTightElectrons = int(selectedElectrons_tight.size());
   // int numLooseElectrons = int(selectedElectrons_loose.size());// - numTightElectrons;
@@ -1098,7 +1106,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<pat::Jet> pfJets_ID_clean = miniAODhelper.GetDeltaRCleanedJets( pfJets_ID, selectedMuons_loose, selectedElectrons_loose, 0.4);
   std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets(pfJets_ID_clean);
   // Use JEC from GT
-  std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::NA);
+  std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection);
   //std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, sysType::NA);
 
   std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, minLooseJetPt, 3.0, jetID::none, '-' );
@@ -1122,17 +1130,17 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
 
   /// jets without cc
-  std::vector<pat::Jet> rawJets_nocc = miniAODhelper.GetUncorrectedJets(pfJets_ID);
-  // Use JEC from GT
-  std::vector<pat::Jet> correctedJets_nocc_noSys = miniAODhelper.GetCorrectedJets(rawJets_nocc, iEvent, iSetup);
-  //std::vector<pat::Jet> correctedJets_nocc_noSys = miniAODhelper.GetCorrectedJets(rawJets_nocc);
-  std::vector<pat::Jet> selectedJets_nocc_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_nocc_noSys, minLooseJetPt, 3.0, jetID::none, '-' );
+  // std::vector<pat::Jet> rawJets_nocc = miniAODhelper.GetUncorrectedJets(pfJets_ID);
+  // // Use JEC from GT
+  // std::vector<pat::Jet> correctedJets_nocc_noSys = miniAODhelper.GetCorrectedJets(rawJets_nocc, iEvent, iSetup);
+  // //std::vector<pat::Jet> correctedJets_nocc_noSys = miniAODhelper.GetCorrectedJets(rawJets_nocc);
+  // std::vector<pat::Jet> selectedJets_nocc_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_nocc_noSys, minLooseJetPt, 3.0, jetID::none, '-' );
 
-  //////
-  if( debug_ ) std::cout << " ====> test 15 " << std::endl;
+  // //////
+  // if( debug_ ) std::cout << " ====> test 15 " << std::endl;
 
-  // Sort jet collections by pT
-  std::vector<pat::Jet> selectedJets_nocc = miniAODhelper.GetSortedByPt( selectedJets_nocc_noSys_unsorted );
+  // // Sort jet collections by pT
+  // std::vector<pat::Jet> selectedJets_nocc = miniAODhelper.GetSortedByPt( selectedJets_nocc_noSys_unsorted );
 
 
   // Get Corrected MET (propagating JEC and JER)
@@ -1140,98 +1148,98 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<pat::Jet> oldJetsForMET = miniAODhelper.GetSelectedJets(*pfjets, 0., 999., jetID::jetMETcorrection, '-' );
   std::vector<pat::Jet> oldJetsForMET_uncorr = miniAODhelper.GetUncorrectedJets(oldJetsForMET);
   // Use JEC from GT
-  std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::NA);
+  std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, genjetCollection, sysType::NA);
   //std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::NA);
 
   std::vector<pat::MET> newPfMETs = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmet);
-  std::vector<pat::MET> newPfMETsNoHF = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmetnohf);
-  std::vector<pat::MET> newPuppiMETs = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *puppimet);
+  // std::vector<pat::MET> newPfMETsNoHF = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmetnohf);
+  // std::vector<pat::MET> newPuppiMETs = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *puppimet);
 
   eve->pfMET_pt_  = newPfMETs.at(0).pt();
   eve->pfMET_phi_ = newPfMETs.at(0).phi();
 
-  eve->pfMETNoHF_pt_  = newPfMETsNoHF.at(0).pt();
-  eve->pfMETNoHF_phi_ = newPfMETsNoHF.at(0).phi();
+  // eve->pfMETNoHF_pt_  = newPfMETsNoHF.at(0).pt();
+  // eve->pfMETNoHF_phi_ = newPfMETsNoHF.at(0).phi();
 
-  eve->puppiMET_pt_  = newPuppiMETs.at(0).pt();
-  eve->puppiMET_phi_ = newPuppiMETs.at(0).phi();
+  // eve->puppiMET_pt_  = newPuppiMETs.at(0).pt();
+  // eve->puppiMET_phi_ = newPuppiMETs.at(0).phi();
 
-  eve->puppiMET_Upt_  = puppimet->front().pt();
-  eve->puppiMET_Uphi_ = puppimet->front().phi();
+  // eve->puppiMET_Upt_  = puppimet->front().pt();
+  // eve->puppiMET_Uphi_ = puppimet->front().phi();
 
 
   // JESup
   // Use JEC from GT
-  std::vector<pat::Jet> newJetsForMET_JESup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JESup);
+  std::vector<pat::Jet> newJetsForMET_JESup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, genjetCollection, sysType::JESup);
   //std::vector<pat::Jet> newJetsForMET_JESup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::JESup);
 
   std::vector<pat::MET> newPfMETs_JESup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESup, *pfmet);
-  std::vector<pat::MET> newPfMETsNoHF_JESup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESup, *pfmetnohf);
-  std::vector<pat::MET> newPuppiMETs_JESup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESup, *puppimet);
+  // std::vector<pat::MET> newPfMETsNoHF_JESup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESup, *pfmetnohf);
+  // std::vector<pat::MET> newPuppiMETs_JESup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESup, *puppimet);
 
   eve->pfMET_pt_JESup_  = newPfMETs_JESup.at(0).pt();
   eve->pfMET_phi_JESup_ = newPfMETs_JESup.at(0).phi();
 
-  eve->pfMETNoHF_pt_JESup_  = newPfMETsNoHF_JESup.at(0).pt();
-  eve->pfMETNoHF_phi_JESup_ = newPfMETsNoHF_JESup.at(0).phi();
+  // eve->pfMETNoHF_pt_JESup_  = newPfMETsNoHF_JESup.at(0).pt();
+  // eve->pfMETNoHF_phi_JESup_ = newPfMETsNoHF_JESup.at(0).phi();
 
-  eve->puppiMET_pt_JESup_  = newPuppiMETs_JESup.at(0).pt();
-  eve->puppiMET_phi_JESup_ = newPuppiMETs_JESup.at(0).phi();
+  // eve->puppiMET_pt_JESup_  = newPuppiMETs_JESup.at(0).pt();
+  // eve->puppiMET_phi_JESup_ = newPuppiMETs_JESup.at(0).phi();
 
   // JESdown
   // Use JEC from GT
-  std::vector<pat::Jet> newJetsForMET_JESdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JESdown);
+  std::vector<pat::Jet> newJetsForMET_JESdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, genjetCollection, sysType::JESdown);
   //std::vector<pat::Jet> newJetsForMET_JESdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::JESdown);
 
   std::vector<pat::MET> newPfMETs_JESdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESdown, *pfmet);
-  std::vector<pat::MET> newPfMETsNoHF_JESdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESdown, *pfmetnohf);
-  std::vector<pat::MET> newPuppiMETs_JESdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESdown, *puppimet);
+  // std::vector<pat::MET> newPfMETsNoHF_JESdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESdown, *pfmetnohf);
+  // std::vector<pat::MET> newPuppiMETs_JESdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JESdown, *puppimet);
 
   eve->pfMET_pt_JESdown_  = newPfMETs_JESdown.at(0).pt();
   eve->pfMET_phi_JESdown_ = newPfMETs_JESdown.at(0).phi();
 
-  eve->pfMETNoHF_pt_JESdown_  = newPfMETsNoHF_JESdown.at(0).pt();
-  eve->pfMETNoHF_phi_JESdown_ = newPfMETsNoHF_JESdown.at(0).phi();
+  // eve->pfMETNoHF_pt_JESdown_  = newPfMETsNoHF_JESdown.at(0).pt();
+  // eve->pfMETNoHF_phi_JESdown_ = newPfMETsNoHF_JESdown.at(0).phi();
 
-  eve->puppiMET_pt_JESdown_  = newPuppiMETs_JESdown.at(0).pt();
-  eve->puppiMET_phi_JESdown_ = newPuppiMETs_JESdown.at(0).phi();
+  // eve->puppiMET_pt_JESdown_  = newPuppiMETs_JESdown.at(0).pt();
+  // eve->puppiMET_phi_JESdown_ = newPuppiMETs_JESdown.at(0).phi();
 
 
   // JERup
-  // Use JEC from GT
-  std::vector<pat::Jet> newJetsForMET_JERup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JERup);
-  //std::vector<pat::Jet> newJetsForMET_JERup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::JERup);
+  // // Use JEC from GT
+  // std::vector<pat::Jet> newJetsForMET_JERup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JERup);
+  // //std::vector<pat::Jet> newJetsForMET_JERup = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::JERup);
 
-  std::vector<pat::MET> newPfMETs_JERup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERup, *pfmet);
-  std::vector<pat::MET> newPfMETsNoHF_JERup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERup, *pfmetnohf);
-  std::vector<pat::MET> newPuppiMETs_JERup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERup, *puppimet);
+  // std::vector<pat::MET> newPfMETs_JERup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERup, *pfmet);
+  // std::vector<pat::MET> newPfMETsNoHF_JERup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERup, *pfmetnohf);
+  // std::vector<pat::MET> newPuppiMETs_JERup = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERup, *puppimet);
 
-  eve->pfMET_pt_JERup_  = newPfMETs_JERup.at(0).pt();
-  eve->pfMET_phi_JERup_ = newPfMETs_JERup.at(0).phi();
+  // eve->pfMET_pt_JERup_  = newPfMETs_JERup.at(0).pt();
+  // eve->pfMET_phi_JERup_ = newPfMETs_JERup.at(0).phi();
 
-  eve->pfMETNoHF_pt_JERup_  = newPfMETsNoHF_JERup.at(0).pt();
-  eve->pfMETNoHF_phi_JERup_ = newPfMETsNoHF_JERup.at(0).phi();
+  // eve->pfMETNoHF_pt_JERup_  = newPfMETsNoHF_JERup.at(0).pt();
+  // eve->pfMETNoHF_phi_JERup_ = newPfMETsNoHF_JERup.at(0).phi();
 
-  eve->puppiMET_pt_JERup_  = newPuppiMETs_JERup.at(0).pt();
-  eve->puppiMET_phi_JERup_ = newPuppiMETs_JERup.at(0).phi();
+  // eve->puppiMET_pt_JERup_  = newPuppiMETs_JERup.at(0).pt();
+  // eve->puppiMET_phi_JERup_ = newPuppiMETs_JERup.at(0).phi();
 
-  // JERdown
-  // Use JEC from GT
-  std::vector<pat::Jet> newJetsForMET_JERdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JERdown);
-  //std::vector<pat::Jet> newJetsForMET_JERdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::JERdown);
+  // // JERdown
+  // // Use JEC from GT
+  // std::vector<pat::Jet> newJetsForMET_JERdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, sysType::JERdown);
+  // //std::vector<pat::Jet> newJetsForMET_JERdown = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, sysType::JERdown);
 
-  std::vector<pat::MET> newPfMETs_JERdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERdown, *pfmet);
-  std::vector<pat::MET> newPfMETsNoHF_JERdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERdown, *pfmetnohf);
-  std::vector<pat::MET> newPuppiMETs_JERdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERdown, *puppimet);
+  // std::vector<pat::MET> newPfMETs_JERdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERdown, *pfmet);
+  // std::vector<pat::MET> newPfMETsNoHF_JERdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERdown, *pfmetnohf);
+  // std::vector<pat::MET> newPuppiMETs_JERdown = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET_JERdown, *puppimet);
 
-  eve->pfMET_pt_JERdown_  = newPfMETs_JERdown.at(0).pt();
-  eve->pfMET_phi_JERdown_ = newPfMETs_JERdown.at(0).phi();
+  // eve->pfMET_pt_JERdown_  = newPfMETs_JERdown.at(0).pt();
+  // eve->pfMET_phi_JERdown_ = newPfMETs_JERdown.at(0).phi();
 
-  eve->pfMETNoHF_pt_JERdown_  = newPfMETsNoHF_JERdown.at(0).pt();
-  eve->pfMETNoHF_phi_JERdown_ = newPfMETsNoHF_JERdown.at(0).phi();
+  // eve->pfMETNoHF_pt_JERdown_  = newPfMETsNoHF_JERdown.at(0).pt();
+  // eve->pfMETNoHF_phi_JERdown_ = newPfMETsNoHF_JERdown.at(0).phi();
 
-  eve->puppiMET_pt_JERdown_  = newPuppiMETs_JERdown.at(0).pt();
-  eve->puppiMET_phi_JERdown_ = newPuppiMETs_JERdown.at(0).phi();
+  // eve->puppiMET_pt_JERdown_  = newPuppiMETs_JERdown.at(0).pt();
+  // eve->puppiMET_phi_JERdown_ = newPuppiMETs_JERdown.at(0).phi();
 
 
 
@@ -1282,37 +1290,37 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   /////
 
   // Loop over jets
-  std::vector<double> vec_jet_nocc_pt;
-  std::vector<double> vec_jet_nocc_eta;
-  std::vector<double> vec_jet_nocc_phi;
-  std::vector<double> vec_jet_nocc_energy;
-  std::vector<double> vec_jet_nocc_csv;
-  std::vector<double> vec_jet_nocc_cmva;
-  std::vector<int>    vec_jet_nocc_partonFlavour;
-  std::vector<int>    vec_jet_nocc_hadronFlavour;
-  std::vector<double> vec_jet_nocc_pileupJetId_fullDiscriminant;
+  // std::vector<double> vec_jet_nocc_pt;
+  // std::vector<double> vec_jet_nocc_eta;
+  // std::vector<double> vec_jet_nocc_phi;
+  // std::vector<double> vec_jet_nocc_energy;
+  // std::vector<double> vec_jet_nocc_csv;
+  // std::vector<double> vec_jet_nocc_cmva;
+  // std::vector<int>    vec_jet_nocc_partonFlavour;
+  // std::vector<int>    vec_jet_nocc_hadronFlavour;
+  // std::vector<double> vec_jet_nocc_pileupJetId_fullDiscriminant;
 
-  for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_nocc.begin(); iJet != selectedJets_nocc.end(); iJet++ ){ 
-    vec_jet_nocc_pt.push_back(iJet->pt());
-    vec_jet_nocc_eta.push_back(iJet->eta());
-    vec_jet_nocc_phi.push_back(iJet->phi());
-    vec_jet_nocc_energy.push_back(iJet->energy());
-    vec_jet_nocc_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    vec_jet_nocc_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
-    vec_jet_nocc_partonFlavour.push_back(iJet->partonFlavour());
-    vec_jet_nocc_hadronFlavour.push_back(iJet->hadronFlavour());
-    vec_jet_nocc_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
-  } // end loop on jets
+  // for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_nocc.begin(); iJet != selectedJets_nocc.end(); iJet++ ){ 
+  //   vec_jet_nocc_pt.push_back(iJet->pt());
+  //   vec_jet_nocc_eta.push_back(iJet->eta());
+  //   vec_jet_nocc_phi.push_back(iJet->phi());
+  //   vec_jet_nocc_energy.push_back(iJet->energy());
+  //   vec_jet_nocc_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+  //   vec_jet_nocc_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
+  //   vec_jet_nocc_partonFlavour.push_back(iJet->partonFlavour());
+  //   vec_jet_nocc_hadronFlavour.push_back(iJet->hadronFlavour());
+  //   vec_jet_nocc_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
+  // } // end loop on jets
 
-  eve->jet_nocc_pt_  = vec_jet_nocc_pt;
-  eve->jet_nocc_eta_ = vec_jet_nocc_eta;
-  eve->jet_nocc_phi_ = vec_jet_nocc_phi;
-  eve->jet_nocc_energy_ = vec_jet_nocc_energy;
-  eve->jet_nocc_csv_ = vec_jet_nocc_csv;
-  eve->jet_nocc_cmva_ = vec_jet_nocc_cmva;
-  eve->jet_nocc_partonFlavour_ = vec_jet_nocc_partonFlavour;
-  eve->jet_nocc_hadronFlavour_ = vec_jet_nocc_hadronFlavour;
-  eve->jet_nocc_pileupJetId_fullDiscriminant_ = vec_jet_nocc_pileupJetId_fullDiscriminant;
+  // eve->jet_nocc_pt_  = vec_jet_nocc_pt;
+  // eve->jet_nocc_eta_ = vec_jet_nocc_eta;
+  // eve->jet_nocc_phi_ = vec_jet_nocc_phi;
+  // eve->jet_nocc_energy_ = vec_jet_nocc_energy;
+  // eve->jet_nocc_csv_ = vec_jet_nocc_csv;
+  // eve->jet_nocc_cmva_ = vec_jet_nocc_cmva;
+  // eve->jet_nocc_partonFlavour_ = vec_jet_nocc_partonFlavour;
+  // eve->jet_nocc_hadronFlavour_ = vec_jet_nocc_hadronFlavour;
+  // eve->jet_nocc_pileupJetId_fullDiscriminant_ = vec_jet_nocc_pileupJetId_fullDiscriminant;
 
 
 
@@ -1321,7 +1329,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   // JESUp
   // Use JEC from GT
-  std::vector<pat::Jet> correctedJets_JESup = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JESup);
+  std::vector<pat::Jet> correctedJets_JESup = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection, sysType::JESup);
   //std::vector<pat::Jet> correctedJets_JESup = miniAODhelper.GetCorrectedJets(rawJets, sysType::JESup);
   std::vector<pat::Jet> selectedJets_JESup_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JESup, minLooseJetPt, 3.0, jetID::none, '-' );
   std::vector<pat::Jet> selectedJets_JESup = miniAODhelper.GetSortedByPt( selectedJets_JESup_unsorted );
@@ -1364,7 +1372,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   // JESDown
   // Use JEC from GT
-  std::vector<pat::Jet> correctedJets_JESdown = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JESdown);
+  std::vector<pat::Jet> correctedJets_JESdown = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection, sysType::JESdown);
   //std::vector<pat::Jet> correctedJets_JESdown = miniAODhelper.GetCorrectedJets(rawJets, sysType::JESdown);
   std::vector<pat::Jet> selectedJets_JESdown_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JESdown, minLooseJetPt, 3.0, jetID::none, '-' );
   std::vector<pat::Jet> selectedJets_JESdown = miniAODhelper.GetSortedByPt( selectedJets_JESdown_unsorted );
@@ -1404,88 +1412,88 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
 
 
-  // JERUp
-  // Use JEC from GT
-  std::vector<pat::Jet> correctedJets_JERup = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JERup);
-  //std::vector<pat::Jet> correctedJets_JERup = miniAODhelper.GetCorrectedJets(rawJets, sysType::JERup);
-  std::vector<pat::Jet> selectedJets_JERup_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JERup, minLooseJetPt, 3.0, jetID::none, '-' );
-  std::vector<pat::Jet> selectedJets_JERup = miniAODhelper.GetSortedByPt( selectedJets_JERup_unsorted );
+  // // JERUp
+  // // Use JEC from GT
+  // std::vector<pat::Jet> correctedJets_JERup = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JERup);
+  // //std::vector<pat::Jet> correctedJets_JERup = miniAODhelper.GetCorrectedJets(rawJets, sysType::JERup);
+  // std::vector<pat::Jet> selectedJets_JERup_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JERup, minLooseJetPt, 3.0, jetID::none, '-' );
+  // std::vector<pat::Jet> selectedJets_JERup = miniAODhelper.GetSortedByPt( selectedJets_JERup_unsorted );
 
-  // Loop over jets
-  std::vector<double> vec_jet_JERup_pt;
-  std::vector<double> vec_jet_JERup_eta;
-  std::vector<double> vec_jet_JERup_phi;
-  std::vector<double> vec_jet_JERup_energy;
-  std::vector<double> vec_jet_JERup_csv;
-  std::vector<double> vec_jet_JERup_cmva;
-  std::vector<int>    vec_jet_JERup_partonFlavour;
-  std::vector<int>    vec_jet_JERup_hadronFlavour;
-  std::vector<double> vec_jet_JERup_pileupJetId_fullDiscriminant;
+  // // Loop over jets
+  // std::vector<double> vec_jet_JERup_pt;
+  // std::vector<double> vec_jet_JERup_eta;
+  // std::vector<double> vec_jet_JERup_phi;
+  // std::vector<double> vec_jet_JERup_energy;
+  // std::vector<double> vec_jet_JERup_csv;
+  // std::vector<double> vec_jet_JERup_cmva;
+  // std::vector<int>    vec_jet_JERup_partonFlavour;
+  // std::vector<int>    vec_jet_JERup_hadronFlavour;
+  // std::vector<double> vec_jet_JERup_pileupJetId_fullDiscriminant;
 
-  for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JERup.begin(); iJet != selectedJets_JERup.end(); iJet++ ){ 
-    vec_jet_JERup_pt.push_back(iJet->pt());
-    vec_jet_JERup_eta.push_back(iJet->eta());
-    vec_jet_JERup_phi.push_back(iJet->phi());
-    vec_jet_JERup_energy.push_back(iJet->energy());
-    vec_jet_JERup_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    vec_jet_JERup_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
-    vec_jet_JERup_partonFlavour.push_back(iJet->partonFlavour());
-    vec_jet_JERup_hadronFlavour.push_back(iJet->hadronFlavour());
-    vec_jet_JERup_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
-  } // end loop on jets
+  // for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JERup.begin(); iJet != selectedJets_JERup.end(); iJet++ ){ 
+  //   vec_jet_JERup_pt.push_back(iJet->pt());
+  //   vec_jet_JERup_eta.push_back(iJet->eta());
+  //   vec_jet_JERup_phi.push_back(iJet->phi());
+  //   vec_jet_JERup_energy.push_back(iJet->energy());
+  //   vec_jet_JERup_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+  //   vec_jet_JERup_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
+  //   vec_jet_JERup_partonFlavour.push_back(iJet->partonFlavour());
+  //   vec_jet_JERup_hadronFlavour.push_back(iJet->hadronFlavour());
+  //   vec_jet_JERup_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
+  // } // end loop on jets
 
-  eve->jet_JERup_pt_  = vec_jet_JERup_pt;
-  eve->jet_JERup_eta_ = vec_jet_JERup_eta;
-  eve->jet_JERup_phi_ = vec_jet_JERup_phi;
-  eve->jet_JERup_energy_ = vec_jet_JERup_energy;
-  eve->jet_JERup_csv_ = vec_jet_JERup_csv;
-  eve->jet_JERup_cmva_ = vec_jet_JERup_cmva;
-  eve->jet_JERup_partonFlavour_ = vec_jet_JERup_partonFlavour;
-  eve->jet_JERup_hadronFlavour_ = vec_jet_JERup_hadronFlavour;
-  eve->jet_JERup_pileupJetId_fullDiscriminant_ = vec_jet_JERup_pileupJetId_fullDiscriminant;
+  // eve->jet_JERup_pt_  = vec_jet_JERup_pt;
+  // eve->jet_JERup_eta_ = vec_jet_JERup_eta;
+  // eve->jet_JERup_phi_ = vec_jet_JERup_phi;
+  // eve->jet_JERup_energy_ = vec_jet_JERup_energy;
+  // eve->jet_JERup_csv_ = vec_jet_JERup_csv;
+  // eve->jet_JERup_cmva_ = vec_jet_JERup_cmva;
+  // eve->jet_JERup_partonFlavour_ = vec_jet_JERup_partonFlavour;
+  // eve->jet_JERup_hadronFlavour_ = vec_jet_JERup_hadronFlavour;
+  // eve->jet_JERup_pileupJetId_fullDiscriminant_ = vec_jet_JERup_pileupJetId_fullDiscriminant;
 
 
-  //
+  // //
 
-  // JERDown
-  // Use JEC from GT
-  std::vector<pat::Jet> correctedJets_JERdown = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JERdown);
-  //std::vector<pat::Jet> correctedJets_JERdown = miniAODhelper.GetCorrectedJets(rawJets, sysType::JERdown);
-  std::vector<pat::Jet> selectedJets_JERdown_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JERdown, minLooseJetPt, 3.0, jetID::none, '-' );
-  std::vector<pat::Jet> selectedJets_JERdown = miniAODhelper.GetSortedByPt( selectedJets_JERdown_unsorted );
+  // // JERDown
+  // // Use JEC from GT
+  // std::vector<pat::Jet> correctedJets_JERdown = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, sysType::JERdown);
+  // //std::vector<pat::Jet> correctedJets_JERdown = miniAODhelper.GetCorrectedJets(rawJets, sysType::JERdown);
+  // std::vector<pat::Jet> selectedJets_JERdown_unsorted = miniAODhelper.GetSelectedJets(correctedJets_JERdown, minLooseJetPt, 3.0, jetID::none, '-' );
+  // std::vector<pat::Jet> selectedJets_JERdown = miniAODhelper.GetSortedByPt( selectedJets_JERdown_unsorted );
 
-  // Loop over jets
-  std::vector<double> vec_jet_JERdown_pt;
-  std::vector<double> vec_jet_JERdown_eta;
-  std::vector<double> vec_jet_JERdown_phi;
-  std::vector<double> vec_jet_JERdown_energy;
-  std::vector<double> vec_jet_JERdown_csv;
-  std::vector<double> vec_jet_JERdown_cmva;
-  std::vector<int>    vec_jet_JERdown_partonFlavour;
-  std::vector<int>    vec_jet_JERdown_hadronFlavour;
-  std::vector<double> vec_jet_JERdown_pileupJetId_fullDiscriminant;
+  // // Loop over jets
+  // std::vector<double> vec_jet_JERdown_pt;
+  // std::vector<double> vec_jet_JERdown_eta;
+  // std::vector<double> vec_jet_JERdown_phi;
+  // std::vector<double> vec_jet_JERdown_energy;
+  // std::vector<double> vec_jet_JERdown_csv;
+  // std::vector<double> vec_jet_JERdown_cmva;
+  // std::vector<int>    vec_jet_JERdown_partonFlavour;
+  // std::vector<int>    vec_jet_JERdown_hadronFlavour;
+  // std::vector<double> vec_jet_JERdown_pileupJetId_fullDiscriminant;
 
-  for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JERdown.begin(); iJet != selectedJets_JERdown.end(); iJet++ ){ 
-    vec_jet_JERdown_pt.push_back(iJet->pt());
-    vec_jet_JERdown_eta.push_back(iJet->eta());
-    vec_jet_JERdown_phi.push_back(iJet->phi());
-    vec_jet_JERdown_energy.push_back(iJet->energy());
-    vec_jet_JERdown_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    vec_jet_JERdown_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
-    vec_jet_JERdown_partonFlavour.push_back(iJet->partonFlavour());
-    vec_jet_JERdown_hadronFlavour.push_back(iJet->hadronFlavour());
-    vec_jet_JERdown_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
-  } // end loop on jets
+  // for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JERdown.begin(); iJet != selectedJets_JERdown.end(); iJet++ ){ 
+  //   vec_jet_JERdown_pt.push_back(iJet->pt());
+  //   vec_jet_JERdown_eta.push_back(iJet->eta());
+  //   vec_jet_JERdown_phi.push_back(iJet->phi());
+  //   vec_jet_JERdown_energy.push_back(iJet->energy());
+  //   vec_jet_JERdown_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+  //   vec_jet_JERdown_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
+  //   vec_jet_JERdown_partonFlavour.push_back(iJet->partonFlavour());
+  //   vec_jet_JERdown_hadronFlavour.push_back(iJet->hadronFlavour());
+  //   vec_jet_JERdown_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
+  // } // end loop on jets
 
-  eve->jet_JERdown_pt_  = vec_jet_JERdown_pt;
-  eve->jet_JERdown_eta_ = vec_jet_JERdown_eta;
-  eve->jet_JERdown_phi_ = vec_jet_JERdown_phi;
-  eve->jet_JERdown_energy_ = vec_jet_JERdown_energy;
-  eve->jet_JERdown_csv_ = vec_jet_JERdown_csv;
-  eve->jet_JERdown_cmva_ = vec_jet_JERdown_cmva;
-  eve->jet_JERdown_partonFlavour_ = vec_jet_JERdown_partonFlavour;
-  eve->jet_JERdown_hadronFlavour_ = vec_jet_JERdown_hadronFlavour;
-  eve->jet_JERdown_pileupJetId_fullDiscriminant_ = vec_jet_JERdown_pileupJetId_fullDiscriminant;
+  // eve->jet_JERdown_pt_  = vec_jet_JERdown_pt;
+  // eve->jet_JERdown_eta_ = vec_jet_JERdown_eta;
+  // eve->jet_JERdown_phi_ = vec_jet_JERdown_phi;
+  // eve->jet_JERdown_energy_ = vec_jet_JERdown_energy;
+  // eve->jet_JERdown_csv_ = vec_jet_JERdown_csv;
+  // eve->jet_JERdown_cmva_ = vec_jet_JERdown_cmva;
+  // eve->jet_JERdown_partonFlavour_ = vec_jet_JERdown_partonFlavour;
+  // eve->jet_JERdown_hadronFlavour_ = vec_jet_JERdown_hadronFlavour;
+  // eve->jet_JERdown_pileupJetId_fullDiscriminant_ = vec_jet_JERdown_pileupJetId_fullDiscriminant;
 
 
 
@@ -1542,15 +1550,15 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   vint lepton_trackerLayersWithMeasurement;
   vint lepton_numberOfMatchedStations;
 
-  vint lepton_ele_matchHLT_hltL1sL1SingleEG25;
-  vint lepton_ele_matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter;
+  // vint lepton_ele_matchHLT_hltL1sL1SingleEG25;
+  // vint lepton_ele_matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter;
 
-  vint lepton_ele_matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25;
-  vint lepton_ele_matchHLT_hltEle27WPLooseGsfTrackIsoFilter;
+  // vint lepton_ele_matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25;
+  // vint lepton_ele_matchHLT_hltEle27WPLooseGsfTrackIsoFilter;
 
-  vint lepton_ele_matchHLT_hltL1sL1EG25erHTT125;
-  vint lepton_ele_matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter;
-  vint lepton_ele_matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter;
+  // vint lepton_ele_matchHLT_hltL1sL1EG25erHTT125;
+  // vint lepton_ele_matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter;
+  // vint lepton_ele_matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter;
 
   std::vector<TLorentzVector> vec_TLV_lep;
   TLorentzVector sum_lepton_vect;
@@ -1669,13 +1677,13 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     lepton_trackerLayersWithMeasurement.push_back(trackerLayersWithMeasurement);
     lepton_numberOfMatchedStations.push_back(numberOfMatchedStations);
 
-    lepton_ele_matchHLT_hltL1sL1SingleEG25.push_back(-99);
-    lepton_ele_matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter.push_back(-99);
-    lepton_ele_matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25.push_back(-99);
-    lepton_ele_matchHLT_hltEle27WPLooseGsfTrackIsoFilter.push_back(-99);
-    lepton_ele_matchHLT_hltL1sL1EG25erHTT125.push_back(-99);
-    lepton_ele_matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter.push_back(-99);
-    lepton_ele_matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter.push_back(-99);
+    // lepton_ele_matchHLT_hltL1sL1SingleEG25.push_back(-99);
+    // lepton_ele_matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter.push_back(-99);
+    // lepton_ele_matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25.push_back(-99);
+    // lepton_ele_matchHLT_hltEle27WPLooseGsfTrackIsoFilter.push_back(-99);
+    // lepton_ele_matchHLT_hltL1sL1EG25erHTT125.push_back(-99);
+    // lepton_ele_matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter.push_back(-99);
+    // lepton_ele_matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter.push_back(-99);
 
 
     // Get muon 4Vector and add to vecTLorentzVector for muons
@@ -1687,7 +1695,8 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   }
 
   // Loop over electrons
-  for( std::vector<pat::Electron>::const_iterator iEle = electrons.begin(); iEle != electrons.end(); iEle++ ){ 
+  // for( std::vector<pat::Electron>::const_iterator iEle = electrons.begin(); iEle != electrons.end(); iEle++ ){ 
+  for( std::vector<pat::Electron>::const_iterator iEle = electrons->begin(); iEle != electrons->end(); iEle++ ){ 
 
     int genId=-99, genParentId=-99, genGrandParentId=-99;
     if( (iEle->genLepton()) ){
@@ -1711,10 +1720,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     int isSpring15L = ( miniAODhelper.isGoodElectron(*iEle, minLooseLeptonPt, 2.4, electronID::electronSpring15L) ) ? 1 : 0;
     int isSpring15M = ( miniAODhelper.isGoodElectron(*iEle, minLooseLeptonPt, 2.4, electronID::electronSpring15M) ) ? 1 : 0;
     int isSpring15T = ( miniAODhelper.isGoodElectron(*iEle, minLooseLeptonPt, 2.4, electronID::electronSpring15T) ) ? 1 : 0;
-    int isTrigMVAM = ( miniAODhelper.isGoodElectron(*iEle, minLooseLeptonPt, 2.4, electronID::electronEndOf15MVA80) ) ? 1 : 0;
+    int isTrigMVAM = 0; //( miniAODhelper.isGoodElectron(*iEle, minLooseLeptonPt, 2.4, electronID::electronEndOf15MVA80) ) ? 1 : 0;
 
-    double trigMVAOutput = iEle->userFloat("mvaValue");//miniAODhelper.GetElectronMVAIDValue(*iEle);//myMVATrig->mvaValue(*iEle,false);
-    int category = iEle->userInt("mvaCategory");
+    double trigMVAOutput = -1; //iEle->userFloat("mvaValue");//miniAODhelper.GetElectronMVAIDValue(*iEle);//myMVATrig->mvaValue(*iEle,false);
+    int category = -1; //iEle->userInt("mvaCategory");
 
     
     bool myTrigPresel = ( iEle->pt()>15 && 
@@ -1794,29 +1803,29 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     }
 
 
-    bool matchHLT_hltL1sL1SingleEG25 = false;
-    bool matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter = false;
-    bool matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25 = false;
-    bool matchHLT_hltEle27WPLooseGsfTrackIsoFilter = false;
-    bool matchHLT_hltL1sL1EG25erHTT125 = false;
-    bool matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter = false;
-    bool matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter = false;
+    // bool matchHLT_hltL1sL1SingleEG25 = false;
+    // bool matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter = false;
+    // bool matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25 = false;
+    // bool matchHLT_hltEle27WPLooseGsfTrackIsoFilter = false;
+    // bool matchHLT_hltL1sL1EG25erHTT125 = false;
+    // bool matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter = false;
+    // bool matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter = false;
 
-    for( int iHLTObj = 0; iHLTObj < int(triggerObjects_hltEle.size()); iHLTObj++ ){ 
-      std::string name = vec_hltEle27WP85Gsf_filter[iHLTObj];
-      double deltaR = reco::deltaR( iEle->eta(), iEle->phi(), triggerObjects_hltEle[iHLTObj].Eta(), triggerObjects_hltEle[iHLTObj].Phi() );
-      if( deltaR<0.5 ){
-	if( name=="hltL1sL1SingleEG25" ) matchHLT_hltL1sL1SingleEG25 = true;
-	if( name=="hltL1EG25Ele27WP85GsfTrackIsoFilter" ) matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter = true;
-	if( name=="hltL1sL1SingleIsoEG22erOrSingleEG25" ) matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25 = true;
-	if( name=="hltEle27WPLooseGsfTrackIsoFilter" ) matchHLT_hltEle27WPLooseGsfTrackIsoFilter = true;
-	//if( name=="hltL1sL1EG25erHTT125" ) matchHLT_hltL1sL1EG25erHTT125 = true;
-	if( name.find("hltL1sL1EG25erHTT")!=std::string::npos ) matchHLT_hltL1sL1EG25erHTT125 = true;
-	if( name=="hltL1sL1EG25erHTT125" ) matchHLT_hltL1sL1EG25erHTT125 = true;
-	if( name=="hltL1EGHttEle27WP85GsfTrackIsoFilter" ) matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter = true;
-	if( name=="hltL1EGHttEle27WPLooseGsfTrackIsoFilter" ) matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter = true;
-      }
-    }
+    // for( int iHLTObj = 0; iHLTObj < int(triggerObjects_hltEle.size()); iHLTObj++ ){ 
+    //   std::string name = vec_hltEle27WP85Gsf_filter[iHLTObj];
+    //   double deltaR = reco::deltaR( iEle->eta(), iEle->phi(), triggerObjects_hltEle[iHLTObj].Eta(), triggerObjects_hltEle[iHLTObj].Phi() );
+    //   if( deltaR<0.5 ){
+    // 	if( name=="hltL1sL1SingleEG25" ) matchHLT_hltL1sL1SingleEG25 = true;
+    // 	if( name=="hltL1EG25Ele27WP85GsfTrackIsoFilter" ) matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter = true;
+    // 	if( name=="hltL1sL1SingleIsoEG22erOrSingleEG25" ) matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25 = true;
+    // 	if( name=="hltEle27WPLooseGsfTrackIsoFilter" ) matchHLT_hltEle27WPLooseGsfTrackIsoFilter = true;
+    // 	//if( name=="hltL1sL1EG25erHTT125" ) matchHLT_hltL1sL1EG25erHTT125 = true;
+    // 	if( name.find("hltL1sL1EG25erHTT")!=std::string::npos ) matchHLT_hltL1sL1EG25erHTT125 = true;
+    // 	if( name=="hltL1sL1EG25erHTT125" ) matchHLT_hltL1sL1EG25erHTT125 = true;
+    // 	if( name=="hltL1EGHttEle27WP85GsfTrackIsoFilter" ) matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter = true;
+    // 	if( name=="hltL1EGHttEle27WPLooseGsfTrackIsoFilter" ) matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter = true;
+    //   }
+    // }
 
     lepton_trkCharge.push_back(trkCharge);
     lepton_charge.push_back(iEle->charge());
@@ -1877,13 +1886,13 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     lepton_numberOfMatchedStations.push_back(-99);
 
 
-    lepton_ele_matchHLT_hltL1sL1SingleEG25.push_back(matchHLT_hltL1sL1SingleEG25);
-    lepton_ele_matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter.push_back(matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter);
-    lepton_ele_matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25.push_back(matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25);
-    lepton_ele_matchHLT_hltEle27WPLooseGsfTrackIsoFilter.push_back(matchHLT_hltEle27WPLooseGsfTrackIsoFilter);
-    lepton_ele_matchHLT_hltL1sL1EG25erHTT125.push_back(matchHLT_hltL1sL1EG25erHTT125);
-    lepton_ele_matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter.push_back(matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter);
-    lepton_ele_matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter.push_back(matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter);
+    // lepton_ele_matchHLT_hltL1sL1SingleEG25.push_back(matchHLT_hltL1sL1SingleEG25);
+    // lepton_ele_matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter.push_back(matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter);
+    // lepton_ele_matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25.push_back(matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25);
+    // lepton_ele_matchHLT_hltEle27WPLooseGsfTrackIsoFilter.push_back(matchHLT_hltEle27WPLooseGsfTrackIsoFilter);
+    // lepton_ele_matchHLT_hltL1sL1EG25erHTT125.push_back(matchHLT_hltL1sL1EG25erHTT125);
+    // lepton_ele_matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter.push_back(matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter);
+    // lepton_ele_matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter.push_back(matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter);
 
 
     // Get electron 4Vector and add to vecTLorentzVector for electrons
@@ -1899,67 +1908,67 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->lepton_isMuon_           = lepton_isMuon;
   eve->lepton_isTight_          = lepton_isTight;
   eve->lepton_isLoose_          = lepton_isLoose;
-  eve->lepton_isPhys14L_        = lepton_isPhys14L;
-  eve->lepton_isPhys14M_        = lepton_isPhys14M;
-  eve->lepton_isPhys14T_        = lepton_isPhys14T;
-  eve->lepton_isSpring15L_      = lepton_isSpring15L;
-  eve->lepton_isSpring15M_      = lepton_isSpring15M;
-  eve->lepton_isSpring15T_      = lepton_isSpring15T;
+  // eve->lepton_isPhys14L_        = lepton_isPhys14L;
+  // eve->lepton_isPhys14M_        = lepton_isPhys14M;
+  // eve->lepton_isPhys14T_        = lepton_isPhys14T;
+  // eve->lepton_isSpring15L_      = lepton_isSpring15L;
+  // eve->lepton_isSpring15M_      = lepton_isSpring15M;
+  // eve->lepton_isSpring15T_      = lepton_isSpring15T;
   eve->lepton_isTrigMVAM_       = lepton_isTrigMVAM;
-  eve->lepton_genId_            = lepton_genId;
-  eve->lepton_genParentId_      = lepton_genParentId;
-  eve->lepton_genGrandParentId_ = lepton_genGrandParentId;
+  // eve->lepton_genId_            = lepton_genId;
+  // eve->lepton_genParentId_      = lepton_genParentId;
+  // eve->lepton_genGrandParentId_ = lepton_genGrandParentId;
   eve->lepton_pt_               = lepton_pt;
   eve->lepton_eta_              = lepton_eta;
   eve->lepton_phi_              = lepton_phi;
   eve->lepton_energy_           = lepton_energy;
   eve->lepton_relIso_           = lepton_relIso;
   eve->lepton_relIsoR04_           = lepton_relIsoR04;
-  eve->lepton_iso_sumChargedHadronPt_ = lepton_iso_sumChargedHadronPt;
-  eve->lepton_iso_sumNeutralHadronEt_ = lepton_iso_sumNeutralHadronEt;
-  eve->lepton_iso_sumPhotonEt_        = lepton_iso_sumPhotonEt;
-  eve->lepton_iso_sumPUPt_            = lepton_iso_sumPUPt;
-  eve->lepton_trigMVAOutput_     = lepton_trigMVAOutput;
-  eve->lepton_trigMVACategory_   = lepton_trigMVACategory;
-  eve->lepton_passTrigPresel_    = lepton_passTrigPresel;
-  eve->lepton_scSigmaIEtaIEta_  = lepton_scSigmaIEtaIEta;
-  eve->lepton_full5x5_scSigmaIEtaIEta_ = lepton_full5x5_scSigmaIEtaIEta;
-  eve->lepton_hadronicOverEm_   = lepton_hadronicOverEm;
-  eve->lepton_hcalOverEcal_     = lepton_hcalOverEcal;
-  eve->lepton_ecalPFClusterIso_ = lepton_ecalPFClusterIso;
-  eve->lepton_hcalPFClusterIso_ = lepton_hcalPFClusterIso;
-  eve->lepton_dr03TkSumPt_      = lepton_dr03TkSumPt;
-  eve->lepton_relEcalIso_       = lepton_relEcalIso;
-  eve->lepton_relHcalIso_       = lepton_relHcalIso;
-  eve->lepton_relTrackIso_      = lepton_relTrackIso;
-  eve->lepton_OneOESuperMinusOneOP_ = lepton_OneOESuperMinusOneOP;
-  eve->lepton_numMissingHits_   = lepton_numMissingHits;
-  eve->lepton_isEB_             = lepton_isEB;
-  eve->lepton_passHLTId_        = lepton_passHLTId;
-  eve->lepton_passConversionVeto_ = lepton_passConversionVeto;
+  // eve->lepton_iso_sumChargedHadronPt_ = lepton_iso_sumChargedHadronPt;
+  // eve->lepton_iso_sumNeutralHadronEt_ = lepton_iso_sumNeutralHadronEt;
+  // eve->lepton_iso_sumPhotonEt_        = lepton_iso_sumPhotonEt;
+  // eve->lepton_iso_sumPUPt_            = lepton_iso_sumPUPt;
+  // eve->lepton_trigMVAOutput_     = lepton_trigMVAOutput;
+  // eve->lepton_trigMVACategory_   = lepton_trigMVACategory;
+  // eve->lepton_passTrigPresel_    = lepton_passTrigPresel;
+  // eve->lepton_scSigmaIEtaIEta_  = lepton_scSigmaIEtaIEta;
+  // eve->lepton_full5x5_scSigmaIEtaIEta_ = lepton_full5x5_scSigmaIEtaIEta;
+  // eve->lepton_hadronicOverEm_   = lepton_hadronicOverEm;
+  // eve->lepton_hcalOverEcal_     = lepton_hcalOverEcal;
+  // eve->lepton_ecalPFClusterIso_ = lepton_ecalPFClusterIso;
+  // eve->lepton_hcalPFClusterIso_ = lepton_hcalPFClusterIso;
+  // eve->lepton_dr03TkSumPt_      = lepton_dr03TkSumPt;
+  // eve->lepton_relEcalIso_       = lepton_relEcalIso;
+  // eve->lepton_relHcalIso_       = lepton_relHcalIso;
+  // eve->lepton_relTrackIso_      = lepton_relTrackIso;
+  // eve->lepton_OneOESuperMinusOneOP_ = lepton_OneOESuperMinusOneOP;
+  // eve->lepton_numMissingHits_   = lepton_numMissingHits;
+  // eve->lepton_isEB_             = lepton_isEB;
+  // eve->lepton_passHLTId_        = lepton_passHLTId;
+  // eve->lepton_passConversionVeto_ = lepton_passConversionVeto;
   eve->lepton_inCrack_          = lepton_inCrack;
-  eve->lepton_scEta_            = lepton_scEta;
-  eve->lepton_dEtaSCTrackAtVtx_ = lepton_dEtaSCTrackAtVtx;
-  eve->lepton_dPhiSCTrackAtVtx_ = lepton_dPhiSCTrackAtVtx;
+  // eve->lepton_scEta_            = lepton_scEta;
+  // eve->lepton_dEtaSCTrackAtVtx_ = lepton_dEtaSCTrackAtVtx;
+  // eve->lepton_dPhiSCTrackAtVtx_ = lepton_dPhiSCTrackAtVtx;
   eve->lepton_d0_ = lepton_d0;
   eve->lepton_dZ_ = lepton_dZ;
-  eve->lepton_isGlobalMuon_ = lepton_isGlobalMuon;
-  eve->lepton_isTrackerMuon_ = lepton_isTrackerMuon;
-  eve->lepton_isPFMuon_ = lepton_isPFMuon;
-  eve->lepton_normalizedChi2_ = lepton_normalizedChi2;
-  eve->lepton_numberOfValidMuonHits_ = lepton_numberOfValidMuonHits;
-  eve->lepton_numberOfValidPixelHits_ = lepton_numberOfValidPixelHits;
-  eve->lepton_trackerLayersWithMeasurement_ = lepton_trackerLayersWithMeasurement;
-  eve->lepton_numberOfMatchedStations_ = lepton_numberOfMatchedStations;
+  // eve->lepton_isGlobalMuon_ = lepton_isGlobalMuon;
+  // eve->lepton_isTrackerMuon_ = lepton_isTrackerMuon;
+  // eve->lepton_isPFMuon_ = lepton_isPFMuon;
+  // eve->lepton_normalizedChi2_ = lepton_normalizedChi2;
+  // eve->lepton_numberOfValidMuonHits_ = lepton_numberOfValidMuonHits;
+  // eve->lepton_numberOfValidPixelHits_ = lepton_numberOfValidPixelHits;
+  // eve->lepton_trackerLayersWithMeasurement_ = lepton_trackerLayersWithMeasurement;
+  // eve->lepton_numberOfMatchedStations_ = lepton_numberOfMatchedStations;
 
 
-  eve->lepton_ele_matchHLT_hltL1sL1SingleEG25_ = lepton_ele_matchHLT_hltL1sL1SingleEG25;
-  eve->lepton_ele_matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter_ = lepton_ele_matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter;
-  eve->lepton_ele_matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25_ = lepton_ele_matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25;
-  eve->lepton_ele_matchHLT_hltEle27WPLooseGsfTrackIsoFilter_ = lepton_ele_matchHLT_hltEle27WPLooseGsfTrackIsoFilter;
-  eve->lepton_ele_matchHLT_hltL1sL1EG25erHTT125_ = lepton_ele_matchHLT_hltL1sL1EG25erHTT125;
-  eve->lepton_ele_matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter_ = lepton_ele_matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter;
-  eve->lepton_ele_matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter_ = lepton_ele_matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter;
+  // eve->lepton_ele_matchHLT_hltL1sL1SingleEG25_ = lepton_ele_matchHLT_hltL1sL1SingleEG25;
+  // eve->lepton_ele_matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter_ = lepton_ele_matchHLT_hltL1EG25Ele27WP85GsfTrackIsoFilter;
+  // eve->lepton_ele_matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25_ = lepton_ele_matchHLT_hltL1sL1SingleIsoEG22erOrSingleEG25;
+  // eve->lepton_ele_matchHLT_hltEle27WPLooseGsfTrackIsoFilter_ = lepton_ele_matchHLT_hltEle27WPLooseGsfTrackIsoFilter;
+  // eve->lepton_ele_matchHLT_hltL1sL1EG25erHTT125_ = lepton_ele_matchHLT_hltL1sL1EG25erHTT125;
+  // eve->lepton_ele_matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter_ = lepton_ele_matchHLT_hltL1EGHttEle27WP85GsfTrackIsoFilter;
+  // eve->lepton_ele_matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter_ = lepton_ele_matchHLT_hltL1EGHttEle27WPLooseGsfTrackIsoFilter;
 
 
   /// DIL specific, doesn't make sense in current scope
@@ -2091,29 +2100,29 @@ TriggerAnalyzer::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup)
     flt_filterNames_.push_back(pathNameNoVer);
   }
 
-  unsigned int numHLT = hlt_triggerNames_.size();
-  unsigned int numFLT = flt_filterNames_.size();
+  // unsigned int numHLT = hlt_triggerNames_.size();
+  // unsigned int numFLT = flt_filterNames_.size();
 
-  h_hlt = fs_->make<TH1D>("h_hlt",";HLT path", numHLT , 0 , numHLT );
-  h_flt = fs_->make<TH1D>("h_flt",";Filter path", numFLT , 0 , numFLT );
+  // h_hlt = fs_->make<TH1D>("h_hlt",";HLT path", numHLT , 0 , numHLT );
+  // h_flt = fs_->make<TH1D>("h_flt",";Filter path", numFLT , 0 , numFLT );
 
-  for( unsigned int iPath=0; iPath<numHLT; iPath++ ){
-    std::string pathNameNoVer = hlt_triggerNames_[iPath];
-    int jPath = iPath+1;
-    if( h_hlt ){
-      TAxis * axis = h_hlt->GetXaxis();
-      if( axis ) axis->SetBinLabel(jPath, pathNameNoVer.c_str());
-    }
-  }
+  // for( unsigned int iPath=0; iPath<numHLT; iPath++ ){
+  //   std::string pathNameNoVer = hlt_triggerNames_[iPath];
+  //   int jPath = iPath+1;
+  //   if( h_hlt ){
+  //     TAxis * axis = h_hlt->GetXaxis();
+  //     if( axis ) axis->SetBinLabel(jPath, pathNameNoVer.c_str());
+  //   }
+  // }
 
-  for( unsigned int iPath=0; iPath<numFLT; iPath++ ){
-    std::string pathNameNoVer = flt_filterNames_[iPath];
-    int jPath = iPath+1;
-    if( h_flt ){
-      TAxis * axis = h_flt->GetXaxis();
-      if( axis ) axis->SetBinLabel(jPath, pathNameNoVer.c_str());
-    }
-  }
+  // for( unsigned int iPath=0; iPath<numFLT; iPath++ ){
+  //   std::string pathNameNoVer = flt_filterNames_[iPath];
+  //   int jPath = iPath+1;
+  //   if( h_flt ){
+  //     TAxis * axis = h_flt->GetXaxis();
+  //     if( axis ) axis->SetBinLabel(jPath, pathNameNoVer.c_str());
+  //   }
+  // }
 
   // Get Trigger and Event Handles
   edm::ESHandle<L1GtTriggerMenu> menuRcd;

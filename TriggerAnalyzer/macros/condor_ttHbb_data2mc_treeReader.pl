@@ -1,13 +1,23 @@
 #!/usr/local/bin/perl
 
-$script = "ttHbb_data2mc_treeReader";       # Name of job
+####make DIRs
+@dir = ("Condor", "Script", "Log", "Error", "Output");   
 
-$workingDir = "/uscms_data/d2/dpuigh/TTH/Run2015_76x/CMSSW_7_6_3/src/TriggerRun2/TriggerAnalyzer";
+for $dir (@dir){
+    if(! -d $dir ){
+	mkdir $dir
+    }
+}
 
-$sample = 2510;
-$intLumi = 2430;
+
+$script = "csv_normFix_treeReader";       # Name of job
+
+$workingDir = "/uscms_data/d2/lwming/Trigger2016/CMSSW_8_0_8/src/TriggerRun2/TriggerAnalyzer";
+
+$sample = 2500;
+$intLumi = -1;
 $tthf   = -1;
-$Njobs  = 1;
+$Njobs  = 20;
 $useHTbins = 0;
 
 $num = @ARGV;
@@ -42,7 +52,7 @@ print SHFILE "\n";
 print SHFILE "echo \"\"\n";
 print SHFILE "echo \"Using ROOT on Condor\"\n";
 print SHFILE "echo \"\"\n";
-#print SHFILE "cd \${_CONDOR_SCRATCH_DIR}\n";
+print SHFILE "cd \${_CONDOR_SCRATCH_DIR}\n";
 print SHFILE "\n";
 print SHFILE "sample=\$1\n";
 print SHFILE "NumEvents=\$2\n";
@@ -52,7 +62,8 @@ print SHFILE "intLumi=\$5\n";
 print SHFILE "tthf=\$6\n";
 print SHFILE "useHTbins=\$7\n";
 print SHFILE "\n";
-print SHFILE "root -b -q $workingDir/macros/head.C '$workingDir/macros/$script.C+('\$sample','\$NumEvents','\$NumJobs','\$jobN','\$intLumi','\$tthf','\$useHTbins',1)'\n";
+#print SHFILE "root -b -q $workingDir/macros/head.C '$workingDir/macros/$script.C+('\$sample','\$NumEvents','\$NumJobs','\$jobN','\$intLumi','\$tthf','\$useHTbins',1)'\n";
+print SHFILE "root -b -q head.C $script.C'('\$sample','\$NumEvents','\$NumJobs','\$jobN','\$intLumi','\$tthf','\$useHTbins',1)'\n";
 print SHFILE "\n";
 close SHFILE;
 
@@ -71,7 +82,7 @@ print CONDORFILE "\n";
 print CONDORFILE "use_x509userproxy = true\n";
 print CONDORFILE "Should_Transfer_Files   = YES\n";
 print CONDORFILE "When_To_Transfer_Output = ON_EXIT\n";
-print CONDORFILE "Transfer_Input_Files = CSVv2.csv, CSVv2_TagCountTT.csv, ttH_BTV_CSVv2_13TeV_2015D_20151122.csv, ttH_BTV_CSVv2_13TeV_2015D_2016_02_08.csv, ttH_BTV_CMVAv2_13TeV_2015D_2016_02_12.csv\n";
+print CONDORFILE "Transfer_Input_Files = $workingDir/data/csv_rwt_fit_hf_v2_final_2017_1_10test.root, $workingDir/data/csv_rwt_fit_lf_v2_final_2017_1_10test.root, $workingDir/data/cmva_rwt_fit_hf_v0_final_2017_1_10.root, $workingDir/data/cmva_rwt_fit_lf_v0_final_2017_1_10.root, $workingDir/macros/head.C, $workingDir/macros/$script.C \n";
 print CONDORFILE "\n";
 print CONDORFILE "#+IsLocalJob             = true\n";
 print CONDORFILE "#Rank                    = TARGET.IsLocalSlot\n";

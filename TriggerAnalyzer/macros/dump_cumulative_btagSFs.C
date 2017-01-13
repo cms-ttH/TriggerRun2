@@ -14,12 +14,13 @@
 #include "TKey.h"
 #include "TList.h"
 
-void dump_cumulative_btagSFs(bool isCSV = true, TString inputFileName  = "file.root") {
+void dump_cumulative_btagSFs(bool isCSV = true, bool isHF = true, TString inputFileName  = "file.root") {
 
   TFile *histFile = TFile::Open(inputFileName);
 
   TString btagger = ( isCSV ) ? "CSV" : "CMVA";
-
+  TString flavor = (isHF) ? "" : "lf_";
+  TString flavorStr = (isHF) ? "HF" : "LF";
   
   std::vector<int> csv_systematics;
   csv_systematics.push_back(0);
@@ -132,11 +133,11 @@ void dump_cumulative_btagSFs(bool isCSV = true, TString inputFileName  = "file.r
   for( int iSys=0; iSys<numCSVSys; iSys++ ){
     int useSys = csv_systematics[iSys];
 
-    h_numEvents_jet30_wgtCSV_WP[iSys] = (TH1D*)histFile->Get(Form("h_numEvents_jet30_wgt%s_WP_iSys_%d",btagger.Data(),useSys));
-    h_numEvents_jet30_nowgtCSV_WP[iSys] = (TH1D*)histFile->Get(Form("h_numEvents_jet30_nowgt%s_WP_iSys_%d",btagger.Data(),useSys));
+    h_numEvents_jet30_wgtCSV_WP[iSys] = (TH1D*)histFile->Get(Form("h_numEvents_%sjet30_wgt%s_WP_iSys_%d",flavor.Data(),btagger.Data(),useSys));
+    h_numEvents_jet30_nowgtCSV_WP[iSys] = (TH1D*)histFile->Get(Form("h_numEvents_%sjet30_nowgt%s_WP_iSys_%d",flavor.Data(),btagger.Data(),useSys));
 
-    h_numEvents_jet20_wgtCSV_WP[iSys] = (TH1D*)histFile->Get(Form("h_numEvents_jet20_wgt%s_WP_iSys_%d",btagger.Data(),useSys));
-    h_numEvents_jet20_nowgtCSV_WP[iSys] = (TH1D*)histFile->Get(Form("h_numEvents_jet20_nowgt%s_WP_iSys_%d",btagger.Data(),useSys));
+    h_numEvents_jet20_wgtCSV_WP[iSys] = (TH1D*)histFile->Get(Form("h_numEvents_%sjet20_wgt%s_WP_iSys_%d",flavor.Data(),btagger.Data(),useSys));
+    h_numEvents_jet20_nowgtCSV_WP[iSys] = (TH1D*)histFile->Get(Form("h_numEvents_%sjet20_nowgt%s_WP_iSys_%d",flavor.Data(),btagger.Data(),useSys));
 
 
     h_numEvents_jet30to60_wgtCMVA_WP[iSys] = (TH1D*)histFile->Get(Form("h_numEvents_jet30to60_wgt%s_WP_iSys_%d","CMVA",useSys));
@@ -263,9 +264,9 @@ void dump_cumulative_btagSFs(bool isCSV = true, TString inputFileName  = "file.r
 
   
   std::cout << "***********************************************************" << std::endl;
-  std::cout << "  Cumulative " << btagger << "v2 scale factors for jet pT > 30 " << std::endl;
+  std::cout << "  Cumulative " << btagger << "v2 "<< flavorStr <<" scale factors for jet pT > 30 " << std::endl;
   std::cout << " " << std::endl;
-
+  if(isHF){
   printf("  %sv2L SF = %.4f +%.4f -%.4f : JES (%.4f, %.4f) : LF (%.4f, %.4f) : HFStats1 (%.4f, %.4f) : HFStats2 (%.4f, %.4f) \n",
 	 btagger.Data(),
 	 sf_jet30_csvL[0], sqrt(sf_jet30_csvL_err_up2), sqrt(sf_jet30_csvL_err_down2), sf_jet30_csvL[1], sf_jet30_csvL[2], sf_jet30_csvL[3], sf_jet30_csvL[4],
@@ -280,12 +281,28 @@ void dump_cumulative_btagSFs(bool isCSV = true, TString inputFileName  = "file.r
 	 btagger.Data(),
 	 sf_jet30_csvT[0], sqrt(sf_jet30_csvT_err_up2), sqrt(sf_jet30_csvT_err_down2), sf_jet30_csvT[1], sf_jet30_csvT[2], sf_jet30_csvT[3], sf_jet30_csvT[4],
 	 sf_jet30_csvT[7], sf_jet30_csvT[8], sf_jet30_csvT[9], sf_jet30_csvT[10] );
+  }
+  else{
+  printf("  %sv2L SF = %.4f +%.4f -%.4f : JES (%.4f, %.4f) : HF (%.4f, %.4f) : LFStats1 (%.4f, %.4f) : LFStats2 (%.4f, %.4f) \n",
+	 btagger.Data(),
+	 sf_jet30_csvL[0], sqrt(sf_jet30_csvL_err_up2), sqrt(sf_jet30_csvL_err_down2), sf_jet30_csvL[1], sf_jet30_csvL[2], sf_jet30_csvL[5], sf_jet30_csvL[6],
+	 sf_jet30_csvL[11], sf_jet30_csvL[12], sf_jet30_csvL[13], sf_jet30_csvL[14] );
 
+  printf("  %sv2M SF = %.4f +%.4f -%.4f : JES (%.4f, %.4f) : HF (%.4f, %.4f) : LFStats1 (%.4f, %.4f) : LFStats2 (%.4f, %.4f) \n",
+	 btagger.Data(),
+	 sf_jet30_csvM[0], sqrt(sf_jet30_csvM_err_up2), sqrt(sf_jet30_csvM_err_down2), sf_jet30_csvM[1], sf_jet30_csvM[2], sf_jet30_csvM[5], sf_jet30_csvM[6],
+	 sf_jet30_csvM[11], sf_jet30_csvM[12], sf_jet30_csvM[13], sf_jet30_csvM[14] );
+
+  printf("  %sv2T SF = %.4f +%.4f -%.4f : JES (%.4f, %.4f) : HF (%.4f, %.4f) : LFStats1 (%.4f, %.4f) : LFStats2 (%.4f, %.4f) \n",
+	 btagger.Data(),
+	 sf_jet30_csvT[0], sqrt(sf_jet30_csvT_err_up2), sqrt(sf_jet30_csvT_err_down2), sf_jet30_csvT[1], sf_jet30_csvT[2], sf_jet30_csvT[5], sf_jet30_csvT[6],
+	 sf_jet30_csvT[11], sf_jet30_csvT[12], sf_jet30_csvT[13], sf_jet30_csvT[14] );
+  }
   std::cout << " " << std::endl;
   std::cout << "***********************************************************" << std::endl;
-  std::cout << "  Cumulative " << btagger << "v2 scale factors for jet pT > 20 " << std::endl;
+  std::cout << "  Cumulative " << btagger << "v2 "<< flavorStr <<" scale factors for jet pT > 20 " << std::endl;
   std::cout << " " << std::endl;
-
+  if(isHF){
   printf("  %sv2L SF = %.4f +%.4f -%.4f : JES (%.4f, %.4f) : LF (%.4f, %.4f) : HFStats1 (%.4f, %.4f) : HFStats2 (%.4f, %.4f) \n",
 	 btagger.Data(),
 	 sf_jet20_csvL[0], sqrt(sf_jet20_csvL_err_up2), sqrt(sf_jet20_csvL_err_down2), sf_jet20_csvL[1], sf_jet20_csvL[2], sf_jet20_csvL[3], sf_jet20_csvL[4],
@@ -300,11 +317,27 @@ void dump_cumulative_btagSFs(bool isCSV = true, TString inputFileName  = "file.r
 	 btagger.Data(),
 	 sf_jet20_csvT[0], sqrt(sf_jet20_csvT_err_up2), sqrt(sf_jet20_csvT_err_down2), sf_jet20_csvT[1], sf_jet20_csvT[2], sf_jet20_csvT[3], sf_jet20_csvT[4],
 	 sf_jet20_csvT[7], sf_jet20_csvT[8], sf_jet20_csvT[9], sf_jet20_csvT[10] );
+  }
+  else{
+  printf("  %sv2L SF = %.4f +%.4f -%.4f : JES (%.4f, %.4f) : HF (%.4f, %.4f) : LFStats1 (%.4f, %.4f) : LFStats2 (%.4f, %.4f) \n",
+	 btagger.Data(),
+	 sf_jet20_csvL[0], sqrt(sf_jet20_csvL_err_up2), sqrt(sf_jet20_csvL_err_down2), sf_jet20_csvL[1], sf_jet20_csvL[2], sf_jet20_csvL[5], sf_jet20_csvL[6],
+	 sf_jet20_csvL[11], sf_jet20_csvL[12], sf_jet20_csvL[13], sf_jet20_csvL[14] );
 
+  printf("  %sv2M SF = %.4f +%.4f -%.4f : JES (%.4f, %.4f) : HF (%.4f, %.4f) : LFStats1 (%.4f, %.4f) : LFStats2 (%.4f, %.4f) \n",
+	 btagger.Data(),
+	 sf_jet20_csvM[0], sqrt(sf_jet20_csvM_err_up2), sqrt(sf_jet20_csvM_err_down2), sf_jet20_csvM[1], sf_jet20_csvM[2], sf_jet20_csvM[5], sf_jet20_csvM[6],
+	 sf_jet20_csvM[11], sf_jet20_csvM[12], sf_jet20_csvM[13], sf_jet20_csvM[14] );
+
+  printf("  %sv2T SF = %.4f +%.4f -%.4f : JES (%.4f, %.4f) : HF (%.4f, %.4f) : LFStats1 (%.4f, %.4f) : LFStats2 (%.4f, %.4f) \n",
+	 btagger.Data(),
+	 sf_jet20_csvT[0], sqrt(sf_jet20_csvT_err_up2), sqrt(sf_jet20_csvT_err_down2), sf_jet20_csvT[1], sf_jet20_csvT[2], sf_jet20_csvT[5], sf_jet20_csvT[6],
+	 sf_jet20_csvT[11], sf_jet20_csvT[12], sf_jet20_csvT[13], sf_jet20_csvT[14] );
+  }
   std::cout << " " << std::endl;
   std::cout << "***********************************************************" << std::endl;
-  if( !isCSV ){
-  std::cout << "  Cumulative " << btagger << "v2 scale factors for jet pT [30, 60) " << std::endl;
+  if( !isCSV && isHF ){
+  std::cout << "  Cumulative " << btagger << "v2 "<< flavorStr <<" scale factors for jet pT [30, 60) " << std::endl;
   std::cout << " " << std::endl;
 
   printf("  %sv2L SF = %.4f +%.4f -%.4f : JES (%.4f, %.4f) : LF (%.4f, %.4f) : HFStats1 (%.4f, %.4f) : HFStats2 (%.4f, %.4f) \n",
@@ -324,7 +357,7 @@ void dump_cumulative_btagSFs(bool isCSV = true, TString inputFileName  = "file.r
 
   std::cout << " " << std::endl;
   std::cout << "***********************************************************" << std::endl;
-  std::cout << "  Cumulative " << btagger << "v2 scale factors for jet pT [60, 120) " << std::endl;
+  std::cout << "  Cumulative " << btagger << "v2 "<< flavorStr <<" scale factors for jet pT [60, 120) " << std::endl;
   std::cout << " " << std::endl;
 
   printf("  %sv2L SF = %.4f +%.4f -%.4f : JES (%.4f, %.4f) : LF (%.4f, %.4f) : HFStats1 (%.4f, %.4f) : HFStats2 (%.4f, %.4f) \n",
@@ -344,7 +377,7 @@ void dump_cumulative_btagSFs(bool isCSV = true, TString inputFileName  = "file.r
 
   std::cout << " " << std::endl;
   std::cout << "***********************************************************" << std::endl;
-  std::cout << "  Cumulative " << btagger << "v2 scale factors for jet pT [120, inf) " << std::endl;
+  std::cout << "  Cumulative " << btagger << "v2 "<< flavorStr <<" scale factors for jet pT [120, inf) " << std::endl;
   std::cout << " " << std::endl;
 
   printf("  %sv2L SF = %.4f +%.4f -%.4f : JES (%.4f, %.4f) : LF (%.4f, %.4f) : HFStats1 (%.4f, %.4f) : HFStats2 (%.4f, %.4f) \n",

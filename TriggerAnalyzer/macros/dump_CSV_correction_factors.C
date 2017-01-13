@@ -80,6 +80,17 @@ void dump_CSV_correction_factors(TString inputFileName  = "file.root") {
     printf("         h_csv_ratio_final_Stats1Down[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][8]->GetMean() );
     printf("         h_csv_ratio_final_Stats2Up[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][9]->GetMean() );
     printf("         h_csv_ratio_final_Stats2Down[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][10]->GetMean() );
+    printf("     \n");
+
+    printf("         h_csv_ratio[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][0]->GetMean() );
+    printf("         h_csv_ratio_JESUp[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][1]->GetMean() );
+    printf("         h_csv_ratio_JESDown[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][2]->GetMean() );
+    printf("         h_csv_ratio_LFUp[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][3]->GetMean() );
+    printf("         h_csv_ratio_LFDown[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][4]->GetMean() );
+    printf("         h_csv_ratio_Stats1Up[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][7]->GetMean() );
+    printf("         h_csv_ratio_Stats1Down[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][8]->GetMean() );
+    printf("         h_csv_ratio_Stats2Up[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][9]->GetMean() );
+    printf("         h_csv_ratio_Stats2Down[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_hf_Sys[iPt][0][10]->GetMean() );
     printf("    } \n");
   }
   
@@ -100,8 +111,33 @@ void dump_CSV_correction_factors(TString inputFileName  = "file.root") {
       printf("         h_csv_ratio_final_Stats1Down[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][12]->GetMean() );
       printf("         h_csv_ratio_final_Stats2Up[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][13]->GetMean() );
       printf("         h_csv_ratio_final_Stats2Down[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][14]->GetMean() );
+      printf("     \n");
+      printf("         h_csv_ratio[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][0]->GetMean() );
+      printf("         h_csv_ratio_JESUp[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][1]->GetMean() );
+      printf("         h_csv_ratio_JESDown[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][2]->GetMean() );
+      printf("         h_csv_ratio_HFUp[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][5]->GetMean() );
+      printf("         h_csv_ratio_HFDown[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][6]->GetMean() );
+      printf("         h_csv_ratio_Stats1Up[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][11]->GetMean() );
+      printf("         h_csv_ratio_Stats1Down[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][12]->GetMean() );
+      printf("         h_csv_ratio_Stats2Up[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][13]->GetMean() );
+      printf("         h_csv_ratio_Stats2Down[iHist]->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_lf_Sys[iPt][iEta][14]->GetMean() );
       printf("    } \n");
+
     }
+  }
+
+  std::cout << " " << std::endl;
+  std::cout << "***********************************************************" << std::endl;
+  std::cout << "CF correction factors!" << std::endl;
+  std::cout << " " << std::endl;
+
+  for( int iPt=0; iPt < 5; iPt++ ){	   
+    printf("    if( iHist==%d ){ \n", iPt);
+    printf("         h_cErr1Up->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_cf_Sys[iPt][0][15]->GetMean() );
+    printf("         h_cErr1Down->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_cf_Sys[iPt][0][16]->GetMean() );
+    printf("         h_cErr2Up->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_cf_Sys[iPt][0][17]->GetMean() );
+    printf("         h_cErr2Down->Scale( %.6f ); \n", 1./h_perjet_wgt_csv_cf_Sys[iPt][0][18]->GetMean() );
+    printf("    } \n");
   }
 
   std::cout << " " << std::endl;
