@@ -74,6 +74,17 @@ double get_cmva_wgt( vdouble jetPt, vdouble jetEta, vdouble jetCMVA, vint jetFla
 
 int PtBinsHF_ = 5;
 
+////////////
+// b-tagging WPs --- keep these up-to-date
+///////////
+double csvWPL = 0.5426;
+double csvWPM = 0.8484;
+double csvWPT = 0.9535;
+
+double cMVAWPL = -0.5884;
+double cMVAWPM = 0.4432;
+double cMVAWPT = 0.9432;
+
 // CSV reweighting
 TH1D* h_csv_wgt_hf[9][5];
 TH1D* c_csv_wgt_hf[9][5];
@@ -790,7 +801,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       else                      h_jet_cmva_l->Fill(cmva);
 
       njet++;
-      if( csv>0.80 ) nbtag++;
+      if( csv>csvWPM ) nbtag++;
 
       rejetPts.push_back(pt);
       rejetEtas.push_back(eta);
@@ -842,7 +853,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       if( !(pt>30. && fabs(eta)<2.4) ) continue;
 
       njet_JESup++;
-      if( csv>0.80 ) nbtag_JESup++;
+      if( csv>csvWPM ) nbtag_JESup++;
 
       rejetPts_JESup.push_back(pt);
       rejetEtas_JESup.push_back(eta);
@@ -872,7 +883,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       if( !(pt>30. && fabs(eta)<2.4) ) continue;
 
       njet_JESdown++;
-      if( csv>0.80 ) nbtag_JESdown++;
+      if( csv>csvWPM ) nbtag_JESdown++;
 
       rejetPts_JESdown.push_back(pt);
       rejetEtas_JESdown.push_back(eta);
@@ -1173,58 +1184,58 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 	  h_perjet_wgt_cmva_Sys[iPt][iEta][useSys]->Fill(iCMVAWgtHF,wgt_gen);
 	  if( verbose_ ) std::cout << " ===> 2 test 1.6 jet " << iJet << std::endl;
 
-	  if( csv > 0.460 && pt > 30 && iCSVWgtHF>0. ){
+	  if( csv > csvWPL && pt > 30 && iCSVWgtHF>0. ){
 	    wgt_jet30_CSVL += iCSVWgtHF;
 	    nowgt_jet30_CSVL += 1.0;
 	  }
-	  if( csv > 0.800 && pt > 30 && iCSVWgtHF>0. ){
+	  if( csv > csvWPM && pt > 30 && iCSVWgtHF>0. ){
 	    wgt_jet30_CSVM += iCSVWgtHF;
 	    nowgt_jet30_CSVM += 1.0;
 	  }
-	  if( csv > 0.935 && pt > 30 && iCSVWgtHF>0. ){
+	  if( csv > csvWPT && pt > 30 && iCSVWgtHF>0. ){
 	    wgt_jet30_CSVT += iCSVWgtHF;
 	    nowgt_jet30_CSVT += 1.0;
 	  }
 
 	  
-	  if( csv > 0.460 && pt > 20 && iCSVWgtHF>0. ){
+	  if( csv > csvWPL && pt > 20 && iCSVWgtHF>0. ){
 	    wgt_jet20_CSVL += iCSVWgtHF;
 	    nowgt_jet20_CSVL += 1.0;
 	  }
-	  if( csv > 0.800 && pt > 20 && iCSVWgtHF>0. ){
+	  if( csv > csvWPM && pt > 20 && iCSVWgtHF>0. ){
 	    wgt_jet20_CSVM += iCSVWgtHF;
 	    nowgt_jet20_CSVM += 1.0;
 	  }
-	  if( csv > 0.935 && pt > 20 && iCSVWgtHF>0. ){
+	  if( csv > csvWPT && pt > 20 && iCSVWgtHF>0. ){
 	    wgt_jet20_CSVT += iCSVWgtHF;
 	    nowgt_jet20_CSVT += 1.0;
 	  }
 
 
 
-	  if( cmva > -0.715 && pt > 30 && iCMVAWgtHF>0. ){
+	  if( cmva > cMVAWPL && pt > 30 && iCMVAWgtHF>0. ){
 	    wgt_jet30_CMVAL += iCMVAWgtHF;
 	    nowgt_jet30_CMVAL += 1.0;
 	  }
-	  if( cmva > 0.185 && pt > 30 && iCMVAWgtHF>0. ){
+	  if( cmva > cMVAWPM && pt > 30 && iCMVAWgtHF>0. ){
 	    wgt_jet30_CMVAM += iCMVAWgtHF;
 	    nowgt_jet30_CMVAM += 1.0;
 	  }
-	  if( cmva > 0.875 && pt > 30 && iCMVAWgtHF>0. ){
+	  if( cmva > cMVAWPT && pt > 30 && iCMVAWgtHF>0. ){
 	    wgt_jet30_CMVAT += iCMVAWgtHF;
 	    nowgt_jet30_CMVAT += 1.0;
 	  }
 
 	  
-	  if( cmva > -0.715 && pt > 20 && iCMVAWgtHF>0. ){
+	  if( cmva > cMVAWPL && pt > 20 && iCMVAWgtHF>0. ){
 	    wgt_jet20_CMVAL += iCMVAWgtHF;
 	    nowgt_jet20_CMVAL += 1.0;
 	  }
-	  if( cmva > 0.185 && pt > 20 && iCMVAWgtHF>0. ){
+	  if( cmva > cMVAWPM && pt > 20 && iCMVAWgtHF>0. ){
 	    wgt_jet20_CMVAM += iCMVAWgtHF;
 	    nowgt_jet20_CMVAM += 1.0;
 	  }
-	  if( cmva > 0.875 && pt > 20 && iCMVAWgtHF>0. ){
+	  if( cmva > cMVAWPT && pt > 20 && iCMVAWgtHF>0. ){
 	    wgt_jet20_CMVAT += iCMVAWgtHF;
 	    nowgt_jet20_CMVAT += 1.0;
 	  }
@@ -1233,15 +1244,15 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 	  
 
 	  if( pt>=30 && pt<60 && iCMVAWgtHF>0. ){
-	    if( cmva > -0.715 ){
+	    if( cmva > cMVAWPL ){
 	      wgt_jet30to60_CMVAL += iCMVAWgtHF;
 	      nowgt_jet30to60_CMVAL += 1.0;
 	    }
-	    if( cmva > 0.185 ){
+	    if( cmva > cMVAWPM ){
 	      wgt_jet30to60_CMVAM += iCMVAWgtHF;
 	      nowgt_jet30to60_CMVAM += 1.0;
 	    }
-	    if( cmva > 0.875 ){
+	    if( cmva > cMVAWPT ){
 	      wgt_jet30to60_CMVAT += iCMVAWgtHF;
 	      nowgt_jet30to60_CMVAT += 1.0;
 	    }
@@ -1250,15 +1261,15 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 	  
 
 	  if( pt>=60 && pt<120 && iCMVAWgtHF>0. ){
-	    if( cmva > -0.715 ){
+	    if( cmva > cMVAWPL ){
 	      wgt_jet60to120_CMVAL += iCMVAWgtHF;
 	      nowgt_jet60to120_CMVAL += 1.0;
 	    }
-	    if( cmva > 0.185 ){
+	    if( cmva > cMVAWPM ){
 	      wgt_jet60to120_CMVAM += iCMVAWgtHF;
 	      nowgt_jet60to120_CMVAM += 1.0;
 	    }
-	    if( cmva > 0.875 ){
+	    if( cmva > cMVAWPT ){
 	      wgt_jet60to120_CMVAT += iCMVAWgtHF;
 	      nowgt_jet60to120_CMVAT += 1.0;
 	    }
@@ -1266,15 +1277,15 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
  
 
 	  if( pt>=120 && iCMVAWgtHF>0. ){
-	    if( cmva > -0.715 ){
+	    if( cmva > cMVAWPL ){
 	      wgt_jet120toInf_CMVAL += iCMVAWgtHF;
 	      nowgt_jet120toInf_CMVAL += 1.0;
 	    }
-	    if( cmva > 0.185 ){
+	    if( cmva > cMVAWPM ){
 	      wgt_jet120toInf_CMVAM += iCMVAWgtHF;
 	      nowgt_jet120toInf_CMVAM += 1.0;
 	    }
-	    if( cmva > 0.875 ){
+	    if( cmva > cMVAWPT ){
 	      wgt_jet120toInf_CMVAT += iCMVAWgtHF;
 	      nowgt_jet120toInf_CMVAT += 1.0;
 	    }
@@ -1321,58 +1332,58 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 	  if( verbose_ ) std::cout << " ===> 2 test 1.12 jet " << iJet << std::endl;
 
 
-	  if( csv < 0.460 && pt > 30 && iCSVWgtLF>0. ){
+	  if( csv < csvWPL && pt > 30 && iCSVWgtLF>0. ){
 	    wgt_lf_jet30_CSVL += iCSVWgtLF;
 	    nowgt_lf_jet30_CSVL += 1.0;
 	  }
-	  if( csv < 0.800 && pt > 30 && iCSVWgtLF>0. ){
+	  if( csv < csvWPM && pt > 30 && iCSVWgtLF>0. ){
 	    wgt_lf_jet30_CSVM += iCSVWgtLF;
 	    nowgt_lf_jet30_CSVM += 1.0;
 	  }
-	  if( csv < 0.935 && pt > 30 && iCSVWgtLF>0. ){
+	  if( csv < csvWPT && pt > 30 && iCSVWgtLF>0. ){
 	    wgt_lf_jet30_CSVT += iCSVWgtLF;
 	    nowgt_lf_jet30_CSVT += 1.0;
 	  }
 
 	  
-	  if( csv < 0.460 && pt > 20 && iCSVWgtLF>0. ){
+	  if( csv < csvWPL && pt > 20 && iCSVWgtLF>0. ){
 	    wgt_lf_jet20_CSVL += iCSVWgtLF;
 	    nowgt_lf_jet20_CSVL += 1.0;
 	  }
-	  if( csv < 0.800 && pt > 20 && iCSVWgtLF>0. ){
+	  if( csv < csvWPM && pt > 20 && iCSVWgtLF>0. ){
 	    wgt_lf_jet20_CSVM += iCSVWgtLF;
 	    nowgt_lf_jet20_CSVM += 1.0;
 	  }
-	  if( csv < 0.935 && pt > 20 && iCSVWgtLF>0. ){
+	  if( csv < csvWPT && pt > 20 && iCSVWgtLF>0. ){
 	    wgt_lf_jet20_CSVT += iCSVWgtLF;
 	    nowgt_lf_jet20_CSVT += 1.0;
 	  }
 
 
 
-	  if( cmva < -0.715 && pt > 30 && iCMVAWgtLF>0. ){
+	  if( cmva < cMVAWPL && pt > 30 && iCMVAWgtLF>0. ){
 	    wgt_lf_jet30_CMVAL += iCMVAWgtLF;
 	    nowgt_lf_jet30_CMVAL += 1.0;
 	  }
-	  if( cmva < 0.185 && pt > 30 && iCMVAWgtLF>0. ){
+	  if( cmva < cMVAWPM && pt > 30 && iCMVAWgtLF>0. ){
 	    wgt_lf_jet30_CMVAM += iCMVAWgtLF;
 	    nowgt_lf_jet30_CMVAM += 1.0;
 	  }
-	  if( cmva < 0.875 && pt > 30 && iCMVAWgtLF>0. ){
+	  if( cmva < cMVAWPT && pt > 30 && iCMVAWgtLF>0. ){
 	    wgt_lf_jet30_CMVAT += iCMVAWgtLF;
 	    nowgt_lf_jet30_CMVAT += 1.0;
 	  }
 
 	  
-	  if( cmva < -0.715 && pt > 20 && iCMVAWgtLF>0. ){
+	  if( cmva < cMVAWPL && pt > 20 && iCMVAWgtLF>0. ){
 	    wgt_lf_jet20_CMVAL += iCMVAWgtLF;
 	    nowgt_lf_jet20_CMVAL += 1.0;
 	  }
-	  if( cmva < 0.185 && pt > 20 && iCMVAWgtLF>0. ){
+	  if( cmva < cMVAWPM && pt > 20 && iCMVAWgtLF>0. ){
 	    wgt_lf_jet20_CMVAM += iCMVAWgtLF;
 	    nowgt_lf_jet20_CMVAM += 1.0;
 	  }
-	  if( cmva < 0.875 && pt > 20 && iCMVAWgtLF>0. ){
+	  if( cmva < cMVAWPT && pt > 20 && iCMVAWgtLF>0. ){
 	    wgt_lf_jet20_CMVAT += iCMVAWgtLF;
 	    nowgt_lf_jet20_CMVAT += 1.0;
 	  }
@@ -1832,10 +1843,10 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 	jetFlavors.push_back(flavor);
 
 	numJet++;
-	if( csv > 0.800 ){
+	if( csv > csvWPM ){
 	  numBtag++;
 	}
-	if( cmva > 0.185 ){
+	if( cmva > cMVAWPM ){
 	  numBtag_CMVA++;
 	}
 
