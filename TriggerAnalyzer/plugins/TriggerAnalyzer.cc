@@ -55,7 +55,7 @@
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "DataFormats/HLTReco/interface/TriggerEventWithRefs.h"
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
-
+#include "DataFormats/JetReco/interface/PileupJetIdentifier.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutSetup.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerEvmReadoutRecord.h"
@@ -1262,7 +1262,11 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<double> vec_jet_cmva;
   std::vector<int>    vec_jet_partonFlavour;
   std::vector<int>    vec_jet_hadronFlavour;
-  std::vector<double> vec_jet_pileupJetId_fullDiscriminant;
+  // std::vector<double> vec_jet_pileupJetId_fullDiscriminant;
+  vdouble vec_jet_PUID_mva;
+  vint vec_jet_PUID_flag;
+  vint vec_jet_PUID_passWPLoose;
+
 
   for( std::vector<pat::Jet>::const_iterator iJet = selectedJets.begin(); iJet != selectedJets.end(); iJet++ ){ 
     vec_jet_pt.push_back(iJet->pt());
@@ -1273,7 +1277,13 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_hadronFlavour.push_back(iJet->hadronFlavour());
-    vec_jet_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
+    // vec_jet_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
+
+    //
+    vec_jet_PUID_mva.push_back( iJet->userFloat("pileupJetId:fullDiscriminant") );
+    vec_jet_PUID_flag.push_back( iJet->userInt("pileupJetId:fullId") );
+    vec_jet_PUID_passWPLoose.push_back( PileupJetIdentifier::passJetId( iJet->userInt("pileupJetId:fullId"), PileupJetIdentifier::kLoose ) );
+
   } // end loop on jets
 
   eve->jet_pt_  = vec_jet_pt;
@@ -1284,8 +1294,11 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->jet_cmva_ = vec_jet_cmva;
   eve->jet_partonFlavour_ = vec_jet_partonFlavour;
   eve->jet_hadronFlavour_ = vec_jet_hadronFlavour;
-  eve->jet_pileupJetId_fullDiscriminant_ = vec_jet_pileupJetId_fullDiscriminant;
+  // eve->jet_pileupJetId_fullDiscriminant_ = vec_jet_pileupJetId_fullDiscriminant;
 
+  eve->jet_PUID_mva_ = vec_jet_PUID_mva;
+  eve->jet_PUID_flag_ = vec_jet_PUID_flag;
+  eve->jet_PUID_passWPLoose_ = vec_jet_PUID_passWPLoose;
 
   /////
 
@@ -1343,7 +1356,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<double> vec_jet_JESup_cmva;
   std::vector<int>    vec_jet_JESup_partonFlavour;
   std::vector<int>    vec_jet_JESup_hadronFlavour;
-  std::vector<double> vec_jet_JESup_pileupJetId_fullDiscriminant;
+  // std::vector<double> vec_jet_JESup_pileupJetId_fullDiscriminant;
+  vdouble vec_jet_JESup_PUID_mva;
+  vint    vec_jet_JESup_PUID_flag;
+  vint    vec_jet_JESup_PUID_passWPLoose;
 
   for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JESup.begin(); iJet != selectedJets_JESup.end(); iJet++ ){ 
     vec_jet_JESup_pt.push_back(iJet->pt());
@@ -1354,7 +1370,12 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JESup_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_JESup_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JESup_hadronFlavour.push_back(iJet->hadronFlavour());
-    vec_jet_JESup_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
+    // vec_jet_JESup_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
+
+    vec_jet_JESup_PUID_mva.push_back( iJet->userFloat("pileupJetId:fullDiscriminant") );
+    vec_jet_JESup_PUID_flag.push_back( iJet->userInt("pileupJetId:fullId") );
+    vec_jet_JESup_PUID_passWPLoose.push_back( PileupJetIdentifier::passJetId( iJet->userInt("pileupJetId:fullId"), PileupJetIdentifier::kLoose ) );
+
   } // end loop on jets
 
   eve->jet_JESup_pt_  = vec_jet_JESup_pt;
@@ -1365,8 +1386,11 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->jet_JESup_cmva_ = vec_jet_JESup_cmva;
   eve->jet_JESup_partonFlavour_ = vec_jet_JESup_partonFlavour;
   eve->jet_JESup_hadronFlavour_ = vec_jet_JESup_hadronFlavour;
-  eve->jet_JESup_pileupJetId_fullDiscriminant_ = vec_jet_JESup_pileupJetId_fullDiscriminant;
+  // eve->jet_JESup_pileupJetId_fullDiscriminant_ = vec_jet_JESup_pileupJetId_fullDiscriminant;
 
+  eve->jet_JESup_PUID_mva_ = vec_jet_JESup_PUID_mva;
+  eve->jet_JESup_PUID_flag_ = vec_jet_JESup_PUID_flag;
+  eve->jet_JESup_PUID_passWPLoose_ = vec_jet_JESup_PUID_passWPLoose;
 
   //
 
@@ -1386,7 +1410,10 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   std::vector<double> vec_jet_JESdown_cmva;
   std::vector<int>    vec_jet_JESdown_partonFlavour;
   std::vector<int>    vec_jet_JESdown_hadronFlavour;
-  std::vector<double> vec_jet_JESdown_pileupJetId_fullDiscriminant;
+  // std::vector<double> vec_jet_JESdown_pileupJetId_fullDiscriminant;
+  vdouble vec_jet_JESdown_PUID_mva;
+  vint    vec_jet_JESdown_PUID_flag;
+  vint    vec_jet_JESdown_PUID_passWPLoose;
 
   for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_JESdown.begin(); iJet != selectedJets_JESdown.end(); iJet++ ){ 
     vec_jet_JESdown_pt.push_back(iJet->pt());
@@ -1397,7 +1424,12 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JESdown_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_JESdown_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JESdown_hadronFlavour.push_back(iJet->hadronFlavour());
-    vec_jet_JESdown_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
+    // vec_jet_JESdown_pileupJetId_fullDiscriminant.push_back(iJet->userFloat("pileupJetId:fullDiscriminant"));
+
+    vec_jet_JESdown_PUID_mva.push_back( iJet->userFloat("pileupJetId:fullDiscriminant") );
+    vec_jet_JESdown_PUID_flag.push_back( iJet->userInt("pileupJetId:fullId") );
+    vec_jet_JESdown_PUID_passWPLoose.push_back( PileupJetIdentifier::passJetId( iJet->userInt("pileupJetId:fullId"), PileupJetIdentifier::kLoose ) );
+
   } // end loop on jets
 
   eve->jet_JESdown_pt_  = vec_jet_JESdown_pt;
@@ -1408,8 +1440,11 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   eve->jet_JESdown_cmva_ = vec_jet_JESdown_cmva;
   eve->jet_JESdown_partonFlavour_ = vec_jet_JESdown_partonFlavour;
   eve->jet_JESdown_hadronFlavour_ = vec_jet_JESdown_hadronFlavour;
-  eve->jet_JESdown_pileupJetId_fullDiscriminant_ = vec_jet_JESdown_pileupJetId_fullDiscriminant;
+  // eve->jet_JESdown_pileupJetId_fullDiscriminant_ = vec_jet_JESdown_pileupJetId_fullDiscriminant;
 
+  eve->jet_JESdown_PUID_mva_ = vec_jet_JESdown_PUID_mva;
+  eve->jet_JESdown_PUID_flag_ = vec_jet_JESdown_PUID_flag;
+  eve->jet_JESdown_PUID_passWPLoose_ = vec_jet_JESdown_PUID_passWPLoose;
 
 
   // // JERUp

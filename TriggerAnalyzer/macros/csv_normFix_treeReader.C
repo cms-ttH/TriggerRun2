@@ -74,16 +74,6 @@ double get_cmva_wgt( vdouble jetPt, vdouble jetEta, vdouble jetCMVA, vint jetFla
 
 int PtBinsHF_ = 5;
 
-////////////
-// b-tagging WPs --- keep these up-to-date
-///////////
-double csvWPL = 0.5426;
-double csvWPM = 0.8484;
-double csvWPT = 0.9535;
-
-double cMVAWPL = -0.5884;
-double cMVAWPM = 0.4432;
-double cMVAWPT = 0.9432;
 
 // CSV reweighting
 TH1D* h_csv_wgt_hf[9][5];
@@ -120,6 +110,22 @@ TH1D* h_cmva_wgt_lf[9][4][3];
 
 void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi=-1, int ttCat_=-1, bool useHTbins_=false, bool useCondor_=false ) {
 
+  ////////////
+  // b-tagging WPs --- keep these up-to-date
+  ///////////
+  double csvWPL = 0.5426;
+  double csvWPM = 0.8484;
+  double csvWPT = 0.9535;
+  
+  double cMVAWPL = -0.5884;
+  double cMVAWPM = 0.4432;
+  double cMVAWPT = 0.9432;
+
+  //--------
+  bool rmPUJet = true;
+
+  ///////////
+  //////////
    TString inputFileHF = "data/csv_rwt_fit_hf_v2_final_2017_1_10test.root";
    TString inputFileLF = "data/csv_rwt_fit_lf_v2_final_2017_1_10test.root";
 
@@ -749,7 +755,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       
       if( csv < 0.0 ) csv = -0.05;
       if( csv > 1.0 ) csv = 1.0;
-
+      if( rmPUJet && (eve->jet_PUID_passWPLoose_[iJet] != 1) ) continue;
       if( !(pt>20. && fabs(eta)<2.4) ) continue;
              if( verbose_ ) std::cout << " ===> test 0.3.0.3 " << std::endl;
 
@@ -849,7 +855,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 
       if( csv < 0.0 ) csv = -0.05;
       if( csv > 1.0 ) csv = 1.0;
-
+      if( rmPUJet && (eve->jet_JESup_PUID_passWPLoose_[iJet] != 1) ) continue;
       if( !(pt>30. && fabs(eta)<2.4) ) continue;
 
       njet_JESup++;
@@ -879,7 +885,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       double csv =  eve->jet_JESdown_csv_[iJet];
       if( csv < 0.0 ) csv = -0.05;
       if( csv > 1.0 ) csv = 1.0;
-
+      if( rmPUJet && (eve->jet_JESdown_PUID_passWPLoose_[iJet] != 1) ) continue;
       if( !(pt>30. && fabs(eta)<2.4) ) continue;
 
       njet_JESdown++;
@@ -979,13 +985,14 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       vdouble use_jet_csv = eve->jet_csv_;
       vdouble use_jet_cmva = eve->jet_cmva_;
       vint use_jet_hadronFlavour = eve->jet_hadronFlavour_;
-
+      vint use_jet_PUID_passWPLoose = eve->jet_PUID_passWPLoose_;
       if( mySys==7 ){
 	use_jet_pt = eve->jet_JESup_pt_;
 	use_jet_eta = eve->jet_JESup_eta_;
 	use_jet_csv = eve->jet_JESup_csv_;
 	use_jet_cmva = eve->jet_JESup_cmva_;
 	use_jet_hadronFlavour = eve->jet_JESup_hadronFlavour_;
+	use_jet_PUID_passWPLoose = eve->jet_JESup_PUID_passWPLoose_;
       }
       else if( mySys==8 ){
 	use_jet_pt = eve->jet_JESdown_pt_;
@@ -993,6 +1000,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 	use_jet_csv = eve->jet_JESdown_csv_;
 	use_jet_cmva = eve->jet_JESdown_cmva_;
 	use_jet_hadronFlavour = eve->jet_JESdown_hadronFlavour_;
+	use_jet_PUID_passWPLoose = eve->jet_JESdown_PUID_passWPLoose_;
       }
       else {
 	use_jet_pt = eve->jet_pt_;
@@ -1000,6 +1008,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 	use_jet_csv = eve->jet_csv_;
 	use_jet_cmva = eve->jet_cmva_;
 	use_jet_hadronFlavour = eve->jet_hadronFlavour_;
+	use_jet_PUID_passWPLoose = eve->jet_PUID_passWPLoose_;
       }
 
 
@@ -1105,12 +1114,12 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 	int flavor = use_jet_hadronFlavour[iJet];
 	double csv =  use_jet_csv[iJet];
 	double cmva =  use_jet_cmva[iJet];
-
+	int PUID_passWPLoose = use_jet_PUID_passWPLoose[iJet];
 	double jetAbsEta = fabs(eta);
       
 	if( csv < 0.0 ) csv = -0.05;
 	if( csv > 1.0 ) csv = 1.0;
-
+	if( rmPUJet && (PUID_passWPLoose != 1) ) continue;
 	if( !(pt>20. && fabs(eta)<2.4) ) continue;
       
 	int iPt = -1, iEta = -1;

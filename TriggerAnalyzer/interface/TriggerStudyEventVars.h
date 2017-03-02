@@ -177,7 +177,10 @@ struct triggerStudyEventVars{
   vdouble jet_cmva_;
   vint    jet_partonFlavour_;
   vint    jet_hadronFlavour_;
-  vdouble jet_pileupJetId_fullDiscriminant_;
+  /* vdouble jet_pileupJetId_fullDiscriminant_; */
+  vdouble jet_PUID_mva_;
+  vint    jet_PUID_flag_;
+  vint    jet_PUID_passWPLoose_;
 
   /* vdouble jet_nocc_pt_; */
   /* vdouble jet_nocc_eta_; */
@@ -198,7 +201,10 @@ struct triggerStudyEventVars{
   vdouble jet_JESup_cmva_;
   vint    jet_JESup_partonFlavour_;
   vint    jet_JESup_hadronFlavour_;
-  vdouble jet_JESup_pileupJetId_fullDiscriminant_;
+  /* vdouble jet_JESup_pileupJetId_fullDiscriminant_; */
+  vdouble jet_JESup_PUID_mva_;
+  vint    jet_JESup_PUID_flag_;
+  vint    jet_JESup_PUID_passWPLoose_;
 
   vdouble jet_JESdown_pt_;
   vdouble jet_JESdown_eta_;
@@ -208,7 +214,11 @@ struct triggerStudyEventVars{
   vdouble jet_JESdown_cmva_;
   vint    jet_JESdown_partonFlavour_;
   vint    jet_JESdown_hadronFlavour_;
-  vdouble jet_JESdown_pileupJetId_fullDiscriminant_;
+  /* vdouble jet_JESdown_pileupJetId_fullDiscriminant_; */
+  vdouble jet_JESdown_PUID_mva_;
+  vint    jet_JESdown_PUID_flag_;
+  vint    jet_JESdown_PUID_passWPLoose_;
+
 
   /* vdouble jet_JERup_pt_; */
   /* vdouble jet_JERup_eta_; */
@@ -472,7 +482,10 @@ void triggerStudyEventVars::initialize(){
   jet_cmva_.clear();
   jet_partonFlavour_.clear();
   jet_hadronFlavour_.clear();
-  jet_pileupJetId_fullDiscriminant_.clear();
+  /* jet_pileupJetId_fullDiscriminant_.clear(); */
+  jet_PUID_mva_.clear();
+  jet_PUID_flag_.clear();
+  jet_PUID_passWPLoose_.clear();
 
 
   /* jet_nocc_pt_.clear(); */
@@ -494,7 +507,10 @@ void triggerStudyEventVars::initialize(){
   jet_JESup_cmva_.clear();
   jet_JESup_partonFlavour_.clear();
   jet_JESup_hadronFlavour_.clear();
-  jet_JESup_pileupJetId_fullDiscriminant_.clear();
+  /* jet_JESup_pileupJetId_fullDiscriminant_.clear(); */
+  jet_JESup_PUID_mva_.clear();
+  jet_JESup_PUID_flag_.clear();
+  jet_JESup_PUID_passWPLoose_.clear();
 
   jet_JESdown_pt_.clear();
   jet_JESdown_eta_.clear();
@@ -504,7 +520,10 @@ void triggerStudyEventVars::initialize(){
   jet_JESdown_cmva_.clear();
   jet_JESdown_partonFlavour_.clear();
   jet_JESdown_hadronFlavour_.clear();
-  jet_JESdown_pileupJetId_fullDiscriminant_.clear();
+  /* jet_JESdown_pileupJetId_fullDiscriminant_.clear(); */
+  jet_JESdown_PUID_mva_.clear();
+  jet_JESdown_PUID_flag_.clear();
+  jet_JESdown_PUID_passWPLoose_.clear();
 
   /* jet_JERup_pt_.clear(); */
   /* jet_JERup_eta_.clear(); */

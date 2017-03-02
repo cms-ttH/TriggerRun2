@@ -10,7 +10,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
-process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v7' #'80X_mcRun2_asymptotic_2016_miniAODv2_v1'
+process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v8' #'80X_mcRun2_asymptotic_2016_miniAODv2_v1'
 #process.GlobalTag.globaltag = '74X_dataRun2_Prompt_v2'#'74X_dataRun2_Express_v0'
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )

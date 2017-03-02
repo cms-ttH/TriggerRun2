@@ -1,7 +1,7 @@
 from WMCore.Configuration import Configuration 
 config = Configuration() 
 config.section_("General") 
-config.General.requestName = 'ttjets_Jan6th' ## change
+config.General.requestName = 'ttjets_Mar3rd' ## change
 
 
 config.section_("JobType") 
@@ -20,7 +20,7 @@ config.Data.unitsPerJob = 1
 config.Data.totalUnits = 200  ## only for ttbar
 config.Data.publication = True 
 config.Data.publishDBS = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter/' 
-config.Data.outputDatasetTag = 'Jan6th_trigger_csvRWT_13TeV'
+config.Data.outputDatasetTag = 'Mar3rd_trigger_csvRWT_13TeV'
 ### change user Space 
 config.Data.outLFNDirBase = '/store/user/lwming/' 
 config.Data.ignoreLocality = True
