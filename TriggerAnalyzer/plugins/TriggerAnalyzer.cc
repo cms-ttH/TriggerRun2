@@ -1273,7 +1273,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_eta.push_back(iJet->eta());
     vec_jet_phi.push_back(iJet->phi());
     vec_jet_energy.push_back(iJet->energy());
-    vec_jet_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+    vec_jet_csv.push_back(iJet->bDiscriminator("pfDeepCSVJetTags:probb") + iJet->bDiscriminator("pfDeepCSVJetTags:probbb"));
     vec_jet_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_hadronFlavour.push_back(iJet->hadronFlavour());
@@ -1366,7 +1366,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JESup_eta.push_back(iJet->eta());
     vec_jet_JESup_phi.push_back(iJet->phi());
     vec_jet_JESup_energy.push_back(iJet->energy());
-    vec_jet_JESup_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+    vec_jet_JESup_csv.push_back(iJet->bDiscriminator("pfDeepCSVJetTags:probb") + iJet->bDiscriminator("pfDeepCSVJetTags:probbb"));
     vec_jet_JESup_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_JESup_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JESup_hadronFlavour.push_back(iJet->hadronFlavour());
@@ -1420,7 +1420,7 @@ TriggerAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     vec_jet_JESdown_eta.push_back(iJet->eta());
     vec_jet_JESdown_phi.push_back(iJet->phi());
     vec_jet_JESdown_energy.push_back(iJet->energy());
-    vec_jet_JESdown_csv.push_back(iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+    vec_jet_JESdown_csv.push_back(iJet->bDiscriminator("pfDeepCSVJetTags:probb") + iJet->bDiscriminator("pfDeepCSVJetTags:probbb"));
     vec_jet_JESdown_cmva.push_back(iJet->bDiscriminator("pfCombinedMVAV2BJetTags"));
     vec_jet_JESdown_partonFlavour.push_back(iJet->partonFlavour());
     vec_jet_JESdown_hadronFlavour.push_back(iJet->hadronFlavour());
