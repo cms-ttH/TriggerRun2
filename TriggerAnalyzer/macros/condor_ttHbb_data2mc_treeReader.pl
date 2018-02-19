@@ -12,7 +12,7 @@ for $dir (@dir){
 
 $script = "csv_normFix_treeReader";       # Name of job
 
-$workingDir = "/uscms_data/d2/lwming/Trigger2016/CMSSW_8_0_8/src/TriggerRun2/TriggerAnalyzer";
+$workingDir = "/uscms_data/d2/lwming/2018Trigger/CMSSW_9_4_0/src/TriggerRun2/TriggerAnalyzer";
 
 $sample = 2500;
 $intLumi = -1;
@@ -52,6 +52,8 @@ print SHFILE "\n";
 print SHFILE "echo \"\"\n";
 print SHFILE "echo \"Using ROOT on Condor\"\n";
 print SHFILE "echo \"\"\n";
+#print SHFILE "source /cvmfs/cms.cern.ch/cmsset_default.sh\n";
+#print SHFILE "export SCRAM_ARCH=slc6_amd64_gcc630\n";
 print SHFILE "cd \${_CONDOR_SCRATCH_DIR}\n";
 print SHFILE "\n";
 print SHFILE "sample=\$1\n";
@@ -82,7 +84,7 @@ print CONDORFILE "\n";
 print CONDORFILE "use_x509userproxy = true\n";
 print CONDORFILE "Should_Transfer_Files   = YES\n";
 print CONDORFILE "When_To_Transfer_Output = ON_EXIT\n";
-print CONDORFILE "Transfer_Input_Files = $workingDir/data/csv_rwt_fit_hf_v2_final_2017_1_10test.root, $workingDir/data/csv_rwt_fit_lf_v2_final_2017_1_10test.root, $workingDir/data/cmva_rwt_fit_hf_v0_final_2017_1_10.root, $workingDir/data/cmva_rwt_fit_lf_v0_final_2017_1_10.root, $workingDir/macros/head.C, $workingDir/macros/$script.C \n";
+print CONDORFILE "Transfer_Input_Files = $workingDir/data/csv_rwt_fit_hf_v2_final_2018_2_12test.root, $workingDir/data/csv_rwt_fit_lf_v2_final_2018_2_12test.root, $workingDir/data/cmva_rwt_fit_hf_v0_final_2018_2_13.root, $workingDir/data/cmva_rwt_fit_lf_v0_final_2018_2_13.root, $workingDir/macros/head.C, $workingDir/macros/$script.C, $workingDir/interface/TriggerStudyEventVars.h \n";
 print CONDORFILE "\n";
 print CONDORFILE "#+IsLocalJob             = true\n";
 print CONDORFILE "#Rank                    = TARGET.IsLocalSlot\n";

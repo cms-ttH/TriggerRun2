@@ -41,7 +41,8 @@
 
 #if !defined(__CINT__) && !defined(__MAKECINT__)
 
-#include "TriggerRun2/TriggerAnalyzer/interface/TriggerStudyEventVars.h"
+#include "TriggerStudyEventVars.h"
+//#include "TriggerRun2/TriggerAnalyzer/interface/TriggerStudyEventVars.h"
 //#include "TriggerRun2/TriggerAnalyzer/interface/BTagCalibrationStandalone.h"
 
 // #include "CondFormats/BTauObjects/interface/BTagCalibration.h"
@@ -113,25 +114,25 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
   ////////////
   // b-tagging WPs --- keep these up-to-date
   ///////////
-  double csvWPL = 0.5426;
-  double csvWPM = 0.8484;
-  double csvWPT = 0.9535;
+  double csvWPL = 0.1522; //0.5426;
+  double csvWPM = 0.4941; //0.8484;
+  double csvWPT = 0.8001; //0.9535;
   
-  double cMVAWPL = -0.5884;
-  double cMVAWPM = 0.4432;
-  double cMVAWPT = 0.9432;
+  double cMVAWPL = 0.5803;//-0.5884;
+  double cMVAWPM = 0.8838;//0.4432;
+  double cMVAWPT = 0.9693;//0.9432;
 
   //--------
   bool rmPUJet = true;
 
   ///////////
   //////////
-   TString inputFileHF = "data/csv_rwt_fit_hf_v2_final_2017_1_10test.root";
-   TString inputFileLF = "data/csv_rwt_fit_lf_v2_final_2017_1_10test.root";
+   TString inputFileHF = "data/csv_rwt_fit_hf_v2_final_2018_2_12test.root";
+   TString inputFileLF = "data/csv_rwt_fit_lf_v2_final_2018_2_12test.root";
 
    if( useCondor_ ){
-    inputFileHF = "csv_rwt_fit_hf_v2_final_2017_1_10test.root";
-    inputFileLF = "csv_rwt_fit_lf_v2_final_2017_1_10test.root";
+    inputFileHF = "csv_rwt_fit_hf_v2_final_2018_2_12test.root";
+    inputFileLF = "csv_rwt_fit_lf_v2_final_2018_2_12test.root";
    }
    TFile* f_CSVwgt_HF = new TFile(inputFileHF);
    TFile* f_CSVwgt_LF = new TFile(inputFileLF);
@@ -144,12 +145,12 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 
   // fillCSVhistos_old(f_CSVwgt_HF_old, f_CSVwgt_LF_old);
 
-   TString inputFileHFCMVA = "data/cmva_rwt_fit_hf_v0_final_2017_1_10.root";
-   TString inputFileLFCMVA = "data/cmva_rwt_fit_lf_v0_final_2017_1_10.root";
+   TString inputFileHFCMVA = "data/cmva_rwt_fit_hf_v0_final_2018_2_13.root";
+   TString inputFileLFCMVA = "data/cmva_rwt_fit_lf_v0_final_2018_2_13.root";
 
    if( useCondor_ ){
-    inputFileHFCMVA = "cmva_rwt_fit_hf_v0_final_2017_1_10.root";
-    inputFileLFCMVA = "cmva_rwt_fit_lf_v0_final_2017_1_10.root";
+    inputFileHFCMVA = "cmva_rwt_fit_hf_v0_final_2018_2_13.root";
+    inputFileLFCMVA = "cmva_rwt_fit_lf_v0_final_2018_2_13.root";
    }
 
   TFile* f_CMVAwgt_HF = new TFile(inputFileHFCMVA);
@@ -180,7 +181,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
     mySample_nGen_ = 97994442;//116591749;//25357774;//25446993;
     mySample_sampleName_ = "ttbar_powheg";
     // ext
-    mySample_inputDirs_.push_back("root://cmseos.fnal.gov//store/user/lwming/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/Jan6th_trigger_csvRWT_13TeV/170106_202903/0000/");
+    mySample_inputDirs_.push_back("root://cmseos.fnal.gov//store/user/lwming/TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8/10thFeb_trigger_csvRWT_13TeV/180210_151751/0000/");
     //    mySample_inputDirs_.push_back("/afs/cern.ch/work/l/lwming/csvRWT13TeV/");
 
     if( ttCat_>=0 ){
@@ -399,15 +400,31 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
   TH1D* h_numEvents_jet20_wgtCMVA_WP[numCSVSys];
   TH1D* h_numEvents_jet20_nowgtCMVA_WP[numCSVSys];
 
+  //
+  TH1D* h_numEvents_jet30to50_wgtCSV_WP[numCSVSys];
+  TH1D* h_numEvents_jet30to50_nowgtCSV_WP[numCSVSys];
 
-  TH1D* h_numEvents_jet30to60_wgtCMVA_WP[numCSVSys];
-  TH1D* h_numEvents_jet30to60_nowgtCMVA_WP[numCSVSys];
+  TH1D* h_numEvents_jet50to70_wgtCSV_WP[numCSVSys];
+  TH1D* h_numEvents_jet50to70_nowgtCSV_WP[numCSVSys];
 
-  TH1D* h_numEvents_jet60to120_wgtCMVA_WP[numCSVSys];
-  TH1D* h_numEvents_jet60to120_nowgtCMVA_WP[numCSVSys];
+  TH1D* h_numEvents_jet70to100_wgtCSV_WP[numCSVSys];
+  TH1D* h_numEvents_jet70to100_nowgtCSV_WP[numCSVSys];
 
-  TH1D* h_numEvents_jet120toInf_wgtCMVA_WP[numCSVSys];
-  TH1D* h_numEvents_jet120toInf_nowgtCMVA_WP[numCSVSys];
+  TH1D* h_numEvents_jet100toInf_wgtCSV_WP[numCSVSys];
+  TH1D* h_numEvents_jet100toInf_nowgtCSV_WP[numCSVSys];
+
+  //
+  TH1D* h_numEvents_jet30to50_wgtCMVA_WP[numCSVSys];
+  TH1D* h_numEvents_jet30to50_nowgtCMVA_WP[numCSVSys];
+
+  TH1D* h_numEvents_jet50to70_wgtCMVA_WP[numCSVSys];
+  TH1D* h_numEvents_jet50to70_nowgtCMVA_WP[numCSVSys];
+
+  TH1D* h_numEvents_jet70to100_wgtCMVA_WP[numCSVSys];
+  TH1D* h_numEvents_jet70to100_nowgtCMVA_WP[numCSVSys];
+
+  TH1D* h_numEvents_jet100toInf_wgtCMVA_WP[numCSVSys];
+  TH1D* h_numEvents_jet100toInf_nowgtCMVA_WP[numCSVSys];
 
   //
   TH1D* h_numEvents_lf_jet30_wgtCSV_WP[numCSVSys];
@@ -464,14 +481,31 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
     h_numEvents_jet20_wgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet20_wgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
     h_numEvents_jet20_nowgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet20_nowgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
 
-    h_numEvents_jet30to60_wgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet30to60_wgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
-    h_numEvents_jet30to60_nowgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet30to60_nowgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+    //
+    h_numEvents_jet30to50_wgtCSV_WP[iSys] = new TH1D(Form("h_numEvents_jet30to50_wgtCSV_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+    h_numEvents_jet30to50_nowgtCSV_WP[iSys] = new TH1D(Form("h_numEvents_jet30to50_nowgtCSV_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
 
-    h_numEvents_jet60to120_wgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet60to120_wgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
-    h_numEvents_jet60to120_nowgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet60to120_nowgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+    h_numEvents_jet50to70_wgtCSV_WP[iSys] = new TH1D(Form("h_numEvents_jet50to70_wgtCSV_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+    h_numEvents_jet50to70_nowgtCSV_WP[iSys] = new TH1D(Form("h_numEvents_jet50to70_nowgtCSV_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
 
-    h_numEvents_jet120toInf_wgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet120toInf_wgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
-    h_numEvents_jet120toInf_nowgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet120toInf_nowgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+    h_numEvents_jet70to100_wgtCSV_WP[iSys] = new TH1D(Form("h_numEvents_jet70to100_wgtCSV_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+    h_numEvents_jet70to100_nowgtCSV_WP[iSys] = new TH1D(Form("h_numEvents_jet70to100_nowgtCSV_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+
+    h_numEvents_jet100toInf_wgtCSV_WP[iSys] = new TH1D(Form("h_numEvents_jet100toInf_wgtCSV_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+    h_numEvents_jet100toInf_nowgtCSV_WP[iSys] = new TH1D(Form("h_numEvents_jet100toInf_nowgtCSV_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+
+    //
+    h_numEvents_jet30to50_wgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet30to50_wgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+    h_numEvents_jet30to50_nowgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet30to50_nowgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+
+    h_numEvents_jet50to70_wgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet50to70_wgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+    h_numEvents_jet50to70_nowgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet50to70_nowgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+
+    h_numEvents_jet70to100_wgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet70to100_wgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+    h_numEvents_jet70to100_nowgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet70to100_nowgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+
+    h_numEvents_jet100toInf_wgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet100toInf_wgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
+    h_numEvents_jet100toInf_nowgtCMVA_WP[iSys] = new TH1D(Form("h_numEvents_jet100toInf_nowgtCMVA_WP_iSys_%d",useSys),";Predicted number of events", 3, 0, 3 );
 
     h_wgt_csv_Sys[iSys] = new TH1D(Form("h_wgt_csv_Sys_%d",useSys),";weight", 300, 0., 3. );
     h_wgt_csv_hf_Sys[iSys] = new TH1D(Form("h_wgt_csv_hf_Sys_%d",useSys),";weight", 300, 0., 3. );
@@ -672,17 +706,17 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 
     // h_additionalJetEventId->Fill(additionalJetEventId);
 
-    int numTruePVs = eve->numTruePVs_;
+    // int numTruePVs = eve->numTruePVs_;
 
-    //double wgt_pu = ( insample < 0 ) ? 1. : reweightPU(numPVs);
-    double wgt_pu = ( insample < 0 ) ? 1. : reweightPU(numTruePVs,0);
-    double wgt_pu_up = ( insample < 0 ) ? 1. : reweightPU(numTruePVs,1);
-    double wgt_pu_down = ( insample < 0 ) ? 1. : reweightPU(numTruePVs,-1);
+    // //double wgt_pu = ( insample < 0 ) ? 1. : reweightPU(numPVs);
+    // double wgt_pu = ( insample < 0 ) ? 1. : reweightPU(numTruePVs,0);
+    // double wgt_pu_up = ( insample < 0 ) ? 1. : reweightPU(numTruePVs,1);
+    // double wgt_pu_down = ( insample < 0 ) ? 1. : reweightPU(numTruePVs,-1);
     if( verbose_ ) std::cout << " ===> test 0.2 " << std::endl;
 
-    wgt_pu = 1.;
-    wgt_pu_up = 1.;
-    wgt_pu_down = 1.;
+    double wgt_pu = 1.;
+    double wgt_pu_up = 1.;
+    double wgt_pu_down = 1.;
     
     double wgt_gen = ( insample > 0 ) ? eve->wgt_generator_ : 1;
     wgt_gen = ( wgt_gen > 0 ) ? 1. : -1.;
@@ -756,7 +790,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       if( csv < 0.0 ) csv = -0.05;
       if( csv > 1.0 ) csv = 1.0;
       if( rmPUJet && (eve->jet_PUID_passWPLoose_[iJet] != 1) ) continue;
-      if( !(pt>20. && fabs(eta)<2.4) ) continue;
+      if( !(pt>20. && fabs(eta)<2.5) ) continue;
              if( verbose_ ) std::cout << " ===> test 0.3.0.3 " << std::endl;
 
       int iPt = -1, iEta = -1;
@@ -764,9 +798,19 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       else if (pt >=30 && pt<40) iPt = 1;
       else if (pt >=40 && pt<60) iPt = 2;
       else if (pt >=60 && pt<100) iPt = 3;
-      else if (pt >=100)          iPt = 4;
+      else if (pt >=100)          iPt = 3;
       //else if (pt >=100 && pt<160) iPt = 4;
       //else if (pt >=160 && pt<10000) iPt = 5;
+
+      ////
+      if(abs(flavor) == 5 || abs(flavor) == 4){
+	if (pt >=19.99 && pt<30) iPt = 0;
+	else if (pt >=30 && pt<50) iPt = 1;
+	else if (pt >=50 && pt<70) iPt = 2;
+	else if (pt >=70 && pt<100) iPt = 3;
+	else if (pt >=100 && pt<160) iPt = 4;
+	else if (pt >=160 && pt<10000) iPt = 4; //4
+      }
 
       if( PtBinsHF_ > 5 && pt >=160 )  iPt = 5;
        if( verbose_ ) std::cout << " ===> test 0.3.0.4 " << std::endl;
@@ -774,18 +818,18 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       
       if (jetAbsEta >=0 &&  jetAbsEta<0.8 ) iEta = 0;
       else if ( jetAbsEta>=0.8 && jetAbsEta<1.6 )  iEta = 1;
-      else if ( jetAbsEta>=1.6 && jetAbsEta<2.41 ) iEta = 2;
+      else if ( jetAbsEta>=1.6 && jetAbsEta<2.51 ) iEta = 2;
         if( verbose_ ) std::cout << " ===> test 0.3.1 " << std::endl;
 
 
-      if( abs(flavor)==4 && fabs(eta)<2.4 && pt>20. ){
+      if( abs(flavor)==4 && fabs(eta)<2.5 && pt>20. ){
 	h_c_jet_csv[iPt]->Fill(csv);
 	h_c_jet_cmva[iPt]->Fill(cmva);
 	for( int iSysC=0; iSysC<NumSysC; iSysC++ ){
 	  int useCSVBin = (csv>=0.) ? c_csv_wgt_hf[iSysC][iPt]->FindBin(csv) : 1;
 	  double iCSVWgtC = c_csv_wgt_hf[iSysC][iPt]->GetBinContent(useCSVBin);
 
-	  int useCMVABin = c_cmva_wgt_hf[iSysC][iPt]->FindBin(cmva);
+	  int useCMVABin = (cmva>=0.) ? c_cmva_wgt_hf[iSysC][iPt]->FindBin(cmva) : 1;
 	  double iCMVAWgtC = c_cmva_wgt_hf[iSysC][iPt]->GetBinContent(useCMVABin);
 
 	  h_c_jet_csv_CharmCSVSF[iSysC][iPt]->Fill(csv,iCSVWgtC);
@@ -794,14 +838,14 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       }
        if( verbose_ ) std::cout << " ===> test 0.3.2 " << std::endl;
 
-      if( !(pt>30. && fabs(eta)<2.4) ) continue;
+      if( !(pt>30. && fabs(eta)<2.5) ) continue;
 
       h_jet_csv_a->Fill(csv);
       if( abs(flavor)==5 )      h_jet_csv_b->Fill(csv);
       else if( abs(flavor)==4 ) h_jet_csv_c->Fill(csv);
       else                      h_jet_csv_l->Fill(csv);
 
-      h_jet_cmva_a->Fill(csv);
+      h_jet_cmva_a->Fill(cmva);
       if( abs(flavor)==5 )      h_jet_cmva_b->Fill(cmva);
       else if( abs(flavor)==4 ) h_jet_cmva_c->Fill(cmva);
       else                      h_jet_cmva_l->Fill(cmva);
@@ -856,7 +900,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       if( csv < 0.0 ) csv = -0.05;
       if( csv > 1.0 ) csv = 1.0;
       if( rmPUJet && (eve->jet_JESup_PUID_passWPLoose_[iJet] != 1) ) continue;
-      if( !(pt>30. && fabs(eta)<2.4) ) continue;
+      if( !(pt>30. && fabs(eta)<2.5) ) continue;
 
       njet_JESup++;
       if( csv>csvWPM ) nbtag_JESup++;
@@ -886,7 +930,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       if( csv < 0.0 ) csv = -0.05;
       if( csv > 1.0 ) csv = 1.0;
       if( rmPUJet && (eve->jet_JESdown_PUID_passWPLoose_[iJet] != 1) ) continue;
-      if( !(pt>30. && fabs(eta)<2.4) ) continue;
+      if( !(pt>30. && fabs(eta)<2.5) ) continue;
 
       njet_JESdown++;
       if( csv>csvWPM ) nbtag_JESdown++;
@@ -1045,32 +1089,75 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       double nowgt_jet20_CMVAM = 0.;
       double nowgt_jet20_CMVAT = 0.;
 
+      ///////
+      double wgt_jet30to50_CSVL = 0.;
+      double wgt_jet30to50_CSVM = 0.;
+      double wgt_jet30to50_CSVT = 0.;
 
-      double wgt_jet30to60_CMVAL = 0.;
-      double wgt_jet30to60_CMVAM = 0.;
-      double wgt_jet30to60_CMVAT = 0.;
-
-      double nowgt_jet30to60_CMVAL = 0.;
-      double nowgt_jet30to60_CMVAM = 0.;
-      double nowgt_jet30to60_CMVAT = 0.;
-
-
-      double wgt_jet60to120_CMVAL = 0.;
-      double wgt_jet60to120_CMVAM = 0.;
-      double wgt_jet60to120_CMVAT = 0.;
-
-      double nowgt_jet60to120_CMVAL = 0.;
-      double nowgt_jet60to120_CMVAM = 0.;
-      double nowgt_jet60to120_CMVAT = 0.;
+      double nowgt_jet30to50_CSVL = 0.;
+      double nowgt_jet30to50_CSVM = 0.;
+      double nowgt_jet30to50_CSVT = 0.;
 
 
-      double wgt_jet120toInf_CMVAL = 0.;
-      double wgt_jet120toInf_CMVAM = 0.;
-      double wgt_jet120toInf_CMVAT = 0.;
+      double wgt_jet50to70_CSVL = 0.;
+      double wgt_jet50to70_CSVM = 0.;
+      double wgt_jet50to70_CSVT = 0.;
 
-      double nowgt_jet120toInf_CMVAL = 0.;
-      double nowgt_jet120toInf_CMVAM = 0.;
-      double nowgt_jet120toInf_CMVAT = 0.;
+      double nowgt_jet50to70_CSVL = 0.;
+      double nowgt_jet50to70_CSVM = 0.;
+      double nowgt_jet50to70_CSVT = 0.;
+
+      double wgt_jet70to100_CSVL = 0.;
+      double wgt_jet70to100_CSVM = 0.;
+      double wgt_jet70to100_CSVT = 0.;
+
+      double nowgt_jet70to100_CSVL = 0.;
+      double nowgt_jet70to100_CSVM = 0.;
+      double nowgt_jet70to100_CSVT = 0.;
+
+
+      double wgt_jet100toInf_CSVL = 0.;
+      double wgt_jet100toInf_CSVM = 0.;
+      double wgt_jet100toInf_CSVT = 0.;
+
+      double nowgt_jet100toInf_CSVL = 0.;
+      double nowgt_jet100toInf_CSVM = 0.;
+      double nowgt_jet100toInf_CSVT = 0.;
+
+      /////
+      double wgt_jet30to50_CMVAL = 0.;
+      double wgt_jet30to50_CMVAM = 0.;
+      double wgt_jet30to50_CMVAT = 0.;
+
+      double nowgt_jet30to50_CMVAL = 0.;
+      double nowgt_jet30to50_CMVAM = 0.;
+      double nowgt_jet30to50_CMVAT = 0.;
+
+
+      double wgt_jet50to70_CMVAL = 0.;
+      double wgt_jet50to70_CMVAM = 0.;
+      double wgt_jet50to70_CMVAT = 0.;
+
+      double nowgt_jet50to70_CMVAL = 0.;
+      double nowgt_jet50to70_CMVAM = 0.;
+      double nowgt_jet50to70_CMVAT = 0.;
+
+      double wgt_jet70to100_CMVAL = 0.;
+      double wgt_jet70to100_CMVAM = 0.;
+      double wgt_jet70to100_CMVAT = 0.;
+
+      double nowgt_jet70to100_CMVAL = 0.;
+      double nowgt_jet70to100_CMVAM = 0.;
+      double nowgt_jet70to100_CMVAT = 0.;
+
+
+      double wgt_jet100toInf_CMVAL = 0.;
+      double wgt_jet100toInf_CMVAM = 0.;
+      double wgt_jet100toInf_CMVAT = 0.;
+
+      double nowgt_jet100toInf_CMVAL = 0.;
+      double nowgt_jet100toInf_CMVAM = 0.;
+      double nowgt_jet100toInf_CMVAT = 0.;
 
       //light flavor
       double wgt_lf_jet30_CSVL = 0.;
@@ -1119,24 +1206,37 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       
 	if( csv < 0.0 ) csv = -0.05;
 	if( csv > 1.0 ) csv = 1.0;
+	if( cmva < 0.0 ) cmva = -0.05;
+	if( cmva > 1.0 ) cmva = 1.0;
+
 	if( rmPUJet && (PUID_passWPLoose != 1) ) continue;
-	if( !(pt>20. && fabs(eta)<2.4) ) continue;
+	if( !(pt>20. && fabs(eta)<2.5) ) continue;
       
 	int iPt = -1, iEta = -1;
 	if (pt >=19.99 && pt<30) iPt = 0;
 	else if (pt >=30 && pt<40) iPt = 1;
 	else if (pt >=40 && pt<60) iPt = 2;
 	else if (pt >=60 && pt<100) iPt = 3;
-	else if (pt >=100)          iPt = 4;
+	else if (pt >=100)          iPt = 3;
 	//else if (pt >=100 && pt<160) iPt = 4;
 	//else if (pt >=160 && pt<10000) iPt = 5;
+
+	////
+	if(abs(flavor) == 5 || abs(flavor) == 4){
+	  if (pt >=19.99 && pt<30) iPt = 0;
+	  else if (pt >=30 && pt<50) iPt = 1;
+	  else if (pt >=50 && pt<70) iPt = 2;
+	  else if (pt >=70 && pt<100) iPt = 3;
+	  else if (pt >=100 && pt<160) iPt = 4;
+	  else if (pt >=160 && pt<10000) iPt = 4; //4
+	}
 
 	if( PtBinsHF_ > 5 && pt >=160 )  iPt = 5;
 
       
 	if (jetAbsEta >=0 &&  jetAbsEta<0.8 ) iEta = 0;
 	else if ( jetAbsEta>=0.8 && jetAbsEta<1.6 )  iEta = 1;
-	else if ( jetAbsEta>=1.6 && jetAbsEta<2.41 ) iEta = 2;
+	else if ( jetAbsEta>=1.6 && jetAbsEta<2.51 ) iEta = 2;
 
 	int iSysHF = 0;
 	switch(mySys){
@@ -1185,7 +1285,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 	  h_perjet_wgt_csv_Sys[iPt][iEta][useSys]->Fill(iCSVWgtHF,wgt_gen);
 
 	  if( verbose_ ) std::cout << " ===> 2 test 1.4 jet " << iJet << std::endl;
-	  int useCMVABin = h_cmva_wgt_hf[iSysHF][iPt]->FindBin(cmva);
+	  int useCMVABin = (cmva>=0.) ? h_cmva_wgt_hf[iSysHF][iPt]->FindBin(cmva) : 1;
 	  double iCMVAWgtHF = h_cmva_wgt_hf[iSysHF][iPt]->GetBinContent(useCMVABin);
 	  if( verbose_ ) std::cout << " ===> 2 test 1.5 jet " << iJet << std::endl;
 
@@ -1221,6 +1321,72 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 	  }
 
 
+	  //---------------------
+	  if( pt>=30 && pt<50 && iCSVWgtHF>0. ){
+	    if( csv > csvWPL ){
+	      wgt_jet30to50_CSVL += iCSVWgtHF;
+	      nowgt_jet30to50_CSVL += 1.0;
+	    }
+	    if( csv > csvWPM ){
+	      wgt_jet30to50_CSVM += iCSVWgtHF;
+	      nowgt_jet30to50_CSVM += 1.0;
+	    }
+	    if( csv > csvWPT ){
+	      wgt_jet30to50_CSVT += iCSVWgtHF;
+	      nowgt_jet30to50_CSVT += 1.0;
+	    }
+	  }
+
+	  
+
+	  if( pt>=50 && pt<70 && iCSVWgtHF>0. ){
+	    if( csv > csvWPL ){
+	      wgt_jet50to70_CSVL += iCSVWgtHF;
+	      nowgt_jet50to70_CSVL += 1.0;
+	    }
+	    if( csv > csvWPM ){
+	      wgt_jet50to70_CSVM += iCSVWgtHF;
+	      nowgt_jet50to70_CSVM += 1.0;
+	    }
+	    if( csv > csvWPT ){
+	      wgt_jet50to70_CSVT += iCSVWgtHF;
+	      nowgt_jet50to70_CSVT += 1.0;
+	    }
+	  }
+
+	  if( pt>=70 && pt<100 && iCSVWgtHF>0. ){
+	    if( csv > csvWPL ){
+	      wgt_jet70to100_CSVL += iCSVWgtHF;
+	      nowgt_jet70to100_CSVL += 1.0;
+	    }
+	    if( csv > csvWPM ){
+	      wgt_jet70to100_CSVM += iCSVWgtHF;
+	      nowgt_jet70to100_CSVM += 1.0;
+	    }
+	    if( csv > csvWPT ){
+	      wgt_jet70to100_CSVT += iCSVWgtHF;
+	      nowgt_jet70to100_CSVT += 1.0;
+	    }
+	  }
+ 
+
+	  if( pt>=100 && iCSVWgtHF>0. ){
+	    if( csv > csvWPL ){
+	      wgt_jet100toInf_CSVL += iCSVWgtHF;
+	      nowgt_jet100toInf_CSVL += 1.0;
+	    }
+	    if( csv > csvWPM ){
+	      wgt_jet100toInf_CSVM += iCSVWgtHF;
+	      nowgt_jet100toInf_CSVM += 1.0;
+	    }
+	    if( csv > csvWPT ){
+	      wgt_jet100toInf_CSVT += iCSVWgtHF;
+	      nowgt_jet100toInf_CSVT += 1.0;
+	    }
+	  }
+
+	  /////////////////////////
+	  /////////////////////////
 
 	  if( cmva > cMVAWPL && pt > 30 && iCMVAWgtHF>0. ){
 	    wgt_jet30_CMVAL += iCMVAWgtHF;
@@ -1251,52 +1417,67 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 
 
 	  
-
-	  if( pt>=30 && pt<60 && iCMVAWgtHF>0. ){
+	  //---------------------
+	  if( pt>=30 && pt<50 && iCMVAWgtHF>0. ){
 	    if( cmva > cMVAWPL ){
-	      wgt_jet30to60_CMVAL += iCMVAWgtHF;
-	      nowgt_jet30to60_CMVAL += 1.0;
+	      wgt_jet30to50_CMVAL += iCMVAWgtHF;
+	      nowgt_jet30to50_CMVAL += 1.0;
 	    }
 	    if( cmva > cMVAWPM ){
-	      wgt_jet30to60_CMVAM += iCMVAWgtHF;
-	      nowgt_jet30to60_CMVAM += 1.0;
+	      wgt_jet30to50_CMVAM += iCMVAWgtHF;
+	      nowgt_jet30to50_CMVAM += 1.0;
 	    }
 	    if( cmva > cMVAWPT ){
-	      wgt_jet30to60_CMVAT += iCMVAWgtHF;
-	      nowgt_jet30to60_CMVAT += 1.0;
+	      wgt_jet30to50_CMVAT += iCMVAWgtHF;
+	      nowgt_jet30to50_CMVAT += 1.0;
 	    }
 	  }
 
 	  
 
-	  if( pt>=60 && pt<120 && iCMVAWgtHF>0. ){
+	  if( pt>=50 && pt<70 && iCMVAWgtHF>0. ){
 	    if( cmva > cMVAWPL ){
-	      wgt_jet60to120_CMVAL += iCMVAWgtHF;
-	      nowgt_jet60to120_CMVAL += 1.0;
+	      wgt_jet50to70_CMVAL += iCMVAWgtHF;
+	      nowgt_jet50to70_CMVAL += 1.0;
 	    }
 	    if( cmva > cMVAWPM ){
-	      wgt_jet60to120_CMVAM += iCMVAWgtHF;
-	      nowgt_jet60to120_CMVAM += 1.0;
+	      wgt_jet50to70_CMVAM += iCMVAWgtHF;
+	      nowgt_jet50to70_CMVAM += 1.0;
 	    }
 	    if( cmva > cMVAWPT ){
-	      wgt_jet60to120_CMVAT += iCMVAWgtHF;
-	      nowgt_jet60to120_CMVAT += 1.0;
+	      wgt_jet50to70_CMVAT += iCMVAWgtHF;
+	      nowgt_jet50to70_CMVAT += 1.0;
+	    }
+	  }
+
+	  if( pt>=70 && pt<100 && iCMVAWgtHF>0. ){
+	    if( cmva > cMVAWPL ){
+	      wgt_jet70to100_CMVAL += iCMVAWgtHF;
+	      nowgt_jet70to100_CMVAL += 1.0;
+	    }
+	    if( cmva > cMVAWPM ){
+	      wgt_jet70to100_CMVAM += iCMVAWgtHF;
+	      nowgt_jet70to100_CMVAM += 1.0;
+	    }
+	    if( cmva > cMVAWPT ){
+	      wgt_jet70to100_CMVAT += iCMVAWgtHF;
+	      nowgt_jet70to100_CMVAT += 1.0;
 	    }
 	  }
  
 
-	  if( pt>=120 && iCMVAWgtHF>0. ){
+	  if( pt>=100 && iCMVAWgtHF>0. ){
 	    if( cmva > cMVAWPL ){
-	      wgt_jet120toInf_CMVAL += iCMVAWgtHF;
-	      nowgt_jet120toInf_CMVAL += 1.0;
+	      wgt_jet100toInf_CMVAL += iCMVAWgtHF;
+	      nowgt_jet100toInf_CMVAL += 1.0;
 	    }
 	    if( cmva > cMVAWPM ){
-	      wgt_jet120toInf_CMVAM += iCMVAWgtHF;
-	      nowgt_jet120toInf_CMVAM += 1.0;
+	      wgt_jet100toInf_CMVAM += iCMVAWgtHF;
+	      nowgt_jet100toInf_CMVAM += 1.0;
 	    }
 	    if( cmva > cMVAWPT ){
-	      wgt_jet120toInf_CMVAT += iCMVAWgtHF;
-	      nowgt_jet120toInf_CMVAT += 1.0;
+	      wgt_jet100toInf_CMVAT += iCMVAWgtHF;
+	      nowgt_jet100toInf_CMVAT += 1.0;
 	    }
 	  }
 
@@ -1314,7 +1495,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 
 	  
 	  if( verbose_ ) std::cout << " ===> 2 test 1.7 jet " << iJet << std::endl;
-	  int useCMVABin = c_cmva_wgt_hf[iSysC][iPt]->FindBin(cmva);
+	  int useCMVABin = (cmva>=0.) ? c_cmva_wgt_hf[iSysC][iPt]->FindBin(cmva) : 1;
 	  double iCMVAWgtC = c_cmva_wgt_hf[iSysC][iPt]->GetBinContent(useCMVABin);
 	  if( verbose_ ) std::cout << " ===> 2 test 1.8 jet " << iJet << std::endl;
 
@@ -1332,7 +1513,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 
 	  
 	  if( verbose_ ) std::cout << " ===> 2 test 1.10 jet " << iJet << std::endl;
-	  int useCMVABin = h_cmva_wgt_lf[iSysLF][iPt][iEta]->FindBin(cmva);
+	  int useCMVABin = (cmva>=0.) ? h_cmva_wgt_lf[iSysLF][iPt][iEta]->FindBin(cmva) : 1;
 	  double iCMVAWgtLF = h_cmva_wgt_lf[iSysLF][iPt][iEta]->GetBinContent(useCMVABin);
 	  if( verbose_ ) std::cout << " ===> 2 test 1.11 jet " << iJet << std::endl;
 
@@ -1419,6 +1600,41 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
       h_numEvents_jet20_nowgtCSV_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet20_CSVT);
 
 
+      h_numEvents_jet30to50_wgtCSV_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet30to50_CSVL);
+      h_numEvents_jet30to50_wgtCSV_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet30to50_CSVM);
+      h_numEvents_jet30to50_wgtCSV_WP[useSys]->Fill(2.5,wgt_gen*wgt_jet30to50_CSVT);
+
+      h_numEvents_jet30to50_nowgtCSV_WP[useSys]->Fill(0.5,wgt_gen*nowgt_jet30to50_CSVL);
+      h_numEvents_jet30to50_nowgtCSV_WP[useSys]->Fill(1.5,wgt_gen*nowgt_jet30to50_CSVM);
+      h_numEvents_jet30to50_nowgtCSV_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet30to50_CSVT);
+
+      
+      h_numEvents_jet50to70_wgtCSV_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet50to70_CSVL);
+      h_numEvents_jet50to70_wgtCSV_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet50to70_CSVM);
+      h_numEvents_jet50to70_wgtCSV_WP[useSys]->Fill(2.5,wgt_gen*wgt_jet50to70_CSVT);
+
+      h_numEvents_jet50to70_nowgtCSV_WP[useSys]->Fill(0.5,wgt_gen*nowgt_jet50to70_CSVL);
+      h_numEvents_jet50to70_nowgtCSV_WP[useSys]->Fill(1.5,wgt_gen*nowgt_jet50to70_CSVM);
+      h_numEvents_jet50to70_nowgtCSV_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet50to70_CSVT);
+
+      h_numEvents_jet70to100_wgtCSV_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet70to100_CSVL);
+      h_numEvents_jet70to100_wgtCSV_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet70to100_CSVM);
+      h_numEvents_jet70to100_wgtCSV_WP[useSys]->Fill(2.5,wgt_gen*wgt_jet70to100_CSVT);
+
+      h_numEvents_jet70to100_nowgtCSV_WP[useSys]->Fill(0.5,wgt_gen*nowgt_jet70to100_CSVL);
+      h_numEvents_jet70to100_nowgtCSV_WP[useSys]->Fill(1.5,wgt_gen*nowgt_jet70to100_CSVM);
+      h_numEvents_jet70to100_nowgtCSV_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet70to100_CSVT);
+
+      
+      h_numEvents_jet100toInf_wgtCSV_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet100toInf_CSVL);
+      h_numEvents_jet100toInf_wgtCSV_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet100toInf_CSVM);
+      h_numEvents_jet100toInf_wgtCSV_WP[useSys]->Fill(2.5,wgt_gen*wgt_jet100toInf_CSVT);
+
+      h_numEvents_jet100toInf_nowgtCSV_WP[useSys]->Fill(0.5,wgt_gen*nowgt_jet100toInf_CSVL);
+      h_numEvents_jet100toInf_nowgtCSV_WP[useSys]->Fill(1.5,wgt_gen*nowgt_jet100toInf_CSVM);
+      h_numEvents_jet100toInf_nowgtCSV_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet100toInf_CSVT);
+
+      ////
 
       h_numEvents_jet30_wgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet30_CMVAL);
       h_numEvents_jet30_wgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet30_CMVAM);
@@ -1438,31 +1654,39 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 
 
       
-      h_numEvents_jet30to60_wgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet30to60_CMVAL);
-      h_numEvents_jet30to60_wgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet30to60_CMVAM);
-      h_numEvents_jet30to60_wgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*wgt_jet30to60_CMVAT);
+      h_numEvents_jet30to50_wgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet30to50_CMVAL);
+      h_numEvents_jet30to50_wgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet30to50_CMVAM);
+      h_numEvents_jet30to50_wgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*wgt_jet30to50_CMVAT);
 
-      h_numEvents_jet30to60_nowgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*nowgt_jet30to60_CMVAL);
-      h_numEvents_jet30to60_nowgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*nowgt_jet30to60_CMVAM);
-      h_numEvents_jet30to60_nowgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet30to60_CMVAT);
-
-      
-      h_numEvents_jet60to120_wgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet60to120_CMVAL);
-      h_numEvents_jet60to120_wgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet60to120_CMVAM);
-      h_numEvents_jet60to120_wgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*wgt_jet60to120_CMVAT);
-
-      h_numEvents_jet60to120_nowgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*nowgt_jet60to120_CMVAL);
-      h_numEvents_jet60to120_nowgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*nowgt_jet60to120_CMVAM);
-      h_numEvents_jet60to120_nowgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet60to120_CMVAT);
+      h_numEvents_jet30to50_nowgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*nowgt_jet30to50_CMVAL);
+      h_numEvents_jet30to50_nowgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*nowgt_jet30to50_CMVAM);
+      h_numEvents_jet30to50_nowgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet30to50_CMVAT);
 
       
-      h_numEvents_jet120toInf_wgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet120toInf_CMVAL);
-      h_numEvents_jet120toInf_wgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet120toInf_CMVAM);
-      h_numEvents_jet120toInf_wgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*wgt_jet120toInf_CMVAT);
+      h_numEvents_jet50to70_wgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet50to70_CMVAL);
+      h_numEvents_jet50to70_wgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet50to70_CMVAM);
+      h_numEvents_jet50to70_wgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*wgt_jet50to70_CMVAT);
 
-      h_numEvents_jet120toInf_nowgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*nowgt_jet120toInf_CMVAL);
-      h_numEvents_jet120toInf_nowgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*nowgt_jet120toInf_CMVAM);
-      h_numEvents_jet120toInf_nowgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet120toInf_CMVAT);
+      h_numEvents_jet50to70_nowgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*nowgt_jet50to70_CMVAL);
+      h_numEvents_jet50to70_nowgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*nowgt_jet50to70_CMVAM);
+      h_numEvents_jet50to70_nowgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet50to70_CMVAT);
+
+      h_numEvents_jet70to100_wgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet70to100_CMVAL);
+      h_numEvents_jet70to100_wgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet70to100_CMVAM);
+      h_numEvents_jet70to100_wgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*wgt_jet70to100_CMVAT);
+
+      h_numEvents_jet70to100_nowgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*nowgt_jet70to100_CMVAL);
+      h_numEvents_jet70to100_nowgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*nowgt_jet70to100_CMVAM);
+      h_numEvents_jet70to100_nowgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet70to100_CMVAT);
+
+      
+      h_numEvents_jet100toInf_wgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*wgt_jet100toInf_CMVAL);
+      h_numEvents_jet100toInf_wgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*wgt_jet100toInf_CMVAM);
+      h_numEvents_jet100toInf_wgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*wgt_jet100toInf_CMVAT);
+
+      h_numEvents_jet100toInf_nowgtCMVA_WP[useSys]->Fill(0.5,wgt_gen*nowgt_jet100toInf_CMVAL);
+      h_numEvents_jet100toInf_nowgtCMVA_WP[useSys]->Fill(1.5,wgt_gen*nowgt_jet100toInf_CMVAM);
+      h_numEvents_jet100toInf_nowgtCMVA_WP[useSys]->Fill(2.5,wgt_gen*nowgt_jet100toInf_CMVAT);
 
       //mistag
       h_numEvents_lf_jet30_wgtCSV_WP[useSys]->Fill(0.5,wgt_gen*wgt_lf_jet30_CSVL);
@@ -1815,7 +2039,7 @@ void csv_normFix_treeReader( int insample=2500, int maxNentries=-1, int Njobs=1,
 	double pt  = use_jet_pt[iJet];
 	double eta = use_jet_eta[iJet];
 
-	if( !(pt>30. && fabs(eta)<2.4) ) continue;
+	if( !(pt>30. && fabs(eta)<2.5) ) continue;
 
 	double dR = myJet.DeltaR(myLep);
 	// if( iSys==0 ) h_deltaR_jet_lep->Fill(dR,wgt);
@@ -2432,15 +2656,25 @@ double get_csv_wgt( vdouble jetPt, vdouble jetEta, vdouble jetCSV, vint jetFlavo
     else if (pt >=30 && pt<40) iPt = 1;
     else if (pt >=40 && pt<60) iPt = 2;
     else if (pt >=60 && pt<100) iPt = 3;
-    else if (pt >=100)          iPt = 4;
+    else if (pt >=100)          iPt = 3;
     //else if (pt >=100 && pt<160) iPt = 4;
     //else if (pt >=160 && pt<10000) iPt = 5;
+
+    ////
+    if(abs(flavor) == 5 || abs(flavor) == 4){
+      if (pt >=19.99 && pt<30) iPt = 0;
+      else if (pt >=30 && pt<50) iPt = 1;
+      else if (pt >=50 && pt<70) iPt = 2;
+      else if (pt >=70 && pt<100) iPt = 3;
+      else if (pt >=100 && pt<160) iPt = 4;
+      else if (pt >=160 && pt<10000) iPt = 4; //4
+    }
 
     if( PtBinsHF_ > 5 && pt >=160 )  iPt = 5;
 
     if (jetAbsEta >=0 &&  jetAbsEta<0.8 ) iEta = 0;
     else if ( jetAbsEta>=0.8 && jetAbsEta<1.6 )  iEta = 1;
-    else if ( jetAbsEta>=1.6 && jetAbsEta<2.41 ) iEta = 2;
+    else if ( jetAbsEta>=1.6 && jetAbsEta<2.51 ) iEta = 2;
 
     if (iPt < 0 || iEta < 0) std::cout << "Error, couldn't find Pt, Eta bins for this b-flavor jet, pt = " << pt << ", jetAbsEta = " << jetAbsEta << std::endl;
 
@@ -2542,22 +2776,32 @@ double get_cmva_wgt( vdouble jetPt, vdouble jetEta, vdouble jetCMVA, vint jetFla
     else if (pt >=30 && pt<40) iPt = 1;
     else if (pt >=40 && pt<60) iPt = 2;
     else if (pt >=60 && pt<100) iPt = 3;
-    else if (pt >=100)          iPt = 4;
+    else if (pt >=100)          iPt = 3;
     //else if (pt >=100 && pt<160) iPt = 4;
     //else if (pt >=160 && pt<10000) iPt = 5;
+
+    ////
+    if(abs(flavor) == 5 || abs(flavor) == 4){
+      if (pt >=19.99 && pt<30) iPt = 0;
+      else if (pt >=30 && pt<50) iPt = 1;
+      else if (pt >=50 && pt<70) iPt = 2;
+      else if (pt >=70 && pt<100) iPt = 3;
+      else if (pt >=100 && pt<160) iPt = 4;
+      else if (pt >=160 && pt<10000) iPt = 4; //4
+    }
 
     if( PtBinsHF_ > 5 && pt >=160 )  iPt = 5;
 
     if (jetAbsEta >=0 &&  jetAbsEta<0.8 ) iEta = 0;
     else if ( jetAbsEta>=0.8 && jetAbsEta<1.6 )  iEta = 1;
-    else if ( jetAbsEta>=1.6 && jetAbsEta<2.41 ) iEta = 2;
+    else if ( jetAbsEta>=1.6 && jetAbsEta<2.51 ) iEta = 2;
 
     if (iPt < 0 || iEta < 0) std::cout << "Error, couldn't find Pt, Eta bins for this b-flavor jet, pt = " << pt << ", jetAbsEta = " << jetAbsEta << std::endl;
 
     //std::cout << " flavor = " << flavor << ", cmva = " << cmva << ", iPt = " << iPt << ", iEta = " << iEta << ", iSysHF = " << iSysHF << ", iSysC = " << iSysC << ", iSysLF = " << iSysLF << std::endl;
 
     if (abs(flavor) == 5 ){
-      int useCMVABin = h_cmva_wgt_hf[iSysHF][iPt]->FindBin(cmva);
+      int useCMVABin = (cmva>=0.) ? h_cmva_wgt_hf[iSysHF][iPt]->FindBin(cmva) : 1;
       double iCMVAWgtHF = h_cmva_wgt_hf[iSysHF][iPt]->GetBinContent(useCMVABin);
       if( iCMVAWgtHF!=0 ) cmvaWgthf *= iCMVAWgtHF;
 
@@ -2565,7 +2809,7 @@ double get_cmva_wgt( vdouble jetPt, vdouble jetEta, vdouble jetCMVA, vint jetFla
       //  			     flavor, pt, jetAbsEta, cmva, iCMVAWgtHF );
     }
     else if( abs(flavor) == 4 ){
-      int useCMVABin = c_cmva_wgt_hf[iSysC][iPt]->FindBin(cmva);
+      int useCMVABin = (cmva>=0.) ? c_cmva_wgt_hf[iSysC][iPt]->FindBin(cmva) : 1;
       double iCMVAWgtC = c_cmva_wgt_hf[iSysC][iPt]->GetBinContent(useCMVABin);
       if( iCMVAWgtC!=0 ) cmvaWgtC *= iCMVAWgtC;
       // if( iSysC==0 ) printf(" iJet,\t flavor=%d,\t pt=%.1f,\t eta=%.2f,\t cmva=%.3f,\t wgt=%.2f \n",
@@ -2573,7 +2817,7 @@ double get_cmva_wgt( vdouble jetPt, vdouble jetEta, vdouble jetCMVA, vint jetFla
     }
     else {
       if (iPt >=3) iPt=3;       /// [30-40], [40-60] and [60-10000] only 3 Pt bins for lf
-      int useCMVABin = h_cmva_wgt_lf[iSysLF][iPt][iEta]->FindBin(cmva);
+      int useCMVABin = (cmva>=0.) ? h_cmva_wgt_lf[iSysLF][iPt][iEta]->FindBin(cmva) : 1;
       double iCMVAWgtLF = h_cmva_wgt_lf[iSysLF][iPt][iEta]->GetBinContent(useCMVABin);
       if( iCMVAWgtLF!=0 ) cmvaWgtlf *= iCMVAWgtLF;
       // if( iSysLF==0 ) printf(" iSysLF = %d, iJet = %d,\t flavor=%d,\t pt=%.1f,\t eta=%.2f,\t cmva=%.3f,\t wgt=%.2f \n",
