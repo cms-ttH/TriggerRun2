@@ -1,14 +1,14 @@
 from WMCore.Configuration import Configuration 
 config = Configuration() 
 config.section_("General") 
-config.General.requestName = 'ttjets_LJ_23rdJan' ## change
+config.General.requestName = 'ttjets_LJ_10thFeb' ## change
 
 
 config.section_("JobType") 
 config.JobType.pluginName = 'Analysis' 
 config.JobType.psetName = 'trigger_analyzer_mc_25ns_cfg.py' 
 config.JobType.allowUndistributedCMSSW = False
-#config.JobType.inputFiles = ['Fall15_25nsV2_DATA.db','Fall15_25nsV2_MC.db']
+config.JobType.inputFiles = ['Fall17_17Nov2017C_V4_DATA.db','Fall17_17Nov2017_V4_MC.db']
 
 
 config.section_("Data") 
@@ -21,10 +21,10 @@ config.Data.unitsPerJob = 1
 config.Data.totalUnits = 200  ## only for ttbar
 config.Data.publication = True 
 config.Data.publishDBS = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter/' 
-config.Data.outputDatasetTag = '23rdJan_trigger_csvRWT_13TeV'
+config.Data.outputDatasetTag = '10thFeb_trigger_csvRWT_13TeV'
 ### change user Space 
 config.Data.outLFNDirBase = '/store/user/lwming/' 
-config.Data.ignoreLocality = True
+#config.Data.ignoreLocality = True
 
 config.section_("Site") 
 config.Site.storageSite = 'T3_US_FNALLPC' 
